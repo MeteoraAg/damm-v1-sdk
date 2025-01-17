@@ -83,7 +83,7 @@ async function main() {
   const poolAddress = 'Bgf1Sy5kfeDgib4go4NgzHuZwek8wE8NZus56z6uizzi';
 
   // swap 5 9NG token to SOL
-  // await swap(new PublicKey(poolAddress), new BN(5000_000_000), true);
+  await swap(new PublicKey(poolAddress), new BN(5000_000_000), true);
 
   // swap 0.01 SOL to 9NG token
   await swap(new PublicKey(poolAddress), new BN(10_000_000), false);

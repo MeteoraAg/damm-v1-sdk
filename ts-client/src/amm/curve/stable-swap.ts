@@ -1,5 +1,4 @@
-import { BN } from '@coral-xyz/anchor';
-import { BorshCoder, Idl } from '@project-serum/anchor';
+import { BN, BorshCoder, Idl } from '@coral-xyz/anchor';
 import { Fraction, Percent, ZERO, Fees, computeD, computeY, normalizedTradeFee } from './stable-swap-math';
 import { AccountInfo, PublicKey } from '@solana/web3.js';
 import { OutResult, SwapCurve, TradeDirection, getPriceImpact } from '.';
@@ -21,7 +20,7 @@ export class StableSwap implements SwapCurve {
     private extraAccounts: Map<String, AccountInfo<Buffer>>,
     private onChainTime: BN,
     private stakePoolPubkey: PublicKey,
-  ) { }
+  ) {}
 
   private getBasePoolVirtualPrice(depegType: DepegType): BN {
     if (depegType['marinade']) {
@@ -127,15 +126,15 @@ export class StableSwap implements SwapCurve {
     const [upscaledSourceAmount, upscaledSwapSourceAmount, upscaledSwapDestinationAmount] =
       tradeDirection == TradeDirection.AToB
         ? [
-          this.upscaleTokenA(sourceAmount),
-          this.upscaleTokenA(swapSourceAmount),
-          this.upscaleTokenB(swapDestinationAmount),
-        ]
+            this.upscaleTokenA(sourceAmount),
+            this.upscaleTokenA(swapSourceAmount),
+            this.upscaleTokenB(swapDestinationAmount),
+          ]
         : [
-          this.upscaleTokenB(sourceAmount),
-          this.upscaleTokenB(swapSourceAmount),
-          this.upscaleTokenA(swapDestinationAmount),
-        ];
+            this.upscaleTokenB(sourceAmount),
+            this.upscaleTokenB(swapSourceAmount),
+            this.upscaleTokenA(swapDestinationAmount),
+          ];
 
     const invariantD = computeD(
       BigInt(this.amp),
@@ -188,15 +187,15 @@ export class StableSwap implements SwapCurve {
     const [upscaledDestAmount, upscaledSwapSourceAmount, upscaledSwapDestinationAmount] =
       tradeDirection == TradeDirection.AToB
         ? [
-          this.upscaleTokenB(destAmount),
-          this.upscaleTokenA(swapSourceAmount),
-          this.upscaleTokenB(swapDestinationAmount),
-        ]
+            this.upscaleTokenB(destAmount),
+            this.upscaleTokenA(swapSourceAmount),
+            this.upscaleTokenB(swapDestinationAmount),
+          ]
         : [
-          this.upscaleTokenA(destAmount),
-          this.upscaleTokenB(swapSourceAmount),
-          this.upscaleTokenA(swapDestinationAmount),
-        ];
+            this.upscaleTokenA(destAmount),
+            this.upscaleTokenB(swapSourceAmount),
+            this.upscaleTokenA(swapDestinationAmount),
+          ];
 
     const invariantD = computeD(
       BigInt(this.amp),
@@ -344,14 +343,14 @@ function calculateEstimatedWithdrawOneAmount({
     tradeDirection == TradeDirection.BToA ? [reserves[0], reserves[1]] : [reserves[1], reserves[0]];
 
   const d_0 = computeD(ampFactor, baseReserves, quoteReserves);
-  const d_1 = d_0 - poolTokenAmount * d_0 / lpTotalSupply;
+  const d_1 = d_0 - (poolTokenAmount * d_0) / lpTotalSupply;
 
   const new_y = computeY(ampFactor, quoteReserves, d_1);
 
   // expected_base_amount = swap_base_amount * d_1 / d_0 - new_y;
-  const expected_base_amount = baseReserves * d_1 / d_0 - new_y;
+  const expected_base_amount = (baseReserves * d_1) / d_0 - new_y;
   // expected_quote_amount = swap_quote_amount - swap_quote_amount * d_1 / d_0;
-  const expected_quote_amount = quoteReserves - quoteReserves * d_1 / d_0;
+  const expected_quote_amount = quoteReserves - (quoteReserves * d_1) / d_0;
   // new_base_amount = swap_base_amount - expected_base_amount * fee / fee_denominator;
   const new_base_amount = new Fraction(baseReserves.toString(), 1).subtract(
     normalizedTradeFee(feeInfo, N_COINS, expected_base_amount),
@@ -433,8 +432,8 @@ function calculateEstimatedMintAmount(
   const d2 = computeD(amp, adjustedBalances[0], adjustedBalances[1]);
 
   const lpSupply = lpTotalSupply;
-  const mintAmountRaw = lpSupply * (d2 - d0) / d0;
-  const mintAmountRawBeforeFees = lpSupply * (d1 - d0) / d0;
+  const mintAmountRaw = (lpSupply * (d2 - d0)) / d0;
+  const mintAmountRawBeforeFees = (lpSupply * (d1 - d0)) / d0;
 
   const fees = mintAmountRawBeforeFees - mintAmountRaw;
 

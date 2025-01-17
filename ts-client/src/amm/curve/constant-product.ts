@@ -1,7 +1,7 @@
-import sqrt from 'bn-sqrt';
 import { BN } from '@coral-xyz/anchor';
 import { getPriceImpact, OutResult, SwapCurve, TradeDirection } from '.';
 import { PoolFees } from '../types';
+import Decimal from 'decimal.js';
 
 // Typescript implementation of https://github.com/solana-labs/solana-program-library/blob/master/libraries/math/src/checked_ceil_div.rs#L29
 function ceilDiv(lhs: BN, rhs: BN) {
@@ -27,7 +27,7 @@ function ceilDiv(lhs: BN, rhs: BN) {
 }
 
 export class ConstantProductSwap implements SwapCurve {
-  constructor() { }
+  constructor() {}
 
   private computeOutAmountWithoutSlippage(sourceAmount: BN, swapSourceAmount: BN, swapDestinationAmount: BN): BN {
     return sourceAmount.mul(swapDestinationAmount).div(swapSourceAmount);
@@ -58,7 +58,8 @@ export class ConstantProductSwap implements SwapCurve {
     };
   }
   computeD(tokenAAmount: BN, tokenBAmount: BN): BN {
-    return sqrt(tokenAAmount.mul(tokenBAmount));
+    const sqrt = new Decimal(tokenAAmount.mul(tokenBAmount).toString()).floor();
+    return new BN(sqrt.toString());
   }
   computeInAmount(
     destAmount: BN,
