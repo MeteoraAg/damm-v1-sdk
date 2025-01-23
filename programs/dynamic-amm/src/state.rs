@@ -282,7 +282,7 @@ impl TokenMultiplier {
 }
 
 /// Contains information for depeg pool
-#[derive(Clone, Copy, Debug, AnchorSerialize, AnchorDeserialize)]
+#[derive(Clone, Copy, Debug, Default, AnchorSerialize, AnchorDeserialize)]
 pub struct Depeg {
     /// The virtual price of staking / interest bearing token
     pub base_virtual_price: u64,
@@ -300,8 +300,9 @@ impl DepegType {
 }
 
 /// Type of depeg pool
-#[derive(Clone, Copy, Debug, AnchorDeserialize, AnchorSerialize, PartialEq)]
+#[derive(Clone, Copy, Debug, Default, AnchorDeserialize, AnchorSerialize, PartialEq)]
 pub enum DepegType {
+    #[default]
     /// Indicate that it is not a depeg pool
     None,
     /// A depeg pool belongs to marinade finance

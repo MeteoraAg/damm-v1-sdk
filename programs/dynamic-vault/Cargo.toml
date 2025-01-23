@@ -15,5 +15,5 @@ crate-type = ["cdylib", "lib"]
 name = "dynamic_vault"
 
 [dependencies]
-anchor-lang = { version="0.28.0", features = ["event-cpi"] }
+anchor-lang = { version = "0.28.0", features = ["event-cpi"] }
 anchor-spl = "0.28.0"

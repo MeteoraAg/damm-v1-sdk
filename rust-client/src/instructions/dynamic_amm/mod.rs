@@ -12,9 +12,6 @@ pub use swap::*;
 pub mod quote;
 pub use quote::*;
 
-pub mod pda;
-pub use pda::*;
-
 pub mod get_pool_info;
 pub use get_pool_info::*;
 

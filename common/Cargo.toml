@@ -1,0 +1,13 @@
+[package]
+name = "common"
+version = { workspace = true }
+edition = { workspace = true }
+
+[dependencies]
+anchor-lang = { version = "0.28.0" }
+anchor-spl = "0.28.0"
+solana-sdk = { version = "1.16.0" }
+spl-associated-token-account = "2.2.0"
+mpl-token-metadata = "3.2.3"
+dynamic-amm = { path = "../programs/dynamic-amm" }
+dynamic-vault = { path = "../programs/dynamic-vault" }
