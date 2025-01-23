@@ -1106,6 +1106,7 @@ dependencies = [
 name = "common"
 version = "0.0.4"
 dependencies = [
+ "anchor-client",
  "anchor-lang",
  "anchor-spl",
  "dynamic-amm",
@@ -1113,6 +1114,7 @@ dependencies = [
  "mpl-token-metadata",
  "solana-sdk",
  "spl-associated-token-account 2.2.0",
+ "tokio",
 ]
 
 [[package]]

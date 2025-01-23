@@ -11,3 +11,7 @@ spl-associated-token-account = "2.2.0"
 mpl-token-metadata = "3.2.3"
 dynamic-amm = { path = "../programs/dynamic-amm" }
 dynamic-vault = { path = "../programs/dynamic-vault" }
+
+[dev-dependencies]
+anchor-client = "0.28.0"
+tokio = { version = "1.0.0", features = ["full"] }

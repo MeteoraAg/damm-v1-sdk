@@ -424,3 +424,38 @@ impl IxAccountBuilder {
         Ok(accounts)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use anchor_client::{solana_client::nonblocking::rpc_client::RpcClient, Cluster};
+
+    const JUP: solana_sdk::pubkey::Pubkey =
+        solana_sdk::pubkey!("JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN");
+
+    #[tokio::test]
+    async fn test_initialize_customizable_permissionless_constant_product_pool() {
+        let token_a_mint = Pubkey::new_unique();
+        let token_b_mint = JUP;
+        let payer = Pubkey::new_unique();
+
+        let account_fetcher = |address| {
+            let rpc_client = RpcClient::new(Cluster::Mainnet.url().to_owned());
+            async move {
+                let account = rpc_client.get_account(&address).await;
+                Ok(account?)
+            }
+        };
+
+        let accounts =
+            IxAccountBuilder::initialize_customizable_permissionless_constant_product_pool(
+                token_a_mint,
+                token_b_mint,
+                payer,
+                account_fetcher,
+            )
+            .await;
+
+        assert!(accounts.is_ok());
+    }
+}
