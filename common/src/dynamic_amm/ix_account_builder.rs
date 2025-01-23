@@ -39,25 +39,25 @@ fn get_or_derive_vault_related_keys(
     }
 }
 
-struct InitPoolRelatedKeys {
-    vault_a: Pubkey,
-    vault_a_token_vault: Pubkey,
-    vault_a_lp_mint: Pubkey,
-    vault_a_lp: Pubkey,
-    vault_b: Pubkey,
-    vault_b_token_vault: Pubkey,
-    vault_b_lp_mint: Pubkey,
-    vault_b_lp: Pubkey,
-    lp_mint: Pubkey,
-    protocol_token_a_fee: Pubkey,
-    protocol_token_b_fee: Pubkey,
-    mint_metadata: Pubkey,
-    payer_token_a: Pubkey,
-    payer_pool_lp: Pubkey,
-    payer_token_b: Pubkey,
+pub struct InitPoolRelatedKeys {
+    pub vault_a: Pubkey,
+    pub vault_a_token_vault: Pubkey,
+    pub vault_a_lp_mint: Pubkey,
+    pub vault_a_lp: Pubkey,
+    pub vault_b: Pubkey,
+    pub vault_b_token_vault: Pubkey,
+    pub vault_b_lp_mint: Pubkey,
+    pub vault_b_lp: Pubkey,
+    pub lp_mint: Pubkey,
+    pub protocol_token_a_fee: Pubkey,
+    pub protocol_token_b_fee: Pubkey,
+    pub mint_metadata: Pubkey,
+    pub payer_token_a: Pubkey,
+    pub payer_pool_lp: Pubkey,
+    pub payer_token_b: Pubkey,
 }
 
-async fn get_or_derive_initialize_pool_related_keys<F, Fut>(
+pub async fn get_or_derive_initialize_pool_related_keys<F, Fut>(
     pool_key: Pubkey,
     token_a_mint: Pubkey,
     token_b_mint: Pubkey,
