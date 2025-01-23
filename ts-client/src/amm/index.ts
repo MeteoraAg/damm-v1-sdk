@@ -78,7 +78,6 @@ import {
 } from './utils';
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes';
 import Decimal from 'decimal.js';
-import sqrt from 'bn-sqrt';
 import { DataV2 } from '@metaplex-foundation/mpl-token-metadata';
 
 type Opt = {
@@ -525,7 +524,7 @@ export default class AmmImpl implements AmmImplementation {
     const [mintMetadata, _mintMetadataBump] = deriveMintMetadata(lpMint);
     const activationPoint = opt?.activationPoint || null;
 
-    const lpAmount = sqrt(tokenAAmount.mul(tokenBAmount));
+    const lpAmount = new BN(new Decimal(tokenAAmount.mul(tokenBAmount).toString()).floor().toString());
     const { userLockAmount, feeWrapperLockAmount } = calculateLockAmounts(lpAmount, opt?.stakeLiquidity?.ratio);
 
     const createPoolPostInstructions: TransactionInstruction[] = [];
@@ -1084,7 +1083,7 @@ export default class AmmImpl implements AmmImplementation {
     }
 
     const [mintMetadata, _mintMetadataBump] = deriveMintMetadata(lpMint);
-    const lpAmount = sqrt(tokenAAmount.mul(tokenBAmount));
+    const lpAmount = new BN(new Decimal(tokenAAmount.mul(tokenBAmount).toString()).floor().toString());
     const { userLockAmount, feeWrapperLockAmount } = calculateLockAmounts(lpAmount, opt?.stakeLiquidity?.ratio);
 
     const createPoolPostInstructions: TransactionInstruction[] = [];
