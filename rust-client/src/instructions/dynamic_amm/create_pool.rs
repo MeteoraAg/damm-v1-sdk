@@ -4,6 +4,11 @@ use anchor_lang::AccountDeserialize;
 use anchor_lang::InstructionData;
 use anchor_lang::ToAccountMetas;
 use anchor_spl::associated_token::get_associated_token_address;
+use common::dynamic_amm::pda::derive_permissionless_pool_key_with_fee_tier;
+use common::dynamic_amm::pda::derive_protocol_fee_key;
+use common::dynamic_amm::pda::derive_vault_lp_key;
+use common::dynamic_vault::pda::derive_token_vault_key;
+use common::dynamic_vault::pda::derive_vault_key;
 use prog_dynamic_amm::state::CurveType;
 use prog_dynamic_vault::state::Vault;
 use solana_rpc_client::rpc_client::RpcClient;
@@ -44,9 +49,9 @@ pub fn process_new_dynamic_pool(args: &Args, sub_args: &CreateDynamicAmmPoolArgs
         ComputeBudgetInstruction::set_compute_unit_limit(CREATE_POOL_COMPUTE_UNIT),
     ];
     // check vault
-    let a_vault = derive_vault_address(token_a_mint);
-    let a_token_vault = derive_token_vault_address(&a_vault);
-    let a_vault_lp_mint = derive_vault_lp_mint_address(&a_vault);
+    let a_vault = derive_vault_key(*token_a_mint);
+    let a_token_vault = derive_token_vault_key(a_vault);
+    let a_vault_lp_mint = common::dynamic_vault::pda::derive_lp_mint_key(a_vault);
     if client.get_account(&a_vault).is_err() {
         ixs.push(Instruction {
             program_id: prog_dynamic_vault::ID,
@@ -65,9 +70,9 @@ pub fn process_new_dynamic_pool(args: &Args, sub_args: &CreateDynamicAmmPoolArgs
         });
     }
 
-    let b_vault = derive_vault_address(token_b_mint);
-    let b_token_vault = derive_token_vault_address(&b_vault);
-    let mut b_vault_lp_mint = derive_vault_lp_mint_address(&b_vault);
+    let b_vault = derive_vault_key(*token_b_mint);
+    let b_token_vault = derive_token_vault_key(b_vault);
+    let mut b_vault_lp_mint = common::dynamic_vault::pda::derive_lp_mint_key(b_vault);
     match client.get_account(&b_vault) {
         Ok(account) => {
             let mut buff = account.data.as_slice();
@@ -93,8 +98,13 @@ pub fn process_new_dynamic_pool(args: &Args, sub_args: &CreateDynamicAmmPoolArgs
         }
     }
 
-    let pool = derive_pool_address(*token_a_mint, *token_b_mint, *trade_fee_bps);
-    let pool_lp_mint = derive_pool_lp_mint_address(pool);
+    let pool = derive_permissionless_pool_key_with_fee_tier(
+        CurveType::ConstantProduct,
+        *token_a_mint,
+        *token_b_mint,
+        *trade_fee_bps,
+    );
+    let pool_lp_mint = common::dynamic_amm::pda::derive_lp_mint_key(pool);
     let (mint_metadata, _bump) = mpl_token_metadata::accounts::Metadata::find_pda(&pool_lp_mint);
     ixs.push(Instruction {
         program_id: prog_dynamic_amm::ID,
@@ -114,13 +124,13 @@ pub fn process_new_dynamic_pool(args: &Args, sub_args: &CreateDynamicAmmPoolArgs
             token_b_mint: *token_b_mint,
             token_program: spl_token::ID,
             associated_token_program: spl_associated_token_account::ID,
-            a_vault_lp: derive_vault_lp_token_address(a_vault, pool),
-            b_vault_lp: derive_vault_lp_token_address(b_vault, pool),
+            a_vault_lp: derive_vault_lp_key(a_vault, pool),
+            b_vault_lp: derive_vault_lp_key(b_vault, pool),
             payer_token_a: get_associated_token_address(&keypair.pubkey(), token_a_mint),
             payer_token_b: get_associated_token_address(&keypair.pubkey(), token_b_mint),
             payer_pool_lp: get_associated_token_address(&keypair.pubkey(), &pool_lp_mint),
-            protocol_token_a_fee: derive_pool_fee_token_address(*token_a_mint, pool),
-            protocol_token_b_fee: derive_pool_fee_token_address(*token_b_mint, pool),
+            protocol_token_a_fee: derive_protocol_fee_key(*token_a_mint, pool),
+            protocol_token_b_fee: derive_protocol_fee_key(*token_b_mint, pool),
             fee_owner: Pubkey::default(),
             vault_program: prog_dynamic_vault::ID,
             metadata_program: mpl_token_metadata::ID,

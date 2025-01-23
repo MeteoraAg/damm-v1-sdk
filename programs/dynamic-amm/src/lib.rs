@@ -9,6 +9,7 @@ pub mod constants;
 pub mod error;
 pub mod event;
 pub mod instructions;
+pub mod seed;
 pub mod state;
 
 use crate::state::CurveType;

@@ -1,5 +1,5 @@
 [workspace]
-members = ["programs/*", "rust-client", "dynamic-amm-quote"]
+members = ["programs/*", "rust-client", "dynamic-amm-quote", "common"]
 resolver = "2"
 
 [workspace.package]
