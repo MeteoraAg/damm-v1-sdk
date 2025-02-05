@@ -6,7 +6,7 @@ import {
   IDL as VaultIDL,
   VaultIdl,
   PROGRAM_ID as VAULT_PROGRAM_ID,
-} from '@mercurial-finance/vault-sdk';
+} from '@meteora-ag/vault-sdk';
 import {
   STAKE_FOR_FEE_PROGRAM_ID,
   IDL as StakeForFeeIDL,
@@ -231,7 +231,7 @@ export const computeActualDepositAmount = (
 };
 
 /**
- * Compute pool information, Typescript implementation of https://github.com/mercurial-finance/mercurial-dynamic-amm/blob/main/programs/amm/src/lib.rs#L960
+ * Compute pool information, Typescript implementation of https://github.com/meteora-ag/mercurial-dynamic-amm/blob/main/programs/amm/src/lib.rs#L960
  * @param {number} currentTime - the on solana chain time in seconds (SYSVAR_CLOCK_PUBKEY)
  * @param {BN} poolVaultALp - The amount of LP tokens in the pool for token A
  * @param {BN} poolVaultBLp - The amount of Lp tokens in the pool for token B,

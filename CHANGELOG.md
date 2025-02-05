@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## @mercurial-finance/dynamic-amm-sdk [0.1.0] - PR[#196](https://github.com/mercurial-finance/mercurial-dynamic-amm-sdk/pull/196)
+
+### Changed
+
+- move to `meteora-ag` org
+
 ## @mercurial-finance/dynamic-amm-sdk [1.1.23] - PR[#192](https://github.com/mercurial-finance/mercurial-dynamic-amm-sdk/pull/192)
 
 ### Changed

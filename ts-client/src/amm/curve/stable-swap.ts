@@ -33,7 +33,7 @@ export class StableSwap implements SwapCurve {
     }
     if (depegType['lido']) {
       const account = this.extraAccounts.get(CURVE_TYPE_ACCOUNTS.lido.toBase58());
-      //https://github.com/mercurial-finance/mercurial-dynamic-amm/blob/main/programs/amm/tests/test_depeg_price.rs#L33
+      //https://github.com/meteora-ag/mercurial-dynamic-amm/blob/main/programs/amm/tests/test_depeg_price.rs#L33
       const stSolSupply = new BN(account!.data.readBigInt64LE(73).toString());
       const stSolBalance = new BN(account!.data.readBigInt64LE(81).toString());
       return stSolBalance.mul(PRECISION).div(stSolSupply);

@@ -20,15 +20,15 @@ importers:
       '@mercurial-finance/token-math':
         specifier: 6.0.0
         version: 6.0.0
-      '@mercurial-finance/vault-sdk':
-        specifier: 2.2.0
-        version: 2.2.0(bufferutil@4.0.7)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)(utf-8-validate@5.0.10)
       '@metaplex-foundation/mpl-token-metadata':
         specifier: ~2.13.0
         version: 2.13.0(bufferutil@4.0.7)(fastestsmallesttextencoderdecoder@1.0.22)(utf-8-validate@5.0.10)
       '@meteora-ag/m3m3':
         specifier: 1.0.4
         version: 1.0.4(bufferutil@4.0.7)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)(utf-8-validate@5.0.10)
+      '@meteora-ag/vault-sdk':
+        specifier: 0.1.1
+        version: 0.1.1(bufferutil@4.0.7)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)(utf-8-validate@5.0.10)
       '@project-serum/anchor':
         specifier: ^0.24.2
         version: 0.24.2(bufferutil@4.0.7)(utf-8-validate@5.0.10)
@@ -383,9 +383,6 @@ packages:
     resolution: {integrity: sha512-/o2Kr+gXXE4UvkBJ4QLcbiBmKUyBvU1C0tty6y4smJxEItJYiH6yQzRSWpkBhP5Q387n/j05nqoizX4uZkBlwg==}
     engines: {node: '>=10'}
 
-  '@mercurial-finance/vault-sdk@2.2.0':
-    resolution: {integrity: sha512-Q6Ejkl/mDXR+d4K1p9TL0FJ8p18hQH2rUwPwq+1twLxoHvmHeHM+9bfU3iMLQ+odcC6vh3LXBiMEBdyzgMGXlg==}
-
   '@metaplex-foundation/beet-solana@0.4.1':
     resolution: {integrity: sha512-/6o32FNUtwK8tjhotrvU/vorP7umBuRFvBZrC6XCk51aKidBHe5LPVPA5AjGPbV3oftMfRuXPNd9yAGeEqeCDQ==}
 
@@ -400,6 +397,9 @@ packages:
 
   '@meteora-ag/m3m3@1.0.4':
     resolution: {integrity: sha512-tjNsQ7qCE9LAyZ8TpyNsg8kOiaarAQ91ckAGObKO/gcDkUfm5m/qrDo3qypN9aCAcFnNmvsuJecrJnLhRGq33g==}
+
+  '@meteora-ag/vault-sdk@0.1.1':
+    resolution: {integrity: sha512-qnzylp3ECduYieRTEmNS0rW4DsFsz7ybmS9eW48yO9IfWtTcUAww/UzpI6SXbboxRDagJkOVZ9pSYflh3A+xfw==}
 
   '@noble/curves@1.4.2':
     resolution: {integrity: sha512-TavHr8qycMChk8UwMld0ZDRvatedkzWfH8IiaeGCfymOP5i0hSCozz9vHOL0nkwk7HRMlFnAiKpS2jrUmSybcw==}
@@ -2507,24 +2507,6 @@ snapshots:
       tiny-invariant: 1.3.3
       tslib: 2.6.3
 
-  '@mercurial-finance/vault-sdk@2.2.0(bufferutil@4.0.7)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)(utf-8-validate@5.0.10)':
-    dependencies:
-      '@coral-xyz/anchor': 0.28.0(bufferutil@4.0.7)(utf-8-validate@5.0.10)
-      '@solana/buffer-layout': 4.0.1
-      '@solana/spl-token': 0.4.8(@solana/web3.js@1.95.8(bufferutil@4.0.7)(utf-8-validate@5.0.10))(bufferutil@4.0.7)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)(utf-8-validate@5.0.10)
-      '@solana/spl-token-registry': 0.2.4574
-      '@solana/web3.js': 1.95.8(bufferutil@4.0.7)(utf-8-validate@5.0.10)
-      bn.js: 5.2.1
-      cross-fetch: 3.1.5
-      decimal.js: 10.3.1
-      jsbi: 4.3.0
-    transitivePeerDependencies:
-      - bufferutil
-      - encoding
-      - fastestsmallesttextencoderdecoder
-      - typescript
-      - utf-8-validate
-
   '@metaplex-foundation/beet-solana@0.4.1(bufferutil@4.0.7)(utf-8-validate@5.0.10)':
     dependencies:
       '@metaplex-foundation/beet': 0.7.2
@@ -2573,6 +2555,24 @@ snapshots:
       '@solana/web3.js': 1.95.8(bufferutil@4.0.7)(utf-8-validate@5.0.10)
       bn.js: 5.2.1
       decimal.js: 10.4.3
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - fastestsmallesttextencoderdecoder
+      - typescript
+      - utf-8-validate
+
+  '@meteora-ag/vault-sdk@0.1.1(bufferutil@4.0.7)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)(utf-8-validate@5.0.10)':
+    dependencies:
+      '@coral-xyz/anchor': 0.28.0(bufferutil@4.0.7)(utf-8-validate@5.0.10)
+      '@solana/buffer-layout': 4.0.1
+      '@solana/spl-token': 0.4.8(@solana/web3.js@1.95.8(bufferutil@4.0.7)(utf-8-validate@5.0.10))(bufferutil@4.0.7)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)(utf-8-validate@5.0.10)
+      '@solana/spl-token-registry': 0.2.4574
+      '@solana/web3.js': 1.95.8(bufferutil@4.0.7)(utf-8-validate@5.0.10)
+      bn.js: 5.2.1
+      cross-fetch: 3.1.5
+      decimal.js: 10.3.1
+      jsbi: 4.3.0
     transitivePeerDependencies:
       - bufferutil
       - encoding

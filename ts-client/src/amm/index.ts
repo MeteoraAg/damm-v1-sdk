@@ -24,7 +24,7 @@ import {
   NATIVE_MINT,
   TOKEN_PROGRAM_ID,
 } from '@solana/spl-token';
-import VaultImpl, { calculateWithdrawableAmount, getVaultPdas } from '@mercurial-finance/vault-sdk';
+import VaultImpl, { calculateWithdrawableAmount, getVaultPdas } from '@meteora-ag/vault-sdk';
 import StakeForFee, { deriveFeeVault, STAKE_FOR_FEE_PROGRAM_ID, StakeForFeeProgram } from '@meteora-ag/m3m3';
 import invariant from 'invariant';
 import {

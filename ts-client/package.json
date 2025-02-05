@@ -1,7 +1,7 @@
 {
-  "name": "@mercurial-finance/dynamic-amm-sdk",
-  "version": "1.1.23",
-  "description": "Mercurial Vaults SDK is a typescript library that allows you to interact with Mercurial v2's AMM.",
+  "name": "@meteora-ag/dynamic-amm-sdk",
+  "version": "0.1.0",
+  "description": "Meteora Dynamic Amm SDK is a typescript library that allows you to interact with Meteora's AMM.",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "scripts": {
@@ -15,7 +15,7 @@
     "@coral-xyz/anchor": "^0.28.0",
     "@coral-xyz/borsh": "^0.28.0",
     "@mercurial-finance/token-math": "6.0.0",
-    "@mercurial-finance/vault-sdk": "2.2.0",
+    "@meteora-ag/vault-sdk": "0.1.1",
     "@metaplex-foundation/mpl-token-metadata": "~2.13.0",
     "@meteora-ag/m3m3": "1.0.4",
     "@project-serum/anchor": "^0.24.2",
@@ -54,7 +54,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mercurial-finance/mercurial-dynamic-amm-sdk.git"
+    "url": "git+https://github.com/meteora-ag/mercurial-dynamic-amm-sdk.git"
   },
   "keywords": [
     "mercurial",
@@ -64,10 +64,10 @@
     "sdk",
     "solana"
   ],
-  "author": "mercurial-finance",
+  "author": "meteora-ag",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/mercurial-finance/mercurial-dynamic-amm-sdk/issues"
+    "url": "https://github.com/meteora-ag/mercurial-dynamic-amm-sdk/issues"
   },
-  "homepage": "https://github.com/mercurial-finance/mercurial-dynamic-amm-sdk#readme"
+  "homepage": "https://github.com/meteora-ag/mercurial-dynamic-amm-sdk#readme"
 }

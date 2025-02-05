@@ -1,4 +1,4 @@
-import VaultImpl from '@mercurial-finance/vault-sdk';
+import VaultImpl from '@meteora-ag/vault-sdk';
 import { AccountLayout, MintLayout, NATIVE_MINT, RawAccount, RawMint } from '@solana/spl-token';
 import { clusterApiUrl, Connection, PublicKey, SYSVAR_CLOCK_PUBKEY } from '@solana/web3.js';
 import { calculateSwapQuoteForGoingToCreateMemecoinPool } from '../utils';
