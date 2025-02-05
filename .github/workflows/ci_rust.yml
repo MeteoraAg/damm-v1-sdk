@@ -8,7 +8,7 @@ on:
       - "LICENSE"
       - ".editorconfig"
     branches:
-      - master
+      - main
       - develop
       - staging
       - feat/protocol-fee-part-of-lp-fees
