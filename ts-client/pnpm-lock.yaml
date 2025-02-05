@@ -27,8 +27,8 @@ importers:
         specifier: 1.0.4
         version: 1.0.4(bufferutil@4.0.7)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)(utf-8-validate@5.0.10)
       '@meteora-ag/vault-sdk':
-        specifier: 0.1.1
-        version: 0.1.1(bufferutil@4.0.7)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)(utf-8-validate@5.0.10)
+        specifier: 2.3.0
+        version: 2.3.0(bufferutil@4.0.7)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)(utf-8-validate@5.0.10)
       '@project-serum/anchor':
         specifier: ^0.24.2
         version: 0.24.2(bufferutil@4.0.7)(utf-8-validate@5.0.10)
@@ -398,8 +398,8 @@ packages:
   '@meteora-ag/m3m3@1.0.4':
     resolution: {integrity: sha512-tjNsQ7qCE9LAyZ8TpyNsg8kOiaarAQ91ckAGObKO/gcDkUfm5m/qrDo3qypN9aCAcFnNmvsuJecrJnLhRGq33g==}
 
-  '@meteora-ag/vault-sdk@0.1.1':
-    resolution: {integrity: sha512-qnzylp3ECduYieRTEmNS0rW4DsFsz7ybmS9eW48yO9IfWtTcUAww/UzpI6SXbboxRDagJkOVZ9pSYflh3A+xfw==}
+  '@meteora-ag/vault-sdk@2.3.0':
+    resolution: {integrity: sha512-CD4J5M5IGaKhK3KpLjulhiQSrsj8sNIsnqD4d/Nsk+R1Ag2zLijMpD2HokxmebNmKCg5ggg5MVeg6kFYXCuybA==}
 
   '@noble/curves@1.4.2':
     resolution: {integrity: sha512-TavHr8qycMChk8UwMld0ZDRvatedkzWfH8IiaeGCfymOP5i0hSCozz9vHOL0nkwk7HRMlFnAiKpS2jrUmSybcw==}
@@ -2562,7 +2562,7 @@ snapshots:
       - typescript
       - utf-8-validate
 
-  '@meteora-ag/vault-sdk@0.1.1(bufferutil@4.0.7)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)(utf-8-validate@5.0.10)':
+  '@meteora-ag/vault-sdk@2.3.0(bufferutil@4.0.7)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)(utf-8-validate@5.0.10)':
     dependencies:
       '@coral-xyz/anchor': 0.28.0(bufferutil@4.0.7)(utf-8-validate@5.0.10)
       '@solana/buffer-layout': 4.0.1
