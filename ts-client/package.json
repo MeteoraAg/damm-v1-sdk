@@ -54,7 +54,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/meteora-ag/mercurial-dynamic-amm-sdk.git"
+    "url": "git+https://github.com/MeteoraAg/dynamic-amm-sdk.git"
   },
   "keywords": [
     "mercurial",
@@ -67,7 +67,7 @@
   "author": "meteora-ag",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/meteora-ag/mercurial-dynamic-amm-sdk/issues"
+    "url": "https://github.com/MeteoraAg/dynamic-amm-sdk/issues"
   },
   "homepage": "https://github.com/meteora-ag/mercurial-dynamic-amm-sdk#readme"
 }
