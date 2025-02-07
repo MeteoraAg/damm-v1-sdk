@@ -27,8 +27,8 @@ importers:
         specifier: 1.0.4
         version: 1.0.4(bufferutil@4.0.7)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)(utf-8-validate@5.0.10)
       '@meteora-ag/vault-sdk':
-        specifier: 2.3.0
-        version: 2.3.0(bufferutil@4.0.7)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)(utf-8-validate@5.0.10)
+        specifier: 2.3.1
+        version: 2.3.1(bufferutil@4.0.7)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)(utf-8-validate@5.0.10)
       '@project-serum/anchor':
         specifier: ^0.24.2
         version: 0.24.2(bufferutil@4.0.7)(utf-8-validate@5.0.10)
@@ -398,8 +398,8 @@ packages:
   '@meteora-ag/m3m3@1.0.4':
     resolution: {integrity: sha512-tjNsQ7qCE9LAyZ8TpyNsg8kOiaarAQ91ckAGObKO/gcDkUfm5m/qrDo3qypN9aCAcFnNmvsuJecrJnLhRGq33g==}
 
-  '@meteora-ag/vault-sdk@2.3.0':
-    resolution: {integrity: sha512-CD4J5M5IGaKhK3KpLjulhiQSrsj8sNIsnqD4d/Nsk+R1Ag2zLijMpD2HokxmebNmKCg5ggg5MVeg6kFYXCuybA==}
+  '@meteora-ag/vault-sdk@2.3.1':
+    resolution: {integrity: sha512-I42o02fTpXdBcD/po/mXHnrOfVshr8vj9i7r+s7KG/FNdwC9/z+KZXvjXSTakKe/2CnLm75u3UFJly3j0KraSg==}
 
   '@noble/curves@1.4.2':
     resolution: {integrity: sha512-TavHr8qycMChk8UwMld0ZDRvatedkzWfH8IiaeGCfymOP5i0hSCozz9vHOL0nkwk7HRMlFnAiKpS2jrUmSybcw==}
@@ -2562,12 +2562,11 @@ snapshots:
       - typescript
       - utf-8-validate
 
-  '@meteora-ag/vault-sdk@2.3.0(bufferutil@4.0.7)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)(utf-8-validate@5.0.10)':
+  '@meteora-ag/vault-sdk@2.3.1(bufferutil@4.0.7)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)(utf-8-validate@5.0.10)':
     dependencies:
       '@coral-xyz/anchor': 0.28.0(bufferutil@4.0.7)(utf-8-validate@5.0.10)
       '@solana/buffer-layout': 4.0.1
       '@solana/spl-token': 0.4.8(@solana/web3.js@1.95.8(bufferutil@4.0.7)(utf-8-validate@5.0.10))(bufferutil@4.0.7)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)(utf-8-validate@5.0.10)
-      '@solana/spl-token-registry': 0.2.4574
       '@solana/web3.js': 1.95.8(bufferutil@4.0.7)(utf-8-validate@5.0.10)
       bn.js: 5.2.1
       cross-fetch: 3.1.5
