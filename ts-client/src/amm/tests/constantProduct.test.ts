@@ -1,11 +1,10 @@
 import { AnchorProvider, BN } from '@coral-xyz/anchor';
-import { TokenInfo } from '@solana/spl-token-registry';
 import { Connection, Keypair, PublicKey } from '@solana/web3.js';
 import { CONSTANT_PRODUCT_DEFAULT_TRADE_FEE_BPS, DEFAULT_SLIPPAGE, PROGRAM_ID } from '../constants';
 import AmmImpl from '../index';
 import { derivePoolAddress, derivePoolAddressWithConfig, getOnchainTime } from '../utils';
 import { airDropSol, getOrCreateATA, mockWallet } from './utils';
-import { createMint, mintTo } from '@solana/spl-token';
+import { createMint, getMint, Mint, mintTo } from '@solana/spl-token';
 import { ActivationType } from '../types';
 
 describe('Constant product pool', () => {
@@ -14,14 +13,14 @@ describe('Constant product pool', () => {
     commitment: connection.commitment,
   });
 
-  let btcTokenInfo: TokenInfo;
-  let usdcTokenInfo: TokenInfo;
-
   let BTC: PublicKey;
   let USDC: PublicKey;
 
   let mockWalletBtcATA: PublicKey;
   let mockWalletUsdcATA: PublicKey;
+
+  let btcMint: Mint;
+  let usdcMint: Mint;
 
   let btcDecimal = 8;
   let usdcDecimal = 6;
@@ -34,30 +33,15 @@ describe('Constant product pool', () => {
 
   beforeAll(async () => {
     await airDropSol(connection, mockWallet.publicKey, 10);
-    BTC = await createMint(provider.connection, mockWallet.payer, mockWallet.publicKey, null, btcDecimal);
-
-    btcTokenInfo = {
-      chainId: 101,
-      address: BTC.toString(),
-      symbol: 'BTC',
-      decimals: btcDecimal,
-      name: 'Bitcoin',
-      logoURI: 'https://assets.coingecko.com/coins/images/1/large/bitcoin.png',
-    };
-
-    USDC = await createMint(provider.connection, mockWallet.payer, mockWallet.publicKey, null, usdcDecimal);
-
-    usdcTokenInfo = {
-      chainId: 101,
-      address: USDC.toString(),
-      symbol: 'USDC',
-      decimals: usdcDecimal,
-      name: 'USD Coin',
-      logoURI: 'https://assets.coingecko.com/coins/images/6319/large/USD_Coin_icon.png',
-    };
-
-    mockWalletBtcATA = await getOrCreateATA(connection, BTC, mockWallet.publicKey, mockWallet.payer);
-    mockWalletUsdcATA = await getOrCreateATA(connection, USDC, mockWallet.publicKey, mockWallet.payer);
+    [BTC, USDC] = await Promise.all(
+      [btcDecimal, usdcDecimal].map((decimal) =>
+        createMint(provider.connection, mockWallet.payer, mockWallet.publicKey, null, decimal),
+      ),
+    );
+    [mockWalletBtcATA, mockWalletUsdcATA] = await Promise.all(
+      [BTC, USDC].map((mint) => getOrCreateATA(connection, mint, mockWallet.publicKey, mockWallet.payer)),
+    );
+    [btcMint, usdcMint] = await Promise.all([BTC, USDC].map((mint) => getMint(connection, mint)));
 
     await mintTo(
       provider.connection,
@@ -98,8 +82,8 @@ describe('Constant product pool', () => {
       const transaction = await AmmImpl.createPermissionlessPool(
         connection,
         mockWallet.publicKey,
-        btcTokenInfo,
-        usdcTokenInfo,
+        BTC,
+        USDC,
         btcDepositAmount,
         usdcDepositAmount,
         false,
@@ -110,7 +94,15 @@ describe('Constant product pool', () => {
       const txHash = await connection.sendRawTransaction(transaction.serialize());
       await connection.confirmTransaction(txHash, 'finalized');
 
-      const poolKey = derivePoolAddress(connection, btcTokenInfo, usdcTokenInfo, false, tradeFeeBps);
+      const poolKey = derivePoolAddress(
+        connection,
+        btcMint.address,
+        usdcMint.address,
+        btcMint.decimals,
+        usdcMint.decimals,
+        false,
+        tradeFeeBps,
+      );
       cpPoolFeeTiered = await AmmImpl.create(connection, poolKey);
 
       expect(poolKey.toBase58()).toBe(cpPoolFeeTiered.address.toBase58());
@@ -313,8 +305,8 @@ describe('Constant product pool', () => {
       const transactions = await AmmImpl.createPermissionlessConstantProductPoolWithConfig(
         connection,
         mockWallet.publicKey,
-        new PublicKey(btcTokenInfo.address),
-        new PublicKey(usdcTokenInfo.address),
+        BTC,
+        USDC,
         btcDepositAmount,
         usdcDepositAmount,
         configs[0].publicKey,
@@ -326,12 +318,7 @@ describe('Constant product pool', () => {
         await connection.confirmTransaction(txHash, 'finalized');
       }
 
-      const poolKey = derivePoolAddressWithConfig(
-        new PublicKey(btcTokenInfo.address),
-        new PublicKey(usdcTokenInfo.address),
-        configs[0].publicKey,
-        new PublicKey(PROGRAM_ID),
-      );
+      const poolKey = derivePoolAddressWithConfig(BTC, USDC, configs[0].publicKey, new PublicKey(PROGRAM_ID));
       cpPoolConfig = await AmmImpl.create(connection, poolKey);
 
       expect(poolKey.toBase58()).toBe(cpPoolConfig.address.toBase58());

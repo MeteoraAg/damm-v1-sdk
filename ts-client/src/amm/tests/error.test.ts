@@ -10,10 +10,8 @@ import { Connection, PublicKey } from '@solana/web3.js';
 import { AnchorProvider, BN } from '@coral-xyz/anchor';
 import DynamicAmmError from '../error';
 import { IDL } from '../idl';
-import { createMint, mintTo } from '@solana/spl-token';
-import { TokenInfo } from '@solana/spl-token-registry';
+import { createMint, getMint, Mint, mintTo } from '@solana/spl-token';
 import { derivePoolAddress } from '../utils';
-import { msolTokenInfo, solTokenInfo } from './stableSwap.test';
 
 describe('Error parsing', () => {
   const connection = new Connection('http://127.0.0.1:8899', 'confirmed');
@@ -21,11 +19,11 @@ describe('Error parsing', () => {
     commitment: connection.commitment,
   });
 
-  let usdtTokenInfo: TokenInfo;
-  let usdcTokenInfo: TokenInfo;
-
   let USDT: PublicKey;
   let USDC: PublicKey;
+
+  let usdtMint: Mint;
+  let usdcMint: Mint;
 
   let mockWalletUsdtATA: PublicKey;
   let mockWalletUsdcATA: PublicKey;
@@ -43,30 +41,15 @@ describe('Error parsing', () => {
   beforeAll(async () => {
     await airDropSol(connection, mockWallet.publicKey, 10);
 
-    USDT = await createMint(provider.connection, mockWallet.payer, mockWallet.publicKey, null, usdtDecimal);
-
-    usdtTokenInfo = {
-      chainId: 101,
-      address: USDT.toString(),
-      symbol: 'USDT',
-      decimals: usdtDecimal,
-      name: 'Tether USD',
-      logoURI: 'https://assets.coingecko.com/coins/images/325/large/Tether.png',
-    };
-
-    USDC = await createMint(provider.connection, mockWallet.payer, mockWallet.publicKey, null, usdcDecimal);
-
-    usdcTokenInfo = {
-      chainId: 101,
-      address: USDC.toString(),
-      symbol: 'USDC',
-      decimals: usdcDecimal,
-      name: 'USD Coin',
-      logoURI: 'https://assets.coingecko.com/coins/images/6319/large/USD_Coin_icon.png',
-    };
-
-    mockWalletUsdtATA = await getOrCreateATA(connection, USDT, mockWallet.publicKey, mockWallet.payer);
-    mockWalletUsdcATA = await getOrCreateATA(connection, USDC, mockWallet.publicKey, mockWallet.payer);
+    [USDT, USDC] = await Promise.all(
+      [usdtDecimal, usdcDecimal].map((decimal) =>
+        createMint(provider.connection, mockWallet.payer, mockWallet.publicKey, null, decimal),
+      ),
+    );
+    [mockWalletUsdtATA, mockWalletUsdcATA] = await Promise.all(
+      [USDT, USDC].map((m) => getOrCreateATA(connection, m, mockWallet.publicKey, mockWallet.payer)),
+    );
+    [usdtMint, usdcMint] = await Promise.all([USDT, USDC].map((mint) => getMint(connection, mint)));
 
     await mintTo(
       provider.connection,
@@ -105,8 +88,8 @@ describe('Error parsing', () => {
     let transaction = await AmmImpl.createPermissionlessPool(
       connection,
       mockWallet.publicKey,
-      usdtTokenInfo,
-      usdcTokenInfo,
+      USDT,
+      USDC,
       usdtDepositAmount,
       usdcDepositAmount,
       true,
@@ -117,15 +100,23 @@ describe('Error parsing', () => {
     let txHash = await connection.sendRawTransaction(transaction.serialize());
     await connection.confirmTransaction(txHash, 'finalized');
 
-    let poolKey = derivePoolAddress(connection, usdtTokenInfo, usdcTokenInfo, true, tradeFeeBps);
+    let poolKey = derivePoolAddress(
+      connection,
+      usdtMint.address,
+      usdcMint.address,
+      usdtMint.decimals,
+      usdcMint.decimals,
+      true,
+      tradeFeeBps,
+    );
     stablePool = await AmmImpl.create(connection, poolKey);
 
     tradeFeeBps = new BN(CONSTANT_PRODUCT_DEFAULT_TRADE_FEE_BPS);
     transaction = await AmmImpl.createPermissionlessPool(
       connection,
       mockWallet.publicKey,
-      usdtTokenInfo,
-      usdcTokenInfo,
+      USDT,
+      USDC,
       usdtDepositAmount,
       usdcDepositAmount,
       false,
@@ -136,7 +127,15 @@ describe('Error parsing', () => {
     txHash = await connection.sendRawTransaction(transaction.serialize());
     await connection.confirmTransaction(txHash, 'finalized');
 
-    poolKey = derivePoolAddress(connection, usdtTokenInfo, usdcTokenInfo, false, tradeFeeBps);
+    poolKey = derivePoolAddress(
+      connection,
+      usdtMint.address,
+      usdcMint.address,
+      usdtMint.decimals,
+      usdcMint.decimals,
+      false,
+      tradeFeeBps,
+    );
     cpPool = await AmmImpl.create(connection, poolKey);
 
     lstPool = await AmmImpl.create(connection, MAINNET_POOL.SOL_MSOL);

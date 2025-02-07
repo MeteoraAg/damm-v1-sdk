@@ -24,7 +24,7 @@ import {
   createCloseAccountInstruction,
   getMinimumBalanceForRentExemptMint,
   MintLayout,
-  createInitializeMintInstruction,
+  createInitializeMintInstruction
 } from '@solana/spl-token';
 import {
   AccountInfo,
@@ -69,7 +69,6 @@ import {
   TokenMultiplier,
 } from './types';
 import { Amm as AmmIdl, IDL as AmmIDL } from './idl';
-import { TokenInfo } from '@solana/spl-token-registry';
 import Decimal from 'decimal.js';
 import {
   createCreateMetadataAccountV3Instruction,
@@ -760,8 +759,10 @@ export const deriveProtocolTokenFee = (poolAddress: PublicKey, tokenMint: Public
 
 export function derivePoolAddress(
   connection: Connection,
-  tokenInfoA: TokenInfo,
-  tokenInfoB: TokenInfo,
+  tokenA: PublicKey,
+  tokenB: PublicKey,
+  tokenADecimal: number,
+  tokenBDecimal: number,
   isStable: boolean,
   tradeFeeBps: BN,
   opt?: {
@@ -769,15 +770,13 @@ export function derivePoolAddress(
   },
 ) {
   const { ammProgram } = createProgram(connection, opt?.programId);
-  const curveType = generateCurveType(tokenInfoA, tokenInfoB, isStable);
-  const tokenAMint = new PublicKey(tokenInfoA.address);
-  const tokenBMint = new PublicKey(tokenInfoB.address);
+  const curveType = generateCurveType(tokenADecimal, tokenBDecimal, isStable);
 
   const [poolPubkey] = PublicKey.findProgramAddressSync(
     [
       Buffer.from([encodeCurveType(curveType)]),
-      getFirstKey(tokenAMint, tokenBMint),
-      getSecondKey(tokenAMint, tokenBMint),
+      getFirstKey(tokenA, tokenB),
+      getSecondKey(tokenA, tokenB),
       getTradeFeeBpsBuffer(curveType, tradeFeeBps),
     ],
     ammProgram.programId,
@@ -796,8 +795,10 @@ export function derivePoolAddress(
  */
 export async function checkPoolExists(
   connection: Connection,
-  tokenInfoA: TokenInfo,
-  tokenInfoB: TokenInfo,
+  mintA: PublicKey,
+  mintB: PublicKey,
+  mintADecimal: number,
+  mintBDecimal: number,
   isStable: boolean,
   tradeFeeBps: BN,
   opt?: {
@@ -806,7 +807,7 @@ export async function checkPoolExists(
 ): Promise<PublicKey | undefined> {
   const { ammProgram } = createProgram(connection, opt?.programId);
 
-  const poolPubkey = derivePoolAddress(connection, tokenInfoA, tokenInfoB, isStable, tradeFeeBps, {
+  const poolPubkey = derivePoolAddress(connection, mintA, mintB, mintADecimal, mintBDecimal, isStable, tradeFeeBps, {
     programId: opt?.programId,
   });
 
@@ -941,12 +942,12 @@ export const DepegType = {
   },
 };
 
-export function generateCurveType(tokenInfoA: TokenInfo, tokenInfoB: TokenInfo, isStable: boolean) {
+export function generateCurveType(mintADecimal: number, mintBDecimal: number, isStable: boolean) {
   return isStable
     ? {
         stable: {
           amp: PERMISSIONLESS_AMP,
-          tokenMultiplier: computeTokenMultiplier(tokenInfoA.decimals, tokenInfoB.decimals),
+          tokenMultiplier: computeTokenMultiplier(mintADecimal, mintBDecimal),
           depeg: { baseVirtualPrice: new BN(0), baseCacheUpdated: new BN(0), depegType: DepegType.none() },
           lastAmpUpdatedTimestamp: new BN(0),
         },

@@ -1,5 +1,4 @@
 import { AccountInfo, PublicKey, Transaction } from '@solana/web3.js';
-import { TokenInfo } from '@solana/spl-token-registry';
 import { IdlAccounts, IdlTypes, Program } from '@coral-xyz/anchor';
 import BN from 'bn.js';
 import { Amm as AmmIdl } from '../idl';

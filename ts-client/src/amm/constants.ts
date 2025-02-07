@@ -1,4 +1,3 @@
-import { ENV, TokenInfo } from '@solana/spl-token-registry';
 import { PublicKey } from '@solana/web3.js';
 import { BN } from 'bn.js';
 
@@ -10,72 +9,6 @@ export const ERROR = {
 
 export const PROGRAM_ID = 'Eo7WjKq67rjJQSZxS6z3YkapzY3eMj6Xy8X5EQVn5UaB';
 export const STAGING_PROGRAM_ID = 'ammbh4CQztZ6txJ8AaQgPsWjd6o7GhmvopS2JAo5bCB';
-
-export const DEVNET_COIN: Array<TokenInfo> = [
-  {
-    chainId: ENV.Devnet,
-    address: 'So11111111111111111111111111111111111111112',
-    decimals: 9,
-    name: 'Wrapped SOL',
-    symbol: 'SOL',
-    logoURI:
-      'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png',
-    extensions: {
-      coingeckoId: 'solana',
-      serumV3Usdc: '9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT',
-      serumV3Usdt: 'HWHvQhFmJB3NUcu1aihKmrKegfVxBEHzwVX6yZCKEsi1',
-      website: 'https://solana.com/',
-    },
-  },
-  {
-    chainId: ENV.Devnet,
-    address: 'zVzi5VAf4qMEwzv7NXECVx5v2pQ7xnqVVjCXZwS9XzA',
-    decimals: 6,
-    name: 'USD Coin',
-    symbol: 'USDC',
-    logoURI:
-      'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
-    extensions: {
-      coingeckoId: 'usd-coin',
-      serumV3Usdt: '77quYg4MGneUdjgXCunt9GgM1usmrxKY31twEy3WHwcS',
-      website: 'https://www.centre.io/',
-    },
-  },
-  {
-    chainId: ENV.Devnet,
-    address: '9NGDi2tZtNmCCp8SVLKNuGjuWAVwNF3Vap5tT8km5er9',
-    decimals: 9,
-    name: 'USDT',
-    symbol: 'USDT',
-    logoURI:
-      'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB/logo.svg',
-    tags: ['stablecoin'],
-    extensions: {
-      coingeckoId: 'tether',
-      serumV3Usdc: '77quYg4MGneUdjgXCunt9GgM1usmrxKY31twEy3WHwcS',
-      website: 'https://tether.to/',
-    },
-  },
-  {
-    chainId: ENV.Devnet,
-    address: 'mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So',
-    decimals: 9,
-    symbol: 'mSOL',
-    name: 'Marinade staked SOL (mSOL)',
-    logoURI:
-      'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So/logo.png',
-    extensions: {
-      coingeckoId: 'msol',
-      discord: 'https://discord.gg/mGqZA5pjRN',
-      github: 'https://github.com/marinade-finance',
-      medium: 'https://medium.com/marinade-finance',
-      serumV3Usdc: '6oGsL2puUgySccKzn9XA9afqF217LfxP5ocq4B3LWsjy',
-      serumV3Usdt: 'HxkQdUnrPdHwXP5T9kewEXs3ApgvbufuTfdw9v1nApFd',
-      twitter: 'https://twitter.com/MarinadeFinance',
-      website: 'https://marinade.finance',
-    },
-  },
-];
 
 export const DEVNET_POOL = Object.freeze({
   USDT_USDC: new PublicKey('BAHscmu1NncGS7t4rc5gSBPv1UFEMkvLaon1Ahdd5rHi'),

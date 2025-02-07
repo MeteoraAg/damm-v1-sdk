@@ -22,7 +22,7 @@ Discord: https://discord.com/channels/841152225564950528/864859354335412224
 1. Install deps
 
 ```
-npm i @meteora-ag/dynamic-amm-sdk @coral-xyz/anchor @solana/web3.js @solana/spl-token @solana/spl-token-registry
+npm i @meteora-ag/dynamic-amm-sdk @coral-xyz/anchor @solana/web3.js @solana/spl-token
 ```
 
 2. Initialize AmmImpl instance
