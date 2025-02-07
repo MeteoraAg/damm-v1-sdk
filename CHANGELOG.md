@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
-## @meteora-ag/dynamic-amm-sdk [1.2.2] - PR[#198](https://github.com/MeteoraAg/dynamic-amm-sdk/pull/198)
+## @meteora-ag/dynamic-amm-sdk [1.3.0] - PR[#198](https://github.com/MeteoraAg/dynamic-amm-sdk/pull/198)
 
 ### Security
 
