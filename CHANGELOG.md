@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## @meteora-ag/dynamic-amm-sdk [1.3.1] - PR[#202](https://github.com/MeteoraAg/dynamic-amm-sdk/pull/202)
+
+### Added
+
+- added `moveLockedLP` to transfers locked LP tokens from one owner's escrow to another owner's escrow
+
 ## @meteora-ag/dynamic-amm-sdk [1.3.0] - PR[#198](https://github.com/MeteoraAg/dynamic-amm-sdk/pull/198)
 
 ### Security
