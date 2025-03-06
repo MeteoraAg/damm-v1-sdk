@@ -1,5 +1,5 @@
 export type Amm = {
-  "version": "0.5.2",
+  "version": "0.5.3",
   "name": "amm",
   "docs": [
     "Program for AMM"
@@ -2947,6 +2947,114 @@ export type Amm = {
           "type": "u64"
         }
       ]
+    },
+    {
+      "name": "moveLockedLp",
+      "docs": [
+        "Move locked lp"
+      ],
+      "accounts": [
+        {
+          "name": "pool",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "Pool account"
+          ]
+        },
+        {
+          "name": "lpMint",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "LP token mint of the pool"
+          ]
+        },
+        {
+          "name": "fromLockEscrow",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "From lock account"
+          ]
+        },
+        {
+          "name": "toLockEscrow",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "To lock account"
+          ]
+        },
+        {
+          "name": "owner",
+          "isMut": false,
+          "isSigner": true,
+          "docs": [
+            "Owner of lock account"
+          ]
+        },
+        {
+          "name": "fromEscrowVault",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "From escrow vault"
+          ]
+        },
+        {
+          "name": "toEscrowVault",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "To escrow vault"
+          ]
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "Token program."
+          ]
+        },
+        {
+          "name": "aVault",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "bVault",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "aVaultLp",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "bVaultLp",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "aVaultLpMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "bVaultLpMint",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "maxAmount",
+          "type": "u64"
+        }
+      ]
     }
   ],
   "accounts": [
@@ -3069,6 +3177,18 @@ export type Amm = {
               "Total b fee claimed so far"
             ],
             "type": "u64"
+          },
+          {
+            "name": "padding",
+            "docs": [
+              "padding"
+            ],
+            "type": {
+              "array": [
+                "u8",
+                7
+              ]
+            }
           }
         ]
       }
@@ -3237,6 +3357,18 @@ export type Amm = {
             ],
             "type": {
               "defined": "CurveType"
+            }
+          },
+          {
+            "name": "padding1",
+            "docs": [
+              "padding"
+            ],
+            "type": {
+              "array": [
+                "u8",
+                19
+              ]
             }
           }
         ]
@@ -4189,6 +4321,31 @@ export type Amm = {
         {
           "name": "partner",
           "type": "publicKey",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "MoveLockedLp",
+      "fields": [
+        {
+          "name": "pool",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "fromLockEscrow",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "toLockEscrow",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "amount",
+          "type": "u64",
           "index": false
         }
       ]
@@ -4464,7 +4621,7 @@ export type Amm = {
 };
 
 export const IDL: Amm = {
-  "version": "0.5.2",
+  "version": "0.5.3",
   "name": "amm",
   "docs": [
     "Program for AMM"
@@ -7412,6 +7569,114 @@ export const IDL: Amm = {
           "type": "u64"
         }
       ]
+    },
+    {
+      "name": "moveLockedLp",
+      "docs": [
+        "Move locked lp"
+      ],
+      "accounts": [
+        {
+          "name": "pool",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "Pool account"
+          ]
+        },
+        {
+          "name": "lpMint",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "LP token mint of the pool"
+          ]
+        },
+        {
+          "name": "fromLockEscrow",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "From lock account"
+          ]
+        },
+        {
+          "name": "toLockEscrow",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "To lock account"
+          ]
+        },
+        {
+          "name": "owner",
+          "isMut": false,
+          "isSigner": true,
+          "docs": [
+            "Owner of lock account"
+          ]
+        },
+        {
+          "name": "fromEscrowVault",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "From escrow vault"
+          ]
+        },
+        {
+          "name": "toEscrowVault",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "To escrow vault"
+          ]
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "Token program."
+          ]
+        },
+        {
+          "name": "aVault",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "bVault",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "aVaultLp",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "bVaultLp",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "aVaultLpMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "bVaultLpMint",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "maxAmount",
+          "type": "u64"
+        }
+      ]
     }
   ],
   "accounts": [
@@ -7534,6 +7799,18 @@ export const IDL: Amm = {
               "Total b fee claimed so far"
             ],
             "type": "u64"
+          },
+          {
+            "name": "padding",
+            "docs": [
+              "padding"
+            ],
+            "type": {
+              "array": [
+                "u8",
+                7
+              ]
+            }
           }
         ]
       }
@@ -7702,6 +7979,18 @@ export const IDL: Amm = {
             ],
             "type": {
               "defined": "CurveType"
+            }
+          },
+          {
+            "name": "padding1",
+            "docs": [
+              "padding"
+            ],
+            "type": {
+              "array": [
+                "u8",
+                19
+              ]
             }
           }
         ]
@@ -8654,6 +8943,31 @@ export const IDL: Amm = {
         {
           "name": "partner",
           "type": "publicKey",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "MoveLockedLp",
+      "fields": [
+        {
+          "name": "pool",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "fromLockEscrow",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "toLockEscrow",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "amount",
+          "type": "u64",
           "index": false
         }
       ]

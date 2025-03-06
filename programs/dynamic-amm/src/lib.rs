@@ -220,4 +220,9 @@ pub mod dynamic_amm {
     ) -> Result<()> {
         Ok(())
     }
+
+    /// Move locked lp
+    pub fn move_locked_lp(ctx: Context<MoveLockedLp>, max_amount: u64) -> Result<()> {
+        Ok(())
+    }
 }

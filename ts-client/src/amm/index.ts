@@ -2790,6 +2790,83 @@ export default class AmmImpl implements AmmImplementation {
     }).add(tx);
   }
 
+  /**
+   * `moveLockedLP` transfers locked LP tokens from one owner's escrow to another owner's escrow.
+   * If the new owner does not have an existing lock escrow, it creates one.
+   *
+   * @param {PublicKey} owner - The public key of the current owner of the locked LP tokens.
+   * @param {PublicKey} newOwner - The public key of the new owner to transfer the locked LP tokens to.
+   * @param {BN} maxAmount - The maximum amount of LP tokens to transfer.
+   * @param {PublicKey} [payer] - Optional. The public key of the payer for the transaction fees. Defaults to the current owner.
+   * @returns {Promise<Transaction>} A promise that resolves to a transaction object for the locked LP token transfer.
+   */
+  public async moveLockedLP(
+    owner: PublicKey,
+    newOwner: PublicKey,
+    maxAmount: BN,
+    payer?: PublicKey,
+  ): Promise<Transaction> {
+    payer = payer ?? owner;
+
+    const [ownerLockEscrowPK] = deriveLockEscrowPda(this.address, owner, this.program.programId);
+    const [newOwnerLockEscrowPK] = deriveLockEscrowPda(this.address, newOwner, this.program.programId);
+
+    const preInstructions: TransactionInstruction[] = [];
+
+    const newOwnerLockEscrow = this.program.account.lockEscrow.fetchNullable(newOwnerLockEscrowPK);
+
+    if (!newOwnerLockEscrow) {
+      const createLockEscrowIx = await this.program.methods
+        .createLockEscrow()
+        .accounts({
+          pool: this.address,
+          lockEscrow: newOwnerLockEscrowPK,
+          owner,
+          lpMint: this.poolState.lpMint,
+          payer,
+          systemProgram: SystemProgram.programId,
+        })
+        .instruction();
+      preInstructions.push(createLockEscrowIx);
+    }
+
+    const [[fromEscrowVault, createFromEscrowVaultIx], [toEscrowVault, createToEscrowVaultIx]] = await Promise.all([
+      getOrCreateATAInstruction(this.poolState.lpMint, ownerLockEscrowPK, this.program.provider.connection, payer),
+      getOrCreateATAInstruction(this.poolState.lpMint, newOwnerLockEscrowPK, this.program.provider.connection, payer),
+    ]);
+
+    createFromEscrowVaultIx && preInstructions.push(createFromEscrowVaultIx);
+    createToEscrowVaultIx && preInstructions.push(createToEscrowVaultIx);
+
+    const tx = await this.program.methods
+      .moveLockedLp(maxAmount)
+      .accounts({
+        pool: this.address,
+        fromLockEscrow: ownerLockEscrowPK,
+        toLockEscrow: newOwnerLockEscrowPK,
+        fromEscrowVault,
+        toEscrowVault,
+        owner,
+        lpMint: this.poolState.lpMint,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        aVault: this.poolState.aVault,
+        bVault: this.poolState.bVault,
+        aVaultLp: this.poolState.aVaultLp,
+        bVaultLp: this.poolState.bVaultLp,
+        aVaultLpMint: this.vaultA.vaultState.lpMint,
+        bVaultLpMint: this.vaultB.vaultState.lpMint,
+      })
+      .preInstructions(preInstructions)
+      .transaction();
+
+    const transaction = new Transaction({
+      feePayer: payer,
+      ...(await this.program.provider.connection.getLatestBlockhash(this.program.provider.connection.commitment)),
+    }).add(tx);
+
+    return transaction;
+  }
+
   private async createATAPreInstructions(owner: PublicKey, mintList: Array<PublicKey>) {
     return Promise.all(
       mintList.map((mint) => {

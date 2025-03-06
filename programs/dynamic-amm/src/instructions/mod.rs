@@ -39,3 +39,5 @@ pub mod initialize_customizable_permissionless_constant_product_pool;
 pub use initialize_customizable_permissionless_constant_product_pool::*;
 pub mod partner_claim_fees;
 pub use partner_claim_fees::*;
+pub mod move_locked_lp;
+pub use move_locked_lp::*;
