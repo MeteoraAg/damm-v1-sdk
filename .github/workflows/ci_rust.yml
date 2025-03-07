@@ -50,7 +50,7 @@ jobs:
           components: clippy
       # Cargo build cache
       - name: Cargo Cache
-        uses: actions/cache@v1
+        uses: actions/cache@v4
         with:
           path: |
             ~/.cargo/
