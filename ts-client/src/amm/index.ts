@@ -23,6 +23,7 @@ import {
   NATIVE_MINT,
   TOKEN_PROGRAM_ID,
   getMint,
+  getAssociatedTokenAddressSync,
 } from '@solana/spl-token';
 import VaultImpl, { calculateWithdrawableAmount, getVaultPdas } from '@meteora-ag/vault-sdk';
 import StakeForFee, { deriveFeeVault, STAKE_FOR_FEE_PROGRAM_ID, StakeForFeeProgram } from '@meteora-ag/m3m3';
@@ -2821,7 +2822,7 @@ export default class AmmImpl implements AmmImplementation {
         .accounts({
           pool: this.address,
           lockEscrow: newOwnerLockEscrowPK,
-          owner,
+          owner: newOwner,
           lpMint: this.poolState.lpMint,
           payer,
           systemProgram: SystemProgram.programId,
@@ -2830,12 +2831,15 @@ export default class AmmImpl implements AmmImplementation {
       preInstructions.push(createLockEscrowIx);
     }
 
-    const [[fromEscrowVault, createFromEscrowVaultIx], [toEscrowVault, createToEscrowVaultIx]] = await Promise.all([
-      getOrCreateATAInstruction(this.poolState.lpMint, ownerLockEscrowPK, this.program.provider.connection, payer),
-      getOrCreateATAInstruction(this.poolState.lpMint, newOwnerLockEscrowPK, this.program.provider.connection, payer),
-    ]);
+    const fromEscrowVault = getAssociatedTokenAddressSync(this.poolState.lpMint, ownerLockEscrowPK);
 
-    createFromEscrowVaultIx && preInstructions.push(createFromEscrowVaultIx);
+    const [toEscrowVault, createToEscrowVaultIx] = await getOrCreateATAInstruction(
+      this.poolState.lpMint,
+      newOwnerLockEscrowPK,
+      this.program.provider.connection,
+      payer,
+    );
+
     createToEscrowVaultIx && preInstructions.push(createToEscrowVaultIx);
 
     const tx = await this.program.methods
