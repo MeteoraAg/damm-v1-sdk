@@ -5,7 +5,8 @@ import { AccountInfo, PublicKey } from '@solana/web3.js';
 import { OutResult, SwapCurve, TradeDirection, getPriceImpact } from '.';
 import { CURVE_TYPE_ACCOUNTS } from '../constants';
 import MarinadeIDL from '../marinade-finance.json';
-import { Depeg, DepegType, PoolFees, StakePool, StakePoolLayout, TokenMultiplier } from '../types';
+import { Depeg, DepegType, PoolFees, TokenMultiplier } from '../types';
+import { StakePoolLayout, StakePool } from '@solana/spl-stake-pool';
 
 // Precision for base pool virtual price
 const PRECISION = new BN(1_000_000);
@@ -21,7 +22,7 @@ export class StableSwap implements SwapCurve {
     private extraAccounts: Map<String, AccountInfo<Buffer>>,
     private onChainTime: BN,
     private stakePoolPubkey: PublicKey,
-  ) { }
+  ) {}
 
   private getBasePoolVirtualPrice(depegType: DepegType): BN {
     if (depegType['marinade']) {
@@ -41,7 +42,25 @@ export class StableSwap implements SwapCurve {
     if (depegType['splStake']) {
       const account = this.extraAccounts.get(this.stakePoolPubkey.toBase58());
       const stakePool: StakePool = StakePoolLayout.decode(account!.data);
-      return stakePool.totalLamports.mul(PRECISION).div(stakePool.poolTokenSupply);
+      const { totalLamports, poolTokenSupply, solWithdrawalFee } = stakePool;
+
+      const depositPrice = totalLamports.mul(PRECISION).div(poolTokenSupply);
+
+      const { denominator, numerator } = solWithdrawalFee;
+
+      if (denominator.lte(numerator.mul(new BN(10)))) {
+        return depositPrice;
+      }
+
+      const withdrawPrice = totalLamports
+        .mul(denominator.sub(numerator))
+        .mul(PRECISION)
+        .div(denominator)
+        .div(poolTokenSupply);
+
+      const virtualPrice = depositPrice.mul(new BN(3)).add(withdrawPrice).div(new BN(4));
+
+      return virtualPrice;
     }
     throw new Error('UnsupportedBasePool');
   }
@@ -50,7 +69,10 @@ export class StableSwap implements SwapCurve {
     if (!this.depeg.depegType['none']) {
       const expired = this.onChainTime.toNumber() > this.depeg.baseCacheUpdated.add(BASE_CACHE_EXPIRE).toNumber();
       if (expired) {
-        this.depeg.baseVirtualPrice = this.getBasePoolVirtualPrice(this.depeg.depegType);
+        const latestBaseVirtualPrice = this.getBasePoolVirtualPrice(this.depeg.depegType);
+        if (latestBaseVirtualPrice.gt(this.depeg.baseVirtualPrice)) {
+          this.depeg.baseVirtualPrice = latestBaseVirtualPrice;
+        }
         this.depeg.baseCacheUpdated = new BN(this.onChainTime);
       }
     }
@@ -127,15 +149,15 @@ export class StableSwap implements SwapCurve {
     const [upscaledSourceAmount, upscaledSwapSourceAmount, upscaledSwapDestinationAmount] =
       tradeDirection == TradeDirection.AToB
         ? [
-          this.upscaleTokenA(sourceAmount),
-          this.upscaleTokenA(swapSourceAmount),
-          this.upscaleTokenB(swapDestinationAmount),
-        ]
+            this.upscaleTokenA(sourceAmount),
+            this.upscaleTokenA(swapSourceAmount),
+            this.upscaleTokenB(swapDestinationAmount),
+          ]
         : [
-          this.upscaleTokenB(sourceAmount),
-          this.upscaleTokenB(swapSourceAmount),
-          this.upscaleTokenA(swapDestinationAmount),
-        ];
+            this.upscaleTokenB(sourceAmount),
+            this.upscaleTokenB(swapSourceAmount),
+            this.upscaleTokenA(swapDestinationAmount),
+          ];
 
     const invariantD = computeD(
       BigInt(this.amp),
@@ -188,15 +210,15 @@ export class StableSwap implements SwapCurve {
     const [upscaledDestAmount, upscaledSwapSourceAmount, upscaledSwapDestinationAmount] =
       tradeDirection == TradeDirection.AToB
         ? [
-          this.upscaleTokenB(destAmount),
-          this.upscaleTokenA(swapSourceAmount),
-          this.upscaleTokenB(swapDestinationAmount),
-        ]
+            this.upscaleTokenB(destAmount),
+            this.upscaleTokenA(swapSourceAmount),
+            this.upscaleTokenB(swapDestinationAmount),
+          ]
         : [
-          this.upscaleTokenA(destAmount),
-          this.upscaleTokenB(swapSourceAmount),
-          this.upscaleTokenA(swapDestinationAmount),
-        ];
+            this.upscaleTokenA(destAmount),
+            this.upscaleTokenB(swapSourceAmount),
+            this.upscaleTokenA(swapDestinationAmount),
+          ];
 
     const invariantD = computeD(
       BigInt(this.amp),
@@ -344,14 +366,14 @@ function calculateEstimatedWithdrawOneAmount({
     tradeDirection == TradeDirection.BToA ? [reserves[0], reserves[1]] : [reserves[1], reserves[0]];
 
   const d_0 = computeD(ampFactor, baseReserves, quoteReserves);
-  const d_1 = d_0 - poolTokenAmount * d_0 / lpTotalSupply;
+  const d_1 = d_0 - (poolTokenAmount * d_0) / lpTotalSupply;
 
   const new_y = computeY(ampFactor, quoteReserves, d_1);
 
   // expected_base_amount = swap_base_amount * d_1 / d_0 - new_y;
-  const expected_base_amount = baseReserves * d_1 / d_0 - new_y;
+  const expected_base_amount = (baseReserves * d_1) / d_0 - new_y;
   // expected_quote_amount = swap_quote_amount - swap_quote_amount * d_1 / d_0;
-  const expected_quote_amount = quoteReserves - quoteReserves * d_1 / d_0;
+  const expected_quote_amount = quoteReserves - (quoteReserves * d_1) / d_0;
   // new_base_amount = swap_base_amount - expected_base_amount * fee / fee_denominator;
   const new_base_amount = new Fraction(baseReserves.toString(), 1).subtract(
     normalizedTradeFee(feeInfo, N_COINS, expected_base_amount),
@@ -433,8 +455,8 @@ function calculateEstimatedMintAmount(
   const d2 = computeD(amp, adjustedBalances[0], adjustedBalances[1]);
 
   const lpSupply = lpTotalSupply;
-  const mintAmountRaw = lpSupply * (d2 - d0) / d0;
-  const mintAmountRawBeforeFees = lpSupply * (d1 - d0) / d0;
+  const mintAmountRaw = (lpSupply * (d2 - d0)) / d0;
+  const mintAmountRawBeforeFees = (lpSupply * (d1 - d0)) / d0;
 
   const fees = mintAmountRawBeforeFees - mintAmountRaw;
 
