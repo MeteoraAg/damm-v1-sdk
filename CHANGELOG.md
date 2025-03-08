@@ -19,6 +19,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## @meteora-ag/dynamic-amm-sdk [1.3.2] - PR[#203](https://github.com/MeteoraAg/dynamic-amm-sdk/pull/203)
+
+- improve stake pool price
+
 ## commons [0.0.5] - PR[#195](https://github.com/MeteoraAG/dynamic-amm-sdk/pull/195)
 
 ### Added
