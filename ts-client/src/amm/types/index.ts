@@ -188,27 +188,6 @@ export type AccountsInfo = {
   currentSlot: BN;
 };
 
-export interface StakePool {
-  totalLamports: BN;
-  poolTokenSupply: BN;
-}
-
-export const StakePoolLayout = struct([
-  u8('accountType'),
-  publicKey('manager'),
-  publicKey('staker'),
-  publicKey('stakeDepositAuthority'),
-  u8('stakeWithdrawBumpSeed'),
-  publicKey('validatorList'),
-  publicKey('reserveStake'),
-  publicKey('poolMint'),
-  publicKey('managerFeeAccount'),
-  publicKey('tokenProgramId'),
-  u64('totalLamports'),
-  u64('poolTokenSupply'),
-  u64('lastUpdateEpoch'),
-]);
-
 export interface Clock {
   slot: BN;
   epochStartTimestamp: BN;
