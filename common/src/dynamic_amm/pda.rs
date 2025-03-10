@@ -4,6 +4,8 @@ use dynamic_amm::{
 };
 use solana_sdk::pubkey::Pubkey;
 
+use super::POOL_WITH_NON_PDA_BASED_LP_MINT;
+
 pub const METAPLEX_PROGRAM_ID: Pubkey =
     solana_sdk::pubkey!("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s");
 
@@ -110,7 +112,11 @@ pub fn derive_vault_lp_key(vault_key: Pubkey, pool_key: Pubkey) -> Pubkey {
 }
 
 pub fn derive_lp_mint_key(pool_key: Pubkey) -> Pubkey {
-    Pubkey::find_program_address(&[b"lp_mint", pool_key.as_ref()], &dynamic_amm::ID).0
+    if let Some(lp_mint) = POOL_WITH_NON_PDA_BASED_LP_MINT.get(&pool_key) {
+        *lp_mint
+    } else {
+        Pubkey::find_program_address(&[b"lp_mint", pool_key.as_ref()], &dynamic_amm::ID).0
+    }
 }
 
 pub fn derive_lock_escrow_key(pool_key: Pubkey, owner_key: Pubkey) -> Pubkey {

@@ -1,10 +1,7 @@
 use crate::{dynamic_amm::pda::*, dynamic_vault::pda::*};
-use anchor_lang::AccountDeserialize;
 use anchor_spl::associated_token::get_associated_token_address;
 use dynamic_amm::state::{Depeg, TokenMultiplier};
-use dynamic_vault::state::Vault;
-use solana_sdk::{account::Account, pubkey::Pubkey};
-use std::future::Future;
+use solana_sdk::pubkey::Pubkey;
 
 pub enum CurveTypeIx {
     ConstantProduct,
@@ -22,20 +19,6 @@ impl From<CurveTypeIx> for dynamic_amm::state::CurveType {
                 last_amp_updated_timestamp: 0,
             },
         }
-    }
-}
-
-fn get_or_derive_vault_related_keys(
-    vault_key: Pubkey,
-    vault_account: Result<Account, Box<dyn std::error::Error>>,
-) -> Result<(Pubkey, Pubkey), Box<dyn std::error::Error>> {
-    if let Ok(account) = vault_account {
-        let vault = Vault::try_deserialize(&mut account.data.as_ref())?;
-        Ok((vault.token_vault, vault.lp_mint))
-    } else {
-        let token_vault = derive_token_vault_key(vault_key);
-        let lp_mint = crate::dynamic_vault::pda::derive_lp_mint_key(vault_key);
-        Ok((token_vault, lp_mint))
     }
 }
 
@@ -57,27 +40,20 @@ pub struct InitPoolRelatedKeys {
     pub payer_token_b: Pubkey,
 }
 
-pub async fn get_or_derive_initialize_pool_related_keys<F, Fut>(
+pub fn get_or_derive_initialize_pool_related_keys(
     pool_key: Pubkey,
     token_a_mint: Pubkey,
     token_b_mint: Pubkey,
     payer: Pubkey,
-    account_fetcher: F,
-) -> Result<InitPoolRelatedKeys, Box<dyn std::error::Error>>
-where
-    F: Fn(Pubkey) -> Fut,
-    Fut: Future<Output = Result<Account, Box<dyn std::error::Error>>>,
-{
+) -> InitPoolRelatedKeys {
     let vault_a_key = derive_vault_key(token_a_mint);
     let vault_b_key = derive_vault_key(token_b_mint);
 
-    let vault_a_account = account_fetcher(vault_a_key).await;
-    let (vault_a_token_vault, vault_a_lp_mint) =
-        get_or_derive_vault_related_keys(vault_a_key, vault_a_account)?;
+    let vault_a_token_vault = derive_token_vault_key(vault_a_key);
+    let vault_b_token_vault = derive_token_vault_key(vault_b_key);
 
-    let vault_b_account = account_fetcher(vault_b_key).await;
-    let (vault_b_token_vault, vault_b_lp_mint) =
-        get_or_derive_vault_related_keys(vault_b_key, vault_b_account)?;
+    let vault_a_lp_mint = crate::dynamic_vault::pda::derive_lp_mint_key(vault_a_key);
+    let vault_b_lp_mint = crate::dynamic_vault::pda::derive_lp_mint_key(vault_b_key);
 
     let lp_mint = crate::dynamic_amm::pda::derive_lp_mint_key(pool_key);
 
@@ -93,7 +69,7 @@ where
     let payer_token_b = get_associated_token_address(&payer, &token_b_mint);
     let payer_pool_lp = get_associated_token_address(&payer, &lp_mint);
 
-    Ok(InitPoolRelatedKeys {
+    InitPoolRelatedKeys {
         vault_a: vault_a_key,
         vault_a_token_vault,
         vault_a_lp_mint,
@@ -109,27 +85,19 @@ where
         payer_token_a,
         payer_pool_lp,
         payer_token_b,
-    })
+    }
 }
 
 pub struct IxAccountBuilder;
 
 impl IxAccountBuilder {
-    pub async fn initialize_permissionless_pool_with_fee_tier_accounts<F, Fut>(
+    pub fn initialize_permissionless_pool_with_fee_tier_accounts(
         curve_type_ix: CurveTypeIx,
         trade_fee_bps: u64,
         token_a_mint: Pubkey,
         token_b_mint: Pubkey,
         payer: Pubkey,
-        account_fetcher: F,
-    ) -> Result<
-        dynamic_amm::accounts::InitializePermissionlessPoolWithFeeTier,
-        Box<dyn std::error::Error>,
-    >
-    where
-        F: Fn(Pubkey) -> Fut,
-        Fut: Future<Output = Result<Account, Box<dyn std::error::Error>>>,
-    {
+    ) -> dynamic_amm::accounts::InitializePermissionlessPoolWithFeeTier {
         let curve_type = curve_type_ix.into();
 
         let pool_key = derive_permissionless_pool_key_with_fee_tier(
@@ -155,14 +123,7 @@ impl IxAccountBuilder {
             payer_token_a,
             payer_pool_lp,
             payer_token_b,
-        } = get_or_derive_initialize_pool_related_keys(
-            pool_key,
-            token_a_mint,
-            token_b_mint,
-            payer,
-            account_fetcher,
-        )
-        .await?;
+        } = get_or_derive_initialize_pool_related_keys(pool_key, token_a_mint, token_b_mint, payer);
 
         let accounts = dynamic_amm::accounts::InitializePermissionlessPoolWithFeeTier {
             pool: pool_key,
@@ -194,22 +155,16 @@ impl IxAccountBuilder {
             token_program: anchor_spl::token::ID,
         };
 
-        Ok(accounts)
+        accounts
     }
 
-    pub async fn initialize_permissionless_pool_accounts<F, Fut>(
+    pub fn initialize_permissionless_pool_accounts(
         curve_type_ix: CurveTypeIx,
         token_a_mint: Pubkey,
         token_b_mint: Pubkey,
         payer: Pubkey,
-        account_fetcher: F,
-    ) -> Result<dynamic_amm::accounts::InitializePermissionlessPool, Box<dyn std::error::Error>>
-    where
-        F: Fn(Pubkey) -> Fut,
-        Fut: Future<Output = Result<Account, Box<dyn std::error::Error>>>,
-    {
+    ) -> dynamic_amm::accounts::InitializePermissionlessPool {
         let curve_type = curve_type_ix.into();
-
         let pool_key = derive_permissionless_pool_key(curve_type, token_a_mint, token_b_mint);
 
         let InitPoolRelatedKeys {
@@ -228,14 +183,7 @@ impl IxAccountBuilder {
             payer_token_a,
             payer_pool_lp,
             payer_token_b,
-        } = get_or_derive_initialize_pool_related_keys(
-            pool_key,
-            token_a_mint,
-            token_b_mint,
-            payer,
-            account_fetcher,
-        )
-        .await?;
+        } = get_or_derive_initialize_pool_related_keys(pool_key, token_a_mint, token_b_mint, payer);
 
         let accounts = dynamic_amm::accounts::InitializePermissionlessPool {
             pool: pool_key,
@@ -267,23 +215,15 @@ impl IxAccountBuilder {
             token_program: anchor_spl::token::ID,
         };
 
-        Ok(accounts)
+        accounts
     }
 
-    pub async fn initialize_permissionless_constant_product_pool_with_config_accounts<F, Fut>(
+    pub fn initialize_permissionless_constant_product_pool_with_config_accounts(
         token_a_mint: Pubkey,
         token_b_mint: Pubkey,
         config: Pubkey,
         payer: Pubkey,
-        account_fetcher: F,
-    ) -> Result<
-        dynamic_amm::accounts::InitializePermissionlessConstantProductPoolWithConfig,
-        Box<dyn std::error::Error>,
-    >
-    where
-        F: Fn(Pubkey) -> Fut,
-        Fut: Future<Output = Result<Account, Box<dyn std::error::Error>>>,
-    {
+    ) -> dynamic_amm::accounts::InitializePermissionlessConstantProductPoolWithConfig {
         let pool_key = derive_permissionless_constant_product_pool_with_config_key(
             token_a_mint,
             token_b_mint,
@@ -306,14 +246,7 @@ impl IxAccountBuilder {
             payer_token_a,
             payer_pool_lp,
             payer_token_b,
-        } = get_or_derive_initialize_pool_related_keys(
-            pool_key,
-            token_a_mint,
-            token_b_mint,
-            payer,
-            account_fetcher,
-        )
-        .await?;
+        } = get_or_derive_initialize_pool_related_keys(pool_key, token_a_mint, token_b_mint, payer);
 
         let accounts =
             dynamic_amm::accounts::InitializePermissionlessConstantProductPoolWithConfig {
@@ -345,22 +278,14 @@ impl IxAccountBuilder {
                 token_program: anchor_spl::token::ID,
             };
 
-        Ok(accounts)
+        accounts
     }
 
-    pub async fn initialize_customizable_permissionless_constant_product_pool<F, Fut>(
+    pub fn initialize_customizable_permissionless_constant_product_pool(
         token_a_mint: Pubkey,
         token_b_mint: Pubkey,
         payer: Pubkey,
-        account_fetcher: F,
-    ) -> Result<
-        dynamic_amm::accounts::InitializeCustomizablePermissionlessConstantProductPool,
-        Box<dyn std::error::Error>,
-    >
-    where
-        F: Fn(Pubkey) -> Fut,
-        Fut: Future<Output = Result<Account, Box<dyn std::error::Error>>>,
-    {
+    ) -> dynamic_amm::accounts::InitializeCustomizablePermissionlessConstantProductPool {
         let pool_key = derive_customizable_permissionless_constant_product_pool_key(
             token_a_mint,
             token_b_mint,
@@ -382,14 +307,7 @@ impl IxAccountBuilder {
             payer_token_a,
             payer_pool_lp,
             payer_token_b,
-        } = get_or_derive_initialize_pool_related_keys(
-            pool_key,
-            token_a_mint,
-            token_b_mint,
-            payer,
-            account_fetcher,
-        )
-        .await?;
+        } = get_or_derive_initialize_pool_related_keys(pool_key, token_a_mint, token_b_mint, payer);
 
         let accounts =
             dynamic_amm::accounts::InitializeCustomizablePermissionlessConstantProductPool {
@@ -421,41 +339,6 @@ impl IxAccountBuilder {
                 token_program: anchor_spl::token::ID,
             };
 
-        Ok(accounts)
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use anchor_client::{solana_client::nonblocking::rpc_client::RpcClient, Cluster};
-
-    const JUP: solana_sdk::pubkey::Pubkey =
-        solana_sdk::pubkey!("JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN");
-
-    #[tokio::test]
-    async fn test_initialize_customizable_permissionless_constant_product_pool() {
-        let token_a_mint = Pubkey::new_unique();
-        let token_b_mint = JUP;
-        let payer = Pubkey::new_unique();
-
-        let account_fetcher = |address| {
-            let rpc_client = RpcClient::new(Cluster::Mainnet.url().to_owned());
-            async move {
-                let account = rpc_client.get_account(&address).await;
-                Ok(account?)
-            }
-        };
-
-        let accounts =
-            IxAccountBuilder::initialize_customizable_permissionless_constant_product_pool(
-                token_a_mint,
-                token_b_mint,
-                payer,
-                account_fetcher,
-            )
-            .await;
-
-        assert!(accounts.is_ok());
+        accounts
     }
 }
