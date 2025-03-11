@@ -72,30 +72,23 @@ pub fn process_new_dynamic_pool(args: &Args, sub_args: &CreateDynamicAmmPoolArgs
 
     let b_vault = derive_vault_key(*token_b_mint);
     let b_token_vault = derive_token_vault_key(b_vault);
-    let mut b_vault_lp_mint = common::dynamic_vault::pda::derive_lp_mint_key(b_vault);
-    match client.get_account(&b_vault) {
-        Ok(account) => {
-            let mut buff = account.data.as_slice();
-            let vault_state = Vault::try_deserialize_unchecked(&mut buff).unwrap();
-            b_vault_lp_mint = vault_state.lp_mint;
-        }
-        Err(_) => {
-            ixs.push(Instruction {
-                program_id: prog_dynamic_vault::ID,
-                accounts: prog_dynamic_vault::accounts::Initialize {
-                    vault: b_vault,
-                    token_vault: b_token_vault,
-                    token_mint: *token_b_mint,
-                    token_program: spl_token::ID,
-                    lp_mint: b_vault_lp_mint,
-                    rent: anchor_client::solana_sdk::sysvar::rent::ID,
-                    system_program: solana_program::system_program::ID,
-                    payer: keypair.pubkey(),
-                }
-                .to_account_metas(None),
-                data: prog_dynamic_vault::instruction::Initialize {}.data(),
-            });
-        }
+    let b_vault_lp_mint = common::dynamic_vault::pda::derive_lp_mint_key(b_vault);
+    if client.get_account(&b_vault).is_err() {
+        ixs.push(Instruction {
+            program_id: prog_dynamic_vault::ID,
+            accounts: prog_dynamic_vault::accounts::Initialize {
+                vault: b_vault,
+                token_vault: b_token_vault,
+                token_mint: *token_b_mint,
+                token_program: spl_token::ID,
+                lp_mint: b_vault_lp_mint,
+                rent: anchor_client::solana_sdk::sysvar::rent::ID,
+                system_program: solana_program::system_program::ID,
+                payer: keypair.pubkey(),
+            }
+            .to_account_metas(None),
+            data: prog_dynamic_vault::instruction::Initialize {}.data(),
+        });
     }
 
     let pool = derive_permissionless_pool_key_with_fee_tier(
