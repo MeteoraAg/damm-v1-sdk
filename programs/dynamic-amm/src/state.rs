@@ -1,5 +1,5 @@
 //! Pool account state
-use crate::constants;
+use crate::constants::{self, FEE_CURVE_POINT_NUMBER};
 use anchor_lang::prelude::*;
 use std::fmt::Debug;
 
@@ -28,9 +28,26 @@ pub struct Padding {
     /// Padding 0
     pub padding_0: [u8; 6], // 6
     /// Padding 1
-    pub padding_1: [u64; 21], // 168
+    pub padding_1: [u64; 12], // 96
     /// Padding 2
     pub padding_2: [u64; 21], // 168
+}
+
+/// Fee curve type
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, Debug, PartialEq, InitSpace)]
+pub enum FeeCurveType {
+    /// No dynamic fee
+    None,
+    /// Flat
+    Flat,
+    /// Linear (we dont allow this fee curve type now)
+    Linear,
+}
+
+impl Default for FeeCurveType {
+    fn default() -> Self {
+        FeeCurveType::None
+    }
 }
 
 /// Host fee
@@ -96,11 +113,32 @@ pub struct Pool {
     /// Bootstrapping config
     pub bootstrapping: Bootstrapping,
     pub partner_info: PartnerInfo,
+    /// fee curve
+    pub fee_curve: FeeCurveInfo,
+    /// Flag to indicate that fee update onchain is completed
+    pub is_update_fee_completed: bool,
     /// Padding for future pool field
     pub padding: Padding,
     /// The type of the swap curve supported by the pool.
     // Leaving curve_type as last field give us the flexibility to add specific curve information / new curve type
     pub curve_type: CurveType, //9
+    pub _padding1: [u8; 19],
+}
+
+#[derive(Copy, Clone, Debug, AnchorSerialize, AnchorDeserialize, Default, InitSpace)]
+pub struct FeeCurveInfo {
+    /// Fee curve type, could be flat or linear
+    pub fee_curve_type: FeeCurveType,
+    /// Fee curve point
+    pub points: [FeeBpsFromActivatedPoint; FEE_CURVE_POINT_NUMBER],
+}
+
+#[derive(Copy, Clone, Debug, AnchorSerialize, AnchorDeserialize, InitSpace, Default)]
+pub struct FeeBpsFromActivatedPoint {
+    // fee_bps
+    pub fee_bps: u16, //u16::MAX = 65_535 > 10000
+    // Activated point
+    pub activated_point: u64,
 }
 
 #[derive(Copy, Clone, Debug, AnchorSerialize, AnchorDeserialize, InitSpace, Default)]
