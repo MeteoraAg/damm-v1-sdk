@@ -2949,6 +2949,32 @@ export type Amm = {
       ]
     },
     {
+      "name": "updateConfig",
+      "docs": [
+        "Parner update config"
+      ],
+      "accounts": [
+        {
+          "name": "config",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "poolCreatorAuthority",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": "UpdateConfigParams"
+          }
+        }
+      ]
+    },
+    {
       "name": "moveLockedLp",
       "docs": [
         "Move locked lp"
@@ -3065,16 +3091,25 @@ export type Amm = {
         "fields": [
           {
             "name": "poolFees",
+            "docs": [
+              "Pool fee"
+            ],
             "type": {
               "defined": "PoolFees"
             }
           },
           {
             "name": "activationDuration",
+            "docs": [
+              "Activation duration"
+            ],
             "type": "u64"
           },
           {
             "name": "vaultConfigKey",
+            "docs": [
+              "Vault config key"
+            ],
             "type": "publicKey"
           },
           {
@@ -3093,14 +3128,29 @@ export type Amm = {
           },
           {
             "name": "partnerFeeNumerator",
+            "docs": [
+              "partner fee numerator"
+            ],
             "type": "u64"
           },
           {
+            "name": "feeCurve",
+            "docs": [
+              "Fee curve"
+            ],
+            "type": {
+              "defined": "FeeCurveInfoFromDuration"
+            }
+          },
+          {
             "name": "padding",
+            "docs": [
+              "Padding for further use"
+            ],
             "type": {
               "array": [
                 "u8",
-                219
+                182
               ]
             }
           }
@@ -3180,9 +3230,6 @@ export type Amm = {
           },
           {
             "name": "padding",
-            "docs": [
-              "padding"
-            ],
             "type": {
               "array": [
                 "u8",
@@ -3337,9 +3384,28 @@ export type Amm = {
           },
           {
             "name": "partnerInfo",
+            "docs": [
+              "partner info"
+            ],
             "type": {
               "defined": "PartnerInfo"
             }
+          },
+          {
+            "name": "feeCurve",
+            "docs": [
+              "fee curve"
+            ],
+            "type": {
+              "defined": "FeeCurveInfo"
+            }
+          },
+          {
+            "name": "isUpdateFeeCompleted",
+            "docs": [
+              "Flag to indicate that fee update onchain is completed"
+            ],
+            "type": "bool"
           },
           {
             "name": "padding",
@@ -3361,9 +3427,6 @@ export type Amm = {
           },
           {
             "name": "padding1",
-            "docs": [
-              "padding"
-            ],
             "type": {
               "array": [
                 "u8",
@@ -3522,6 +3585,12 @@ export type Amm = {
           {
             "name": "partnerFeeNumerator",
             "type": "u64"
+          },
+          {
+            "name": "feeCurve",
+            "type": {
+              "defined": "FeeCurveInfoFromDuration"
+            }
           }
         ]
       }
@@ -3562,6 +3631,15 @@ export type Amm = {
             "type": "u8"
           },
           {
+            "name": "feeCurve",
+            "docs": [
+              "Fee curve info"
+            ],
+            "type": {
+              "defined": "FeeCurveInfoFromDuration"
+            }
+          },
+          {
             "name": "padding",
             "docs": [
               "Padding"
@@ -3569,9 +3647,83 @@ export type Amm = {
             "type": {
               "array": [
                 "u8",
-                90
+                53
               ]
             }
+          }
+        ]
+      }
+    },
+    {
+      "name": "UpdateConfigParams",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "tradeFeeNumerator",
+            "type": "u64"
+          },
+          {
+            "name": "feeCurve",
+            "type": {
+              "defined": "FeeCurveInfoFromDuration"
+            }
+          },
+          {
+            "name": "padding",
+            "type": {
+              "array": [
+                "u8",
+                50
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "FeeCurveInfoFromDuration",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "feeCurveType",
+            "docs": [
+              "Fee curve type, could be flat or linear"
+            ],
+            "type": {
+              "defined": "FeeCurveType"
+            }
+          },
+          {
+            "name": "points",
+            "docs": [
+              "Fee curve point"
+            ],
+            "type": {
+              "array": [
+                {
+                  "defined": "FeeBpsFromDuration"
+                },
+                6
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "FeeBpsFromDuration",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "feeBps",
+            "type": "u16"
+          },
+          {
+            "name": "activatedDuration",
+            "type": "u32"
           }
         ]
       }
@@ -3604,7 +3756,7 @@ export type Amm = {
             "type": {
               "array": [
                 "u64",
-                21
+                12
               ]
             }
           },
@@ -3642,6 +3794,53 @@ export type Amm = {
           },
           {
             "name": "pendingFeeB",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "FeeCurveInfo",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "feeCurveType",
+            "docs": [
+              "Fee curve type, could be flat or linear"
+            ],
+            "type": {
+              "defined": "FeeCurveType"
+            }
+          },
+          {
+            "name": "points",
+            "docs": [
+              "Fee curve point"
+            ],
+            "type": {
+              "array": [
+                {
+                  "defined": "FeeBpsFromActivatedPoint"
+                },
+                7
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "FeeBpsFromActivatedPoint",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "feeBps",
+            "type": "u16"
+          },
+          {
+            "name": "activatedPoint",
             "type": "u64"
           }
         ]
@@ -3902,6 +4101,26 @@ export type Amm = {
           },
           {
             "name": "Permissionless"
+          }
+        ]
+      }
+    },
+    {
+      "name": "FeeCurveType",
+      "docs": [
+        "Fee curve type"
+      ],
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "None"
+          },
+          {
+            "name": "Flat"
+          },
+          {
+            "name": "Linear"
           }
         ]
       }
@@ -4326,6 +4545,28 @@ export type Amm = {
       ]
     },
     {
+      "name": "UpdateConfig",
+      "fields": [
+        {
+          "name": "config",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "tradeFeeNumerator",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "feeCurve",
+          "type": {
+            "defined": "FeeCurveInfoFromDuration"
+          },
+          "index": false
+        }
+      ]
+    },
+    {
       "name": "MoveLockedLp",
       "fields": [
         {
@@ -4616,6 +4857,11 @@ export type Amm = {
       "code": 6052,
       "name": "InvalidQuoteMint",
       "msg": "Quote token must be SOL,USDC"
+    },
+    {
+      "code": 6053,
+      "name": "InvalidFeeCurve",
+      "msg": "Invalid fee curve"
     }
   ]
 };
@@ -7571,6 +7817,32 @@ export const IDL: Amm = {
       ]
     },
     {
+      "name": "updateConfig",
+      "docs": [
+        "Parner update config"
+      ],
+      "accounts": [
+        {
+          "name": "config",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "poolCreatorAuthority",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": "UpdateConfigParams"
+          }
+        }
+      ]
+    },
+    {
       "name": "moveLockedLp",
       "docs": [
         "Move locked lp"
@@ -7687,16 +7959,25 @@ export const IDL: Amm = {
         "fields": [
           {
             "name": "poolFees",
+            "docs": [
+              "Pool fee"
+            ],
             "type": {
               "defined": "PoolFees"
             }
           },
           {
             "name": "activationDuration",
+            "docs": [
+              "Activation duration"
+            ],
             "type": "u64"
           },
           {
             "name": "vaultConfigKey",
+            "docs": [
+              "Vault config key"
+            ],
             "type": "publicKey"
           },
           {
@@ -7715,14 +7996,29 @@ export const IDL: Amm = {
           },
           {
             "name": "partnerFeeNumerator",
+            "docs": [
+              "partner fee numerator"
+            ],
             "type": "u64"
           },
           {
+            "name": "feeCurve",
+            "docs": [
+              "Fee curve"
+            ],
+            "type": {
+              "defined": "FeeCurveInfoFromDuration"
+            }
+          },
+          {
             "name": "padding",
+            "docs": [
+              "Padding for further use"
+            ],
             "type": {
               "array": [
                 "u8",
-                219
+                182
               ]
             }
           }
@@ -7802,9 +8098,6 @@ export const IDL: Amm = {
           },
           {
             "name": "padding",
-            "docs": [
-              "padding"
-            ],
             "type": {
               "array": [
                 "u8",
@@ -7959,9 +8252,28 @@ export const IDL: Amm = {
           },
           {
             "name": "partnerInfo",
+            "docs": [
+              "partner info"
+            ],
             "type": {
               "defined": "PartnerInfo"
             }
+          },
+          {
+            "name": "feeCurve",
+            "docs": [
+              "fee curve"
+            ],
+            "type": {
+              "defined": "FeeCurveInfo"
+            }
+          },
+          {
+            "name": "isUpdateFeeCompleted",
+            "docs": [
+              "Flag to indicate that fee update onchain is completed"
+            ],
+            "type": "bool"
           },
           {
             "name": "padding",
@@ -7983,9 +8295,6 @@ export const IDL: Amm = {
           },
           {
             "name": "padding1",
-            "docs": [
-              "padding"
-            ],
             "type": {
               "array": [
                 "u8",
@@ -8144,6 +8453,12 @@ export const IDL: Amm = {
           {
             "name": "partnerFeeNumerator",
             "type": "u64"
+          },
+          {
+            "name": "feeCurve",
+            "type": {
+              "defined": "FeeCurveInfoFromDuration"
+            }
           }
         ]
       }
@@ -8184,6 +8499,15 @@ export const IDL: Amm = {
             "type": "u8"
           },
           {
+            "name": "feeCurve",
+            "docs": [
+              "Fee curve info"
+            ],
+            "type": {
+              "defined": "FeeCurveInfoFromDuration"
+            }
+          },
+          {
             "name": "padding",
             "docs": [
               "Padding"
@@ -8191,9 +8515,83 @@ export const IDL: Amm = {
             "type": {
               "array": [
                 "u8",
-                90
+                53
               ]
             }
+          }
+        ]
+      }
+    },
+    {
+      "name": "UpdateConfigParams",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "tradeFeeNumerator",
+            "type": "u64"
+          },
+          {
+            "name": "feeCurve",
+            "type": {
+              "defined": "FeeCurveInfoFromDuration"
+            }
+          },
+          {
+            "name": "padding",
+            "type": {
+              "array": [
+                "u8",
+                50
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "FeeCurveInfoFromDuration",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "feeCurveType",
+            "docs": [
+              "Fee curve type, could be flat or linear"
+            ],
+            "type": {
+              "defined": "FeeCurveType"
+            }
+          },
+          {
+            "name": "points",
+            "docs": [
+              "Fee curve point"
+            ],
+            "type": {
+              "array": [
+                {
+                  "defined": "FeeBpsFromDuration"
+                },
+                6
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "FeeBpsFromDuration",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "feeBps",
+            "type": "u16"
+          },
+          {
+            "name": "activatedDuration",
+            "type": "u32"
           }
         ]
       }
@@ -8226,7 +8624,7 @@ export const IDL: Amm = {
             "type": {
               "array": [
                 "u64",
-                21
+                12
               ]
             }
           },
@@ -8264,6 +8662,53 @@ export const IDL: Amm = {
           },
           {
             "name": "pendingFeeB",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "FeeCurveInfo",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "feeCurveType",
+            "docs": [
+              "Fee curve type, could be flat or linear"
+            ],
+            "type": {
+              "defined": "FeeCurveType"
+            }
+          },
+          {
+            "name": "points",
+            "docs": [
+              "Fee curve point"
+            ],
+            "type": {
+              "array": [
+                {
+                  "defined": "FeeBpsFromActivatedPoint"
+                },
+                7
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "FeeBpsFromActivatedPoint",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "feeBps",
+            "type": "u16"
+          },
+          {
+            "name": "activatedPoint",
             "type": "u64"
           }
         ]
@@ -8524,6 +8969,26 @@ export const IDL: Amm = {
           },
           {
             "name": "Permissionless"
+          }
+        ]
+      }
+    },
+    {
+      "name": "FeeCurveType",
+      "docs": [
+        "Fee curve type"
+      ],
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "None"
+          },
+          {
+            "name": "Flat"
+          },
+          {
+            "name": "Linear"
           }
         ]
       }
@@ -8948,6 +9413,28 @@ export const IDL: Amm = {
       ]
     },
     {
+      "name": "UpdateConfig",
+      "fields": [
+        {
+          "name": "config",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "tradeFeeNumerator",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "feeCurve",
+          "type": {
+            "defined": "FeeCurveInfoFromDuration"
+          },
+          "index": false
+        }
+      ]
+    },
+    {
       "name": "MoveLockedLp",
       "fields": [
         {
@@ -9238,6 +9725,11 @@ export const IDL: Amm = {
       "code": 6052,
       "name": "InvalidQuoteMint",
       "msg": "Quote token must be SOL,USDC"
+    },
+    {
+      "code": 6053,
+      "name": "InvalidFeeCurve",
+      "msg": "Invalid fee curve"
     }
   ]
 };

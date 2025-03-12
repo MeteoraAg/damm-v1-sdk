@@ -19,6 +19,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## @meteora-ag/dynamic-amm-sdk [1.3.2]
+
+### Changed
+
+- `createCustomizablePermissionlessConstantProductPool` function `customizableParams` now require `feeCurve`. See [test](./ts-client/src/amm/tests/initializeCustomizablePermissionlessConstantProductPool.test.ts) example.
+- `createCustomizablePermissionlessConstantProductPool` function `customizableParams` no longer need to pass in `padding`
+- `calculateTradingFee` and `calculateProtocolTradingFee` function receive `PoolFees` instead of `PoolState`
+
 ## commons [0.0.5] - PR[#195](https://github.com/MeteoraAG/dynamic-amm-sdk/pull/195)
 
 ### Added

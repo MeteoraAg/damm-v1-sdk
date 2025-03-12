@@ -167,7 +167,18 @@ export type Depeg = Omit<IdlTypes<AmmIdl>['Depeg'], 'depegType'> & { depegType: 
 export type PoolFees = IdlTypes<AmmIdl>['PoolFees'];
 export type Bootstrapping = IdlTypes<AmmIdl>['Bootstrapping'];
 export type LockEscrowAccount = IdlAccounts<AmmIdl>['lockEscrow'];
-export type CustomizableParams = IdlTypes<AmmIdl>['CustomizableParams'];
+export type CustomizableParams = Omit<IdlTypes<AmmIdl>['CustomizableParams'], 'padding'>;
+export type FeeCurveInfoFromDuration = IdlTypes<AmmIdl>['FeeCurveInfoFromDuration'];
+export type FeeBpsFromDuration = IdlTypes<AmmIdl>['FeeBpsFromDuration'];
+
+export type FeeCurvePoints = [
+  FeeBpsFromDuration,
+  FeeBpsFromDuration,
+  FeeBpsFromDuration,
+  FeeBpsFromDuration,
+  FeeBpsFromDuration,
+  FeeBpsFromDuration,
+];
 
 export type PoolInformation = {
   tokenAAmount: BN;
@@ -258,3 +269,15 @@ export enum ActivationType {
   Slot,
   Timestamp,
 }
+
+export type FeeCurveNone = {
+  none: {};
+};
+
+export type FeeCurveFlat = {
+  flat: {};
+};
+
+export type FeeCurveLinear = {
+  linear: {};
+};
