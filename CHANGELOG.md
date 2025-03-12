@@ -19,7 +19,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
-## @meteora-ag/dynamic-amm-sdk [1.3.2]
+## dynamic-amm-quote [0.0.5] - PR[#204](https://github.com/MeteoraAg/dynamic-amm-sdk/pull/204/)
+
+### Changed
+
+- Support fee curve quote
+
+## dynamic-amm [0.6.2] - PR[#204](https://github.com/MeteoraAg/dynamic-amm-sdk/pull/204/)
+
+- Add fee curve related state in `Pool` account
+
+## @meteora-ag/dynamic-amm-sdk [1.3.2] - PR[#204](https://github.com/MeteoraAg/dynamic-amm-sdk/pull/204/)
 
 ### Changed
 

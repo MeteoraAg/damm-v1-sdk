@@ -1066,7 +1066,7 @@ dependencies = [
 
 [[package]]
 name = "cli"
-version = "0.0.5"
+version = "0.0.6"
 dependencies = [
  "anchor-client",
  "anchor-lang",
@@ -1104,7 +1104,7 @@ dependencies = [
 
 [[package]]
 name = "common"
-version = "0.0.5"
+version = "0.0.6"
 dependencies = [
  "anchor-lang",
  "anchor-spl",
@@ -1474,7 +1474,7 @@ dependencies = [
 
 [[package]]
 name = "dynamic-amm"
-version = "0.6.1"
+version = "0.6.2"
 dependencies = [
  "anchor-lang",
  "anchor-spl",
@@ -1483,7 +1483,7 @@ dependencies = [
 
 [[package]]
 name = "dynamic-amm-quote"
-version = "0.0.5"
+version = "0.0.6"
 dependencies = [
  "anchor-client",
  "anchor-lang",
