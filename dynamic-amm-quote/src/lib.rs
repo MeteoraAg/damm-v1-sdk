@@ -6,8 +6,9 @@ use crate::math::*;
 use anchor_lang::prelude::*;
 use anchor_spl::token::{Mint, TokenAccount};
 use anyhow::{anyhow, ensure, Context};
+use prog_dynamic_amm::constants::FEE_CURVE_POINT_NUMBER;
 use prog_dynamic_amm::error::PoolError;
-use prog_dynamic_amm::state::{ActivationType, Pool};
+use prog_dynamic_amm::state::{ActivationType, FeeCurveInfo, FeeCurveType, Pool, PoolFees};
 use prog_dynamic_vault::state::Vault;
 use spl_token_swap::curve::calculator::TradeDirection;
 use std::collections::HashMap;
@@ -61,7 +62,7 @@ pub fn compute_quote(
     quote_data: QuoteData,
 ) -> anyhow::Result<QuoteResult> {
     let QuoteData {
-        mut pool,
+        pool,
         vault_a,
         vault_b,
         pool_vault_a_lp_token,
@@ -88,7 +89,8 @@ pub fn compute_quote(
         "Swap is disabled"
     );
 
-    update_base_virtual_price(&mut pool, &clock, stake_data)?;
+    let mut curve = pool.curve_type;
+    update_base_virtual_price(&mut curve, &clock, stake_data, pool.stake)?;
 
     let current_time: u64 = clock.unix_timestamp.try_into()?;
 
@@ -151,13 +153,13 @@ pub fn compute_quote(
         ),
     };
 
-    let trade_fee = pool
-        .fees
+    let latest_pool_fees = get_latest_pool_fees(&pool, current_point)?;
+
+    let trade_fee = latest_pool_fees
         .trading_fee(in_amount.into())
         .context("Fail to calculate trading fee")?;
 
-    let protocol_fee = pool
-        .fees
+    let protocol_fee = latest_pool_fees
         .protocol_trading_fee(trade_fee)
         .context("Fail to calculate protocol trading fee")?;
 
@@ -258,4 +260,50 @@ pub fn compute_pool_tokens(
         .get_amount_by_share(current_time, vault_b.lp_amount, vault_b.lp_supply)
         .ok_or(PoolError::MathOverflow)?;
     Ok((token_a_amount, token_b_amount))
+}
+
+pub fn get_latest_pool_fees(state: &Pool, current_point: u64) -> Result<PoolFees> {
+    if state.fee_curve.fee_curve_type == FeeCurveType::None || state.is_update_fee_completed {
+        return Ok(state.fees);
+    }
+
+    let points = state.fee_curve.points;
+
+    let get_latest_trade_bps = move || -> u16 {
+        for i in 0..FEE_CURVE_POINT_NUMBER {
+            // current_point is between i-1 and i
+            if points[i].activated_point >= current_point {
+                if i == 0 {
+                    return points[i].fee_bps;
+                }
+                if self.fee_curve_type == FeeCurveType::Flat {
+                    return points[i - 1].fee_bps;
+                }
+
+                let m: u64 = points[i - 1].fee_bps.into();
+                let n: u64 = points[i].fee_bps.into();
+                let a = points[i - 1].activated_point;
+                let b = points[i].activated_point;
+
+                let denominator = b - a;
+                if denominator == 0 {
+                    return m;
+                } else {
+                    let numerator = n * (current_point - a) + m * (b - current_point);
+                    return numerator / denominator;
+                }
+            }
+        }
+        points[FEE_CURVE_POINT_NUMBER - 1].fee_bps
+    };
+
+    let latest_trade_fee_bps = get_latest_trade_bps();
+    let trade_fee_numerator = latest_trade_fee_bps.checked_mul(10).context("Overflow")?;
+
+    Ok(PoolFees {
+        trade_fee_numerator,
+        trade_fee_denominator: state.fees.trade_fee_denominator,
+        protocol_trade_fee_numerator: state.fees.protocol_trade_fee_numerator,
+        protocol_trade_fee_denominator: state.fees.protocol_trade_fee_denominator,
+    })
 }
