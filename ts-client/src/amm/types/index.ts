@@ -167,7 +167,18 @@ export type Depeg = Omit<IdlTypes<AmmIdl>['Depeg'], 'depegType'> & { depegType: 
 export type PoolFees = IdlTypes<AmmIdl>['PoolFees'];
 export type Bootstrapping = IdlTypes<AmmIdl>['Bootstrapping'];
 export type LockEscrowAccount = IdlAccounts<AmmIdl>['lockEscrow'];
-export type CustomizableParams = IdlTypes<AmmIdl>['CustomizableParams'];
+export type CustomizableParams = Omit<IdlTypes<AmmIdl>['CustomizableParams'], 'padding'>;
+export type FeeCurveInfoFromDuration = IdlTypes<AmmIdl>['FeeCurveInfoFromDuration'];
+export type FeeBpsFromDuration = IdlTypes<AmmIdl>['FeeBpsFromDuration'];
+
+export type FeeCurvePoints = [
+  FeeBpsFromDuration,
+  FeeBpsFromDuration,
+  FeeBpsFromDuration,
+  FeeBpsFromDuration,
+  FeeBpsFromDuration,
+  FeeBpsFromDuration,
+];
 
 export type PoolInformation = {
   tokenAAmount: BN;
@@ -187,27 +198,6 @@ export type AccountsInfo = {
   currentTime: BN;
   currentSlot: BN;
 };
-
-export interface StakePool {
-  totalLamports: BN;
-  poolTokenSupply: BN;
-}
-
-export const StakePoolLayout = struct([
-  u8('accountType'),
-  publicKey('manager'),
-  publicKey('staker'),
-  publicKey('stakeDepositAuthority'),
-  u8('stakeWithdrawBumpSeed'),
-  publicKey('validatorList'),
-  publicKey('reserveStake'),
-  publicKey('poolMint'),
-  publicKey('managerFeeAccount'),
-  publicKey('tokenProgramId'),
-  u64('totalLamports'),
-  u64('poolTokenSupply'),
-  u64('lastUpdateEpoch'),
-]);
 
 export interface Clock {
   slot: BN;
@@ -258,3 +248,15 @@ export enum ActivationType {
   Slot,
   Timestamp,
 }
+
+export type FeeCurveNone = {
+  none: {};
+};
+
+export type FeeCurveFlat = {
+  flat: {};
+};
+
+export type FeeCurveLinear = {
+  linear: {};
+};

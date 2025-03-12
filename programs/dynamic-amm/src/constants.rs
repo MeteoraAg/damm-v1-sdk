@@ -5,6 +5,10 @@ use anchor_lang::solana_program::pubkey;
 /// Minimum seconds between last AMP changes
 pub const MIN_CHANGE_AMP_DURATION: u64 = 600; // 10 minutes
 
+pub const FEE_CURVE_POINT_NUMBER: usize = 7;
+
+pub const FEE_CURVE_DURATION_NUMBER: usize = 6;
+
 pub mod seeds {
     pub const CONFIG_PREFIX: &[u8] = b"config";
 }

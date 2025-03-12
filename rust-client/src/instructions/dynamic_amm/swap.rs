@@ -68,7 +68,7 @@ pub fn process_swap_dynamic_pool(args: &Args, sub_args: &SwapDynamicAmmArgs) {
                 &keypair.pubkey(),
                 &keypair.pubkey(),
                 &destination_mint,
-                &spl_token::ID,
+                &anchor_spl::token::ID,
             ),
         );
     }
@@ -89,7 +89,7 @@ pub fn process_swap_dynamic_pool(args: &Args, sub_args: &SwapDynamicAmmArgs) {
             b_token_vault: b_vault_state.token_vault,
             user: keypair.pubkey(),
             vault_program: prog_dynamic_vault::ID,
-            token_program: spl_token::ID,
+            token_program: anchor_spl::token::ID,
             protocol_token_fee,
         }
         .to_account_metas(None),

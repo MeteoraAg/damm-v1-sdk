@@ -7,11 +7,7 @@ import {
   VaultIdl,
   PROGRAM_ID as VAULT_PROGRAM_ID,
 } from '@meteora-ag/vault-sdk';
-import {
-  STAKE_FOR_FEE_PROGRAM_ID,
-  IDL as StakeForFeeIDL,
-  StakeForFee as StakeForFeeIdl,
-} from '@meteora-ag/m3m3';
+import { STAKE_FOR_FEE_PROGRAM_ID, IDL as StakeForFeeIDL, StakeForFee as StakeForFeeIdl } from '@meteora-ag/m3m3';
 import { AnchorProvider, BN, Program } from '@coral-xyz/anchor';
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
@@ -24,7 +20,7 @@ import {
   createCloseAccountInstruction,
   getMinimumBalanceForRentExemptMint,
   MintLayout,
-  createInitializeMintInstruction
+  createInitializeMintInstruction,
 } from '@solana/spl-token';
 import {
   AccountInfo,
@@ -49,6 +45,7 @@ import {
   METAPLEX_PROGRAM,
   SEEDS,
   U64_MAX,
+  FEE_CURVE_DURATION_NUMBER,
 } from './constants';
 import { ConstantProductSwap, StableSwap, SwapCurve, TradeDirection } from './curve';
 import {
@@ -59,6 +56,11 @@ import {
   DepegMarinade,
   DepegNone,
   DepegSplStake,
+  FeeCurveFlat,
+  FeeCurveInfoFromDuration,
+  FeeCurveLinear,
+  FeeCurveNone,
+  FeeCurvePoints,
   ParsedClockState,
   PoolFees,
   PoolInformation,
@@ -274,14 +276,61 @@ export const calculatePoolInfo = (
   return poolInformation;
 };
 
-export const calculateProtocolTradingFee = (amount: BN, poolState: PoolState): BN => {
-  const { protocolTradeFeeDenominator, protocolTradeFeeNumerator } = poolState.fees;
+export const calculateProtocolTradingFee = (amount: BN, fees: PoolFees): BN => {
+  const { protocolTradeFeeDenominator, protocolTradeFeeNumerator } = fees;
   return amount.mul(protocolTradeFeeNumerator).div(protocolTradeFeeDenominator);
 };
 
-export const calculateTradingFee = (amount: BN, poolState: PoolState): BN => {
-  const { tradeFeeDenominator, tradeFeeNumerator } = poolState.fees;
+export const calculateTradingFee = (amount: BN, fees: PoolFees): BN => {
+  const { tradeFeeDenominator, tradeFeeNumerator } = fees;
   return amount.mul(tradeFeeNumerator).div(tradeFeeDenominator);
+};
+
+export const getLatestPoolFees = (state: PoolState, currentPoint: BN): PoolFees => {
+  if ('none' in state.feeCurve.feeCurveType || state.isUpdateFeeCompleted) {
+    return state.fees;
+  }
+
+  const points = state.feeCurve.points;
+
+  const latestTradeBps = () => {
+    for (let i = 0; i < points.length; i++) {
+      if (points[i].activatedPoint.gte(currentPoint)) {
+        if (i == 0) {
+          return new BN(points[i].feeBps);
+        }
+
+        if ('flat' in state.feeCurve.feeCurveType) {
+          return new BN(points[i - 1].feeBps);
+        }
+
+        const m = points[i - 1].feeBps;
+        const n = points[i].feeBps;
+        const a = points[i - 1].activatedPoint;
+        const b = points[i].activatedPoint;
+
+        const denominator = b.sub(a);
+        if (denominator.isZero()) {
+          return new BN(m);
+        } else {
+          const numerator = new BN(n).mul(currentPoint.sub(a)).add(new BN(m).mul(b.sub(currentPoint)));
+          return numerator.div(denominator);
+        }
+      }
+    }
+
+    return new BN(points[points.length - 1].feeBps);
+  };
+
+  const tradeBps = latestTradeBps();
+  const tradeFeeNumerator = tradeBps.muln(10);
+
+  return {
+    tradeFeeDenominator: state.fees.tradeFeeDenominator,
+    tradeFeeNumerator,
+    protocolTradeFeeNumerator: state.fees.protocolTradeFeeNumerator,
+    protocolTradeFeeDenominator: state.fees.protocolTradeFeeDenominator,
+  };
 };
 
 export const calculateUnclaimedLockEscrowFee = (
@@ -531,6 +580,9 @@ export const calculateSwapQuote = (
   invariant(inTokenMint.equals(tokenAMint) || inTokenMint.equals(tokenBMint), ERROR.INVALID_MINT);
   invariant(poolState.enabled, 'Pool disabled');
 
+  const activationType = poolState.bootstrapping.activationType;
+  const currentPoint = activationType == ActivationType.Timestamp ? new BN(currentTime) : new BN(currentSlot);
+
   let swapCurve: SwapCurve;
   if ('stable' in poolState.curveType) {
     const { amp, depeg, tokenMultiplier } = poolState.curveType['stable'] as any;
@@ -544,8 +596,6 @@ export const calculateSwapQuote = (
     );
   } else {
     // Bootstrapping pool
-    const activationType = poolState.bootstrapping.activationType;
-    const currentPoint = activationType == ActivationType.Timestamp ? new BN(currentTime) : new BN(currentSlot);
     const canQuoteEarlier = swapInitiator ? swapInitiator.equals(poolState.bootstrapping.whitelistedVault) : false;
     if (!canQuoteEarlier) {
       invariant(currentPoint.gte(poolState.bootstrapping.activationPoint), 'Swap is disabled');
@@ -595,9 +645,10 @@ export const calculateSwapQuote = (
         TradeDirection.BToA,
       ];
 
-  const tradeFee = calculateTradingFee(sourceAmount, poolState);
+  const latestPoolFees = getLatestPoolFees(poolState, currentPoint);
+  const tradeFee = calculateTradingFee(sourceAmount, latestPoolFees);
   // Protocol fee is a cut of trade fee
-  const protocolFee = calculateProtocolTradingFee(tradeFee, poolState);
+  const protocolFee = calculateProtocolTradingFee(tradeFee, latestPoolFees);
   const tradeFeeAfterProtocolFee = tradeFee.sub(protocolFee);
 
   const sourceVaultWithdrawableAmount = calculateWithdrawableAmount(currentTime, swapSourceVault);
@@ -1049,3 +1100,48 @@ export async function createTransactions(
 
   return resultTx;
 }
+
+export const FeeCurveInfo = {
+  none: (): FeeCurveInfoFromDuration => {
+    return {
+      feeCurveType: FeeCurveType.none(),
+      points: Array.from({ length: FEE_CURVE_DURATION_NUMBER }, (_v, _k) => {
+        return {
+          feeBps: 0,
+          activatedDuration: 0,
+        };
+      }),
+    };
+  },
+  flat: (points: FeeCurvePoints): FeeCurveInfoFromDuration => {
+    return {
+      feeCurveType: FeeCurveType.flat(),
+      points,
+    };
+  },
+  // Not support for now
+  // linear: (points: FeeCurvePoints): FeeCurveInfoFromDuration => {
+  //   return {
+  //     feeCurveType: FeeCurveType.linear(),
+  //     points,
+  //   };
+  // },
+};
+
+export const FeeCurveType = {
+  none: (): FeeCurveNone => {
+    return {
+      none: {},
+    };
+  },
+  flat: (): FeeCurveFlat => {
+    return {
+      flat: {},
+    };
+  },
+  linear: (): FeeCurveLinear => {
+    return {
+      linear: {},
+    };
+  },
+};

@@ -2,7 +2,7 @@ import { AnchorProvider, BN } from '@coral-xyz/anchor';
 import { Connection, Keypair, PublicKey } from '@solana/web3.js';
 import { CONSTANT_PRODUCT_DEFAULT_TRADE_FEE_BPS, DEFAULT_SLIPPAGE, PROGRAM_ID } from '../constants';
 import AmmImpl from '../index';
-import { derivePoolAddress, derivePoolAddressWithConfig, getOnchainTime } from '../utils';
+import { derivePoolAddress, derivePoolAddressWithConfig, FeeCurveInfo } from '../utils';
 import { airDropSol, getOrCreateATA, mockWallet } from './utils';
 import { createMint, getMint, Mint, mintTo } from '@solana/spl-token';
 import { ActivationType } from '../types';
@@ -290,6 +290,7 @@ describe('Constant product pool', () => {
         mockWallet.publicKey,
         ActivationType.Slot,
         partnerFeeNumerator,
+        FeeCurveInfo.none(),
       );
       transaction.sign(mockWallet.payer);
       const txHash = await connection.sendRawTransaction(transaction.serialize());

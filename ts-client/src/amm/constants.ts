@@ -63,3 +63,7 @@ export const STABLE_SWAP_ALLOWED_TRADE_FEE_BPS = [1, 4, 10, 100];
 export const METAPLEX_PROGRAM = new PublicKey('metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s');
 
 export const U64_MAX = new BN('18446744073709551615'); // max amount in program side
+
+export const FEE_CURVE_POINT_NUMBER = 7;
+
+export const FEE_CURVE_DURATION_NUMBER = 6;

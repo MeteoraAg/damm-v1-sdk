@@ -38,6 +38,7 @@ import {
   ClockLayout,
   CustomizableParams,
   DepositQuote,
+  FeeCurveInfoFromDuration,
   LockEscrow,
   LockEscrowAccount,
   PoolInformation,
@@ -76,6 +77,7 @@ import {
   calculateLockAmounts,
   createTransactions,
   deriveCustomizablePermissionlessConstantProductPoolAddress,
+  getLatestPoolFees,
 } from './utils';
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes';
 import Decimal from 'decimal.js';
@@ -205,6 +207,7 @@ export default class AmmImpl implements AmmImplementation {
     poolCreatorAuthority: PublicKey,
     activationType: ActivationType,
     partnerFeeNumerator: BN,
+    feeCurveInfoFromDuration: FeeCurveInfoFromDuration,
     opt?: {
       cluster?: Cluster;
       programId?: string;
@@ -228,6 +231,7 @@ export default class AmmImpl implements AmmImplementation {
             index: new BN(index),
             activationType,
             partnerFeeNumerator,
+            feeCurve: feeCurveInfoFromDuration,
           })
           .accounts({
             config: configPda,
@@ -389,7 +393,10 @@ export default class AmmImpl implements AmmImplementation {
     const [mintMetadata, _mintMetadataBump] = deriveMintMetadata(lpMint);
 
     const createPermissionlessPoolTx = await ammProgram.methods
-      .initializeCustomizablePermissionlessConstantProductPool(tokenAAmount, tokenBAmount, customizableParams)
+      .initializeCustomizablePermissionlessConstantProductPool(tokenAAmount, tokenBAmount, {
+        ...customizableParams,
+        padding: Array(53).fill(0),
+      })
       .accounts({
         pool: poolPubkey,
         tokenAMint,
@@ -1792,7 +1799,12 @@ export default class AmmImpl implements AmmImplementation {
   }
 
   get feeBps(): BN {
-    return this.poolState.fees.tradeFeeNumerator.mul(new BN(10000)).div(this.poolState.fees.tradeFeeDenominator);
+    const currentPoint =
+      this.poolState.bootstrapping.activationType == ActivationType.Slot
+        ? this.accountsInfo.currentSlot
+        : this.accountsInfo.currentTime;
+    const { tradeFeeNumerator, tradeFeeDenominator } = getLatestPoolFees(this.poolState, currentPoint);
+    return tradeFeeNumerator.mul(new BN(10000)).div(tradeFeeDenominator);
   }
 
   get depegToken(): Mint | null {

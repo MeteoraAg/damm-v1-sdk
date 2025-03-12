@@ -1,8 +1,8 @@
 use crate::{
-    constants::{activation::*, fee::*, QUOTE_MINTS},
+    constants::{activation::*, fee::*, FEE_CURVE_DURATION_NUMBER, QUOTE_MINTS},
     error::PoolError,
     get_first_key, get_lp_mint_decimal, get_second_key,
-    state::Pool,
+    state::{FeeCurveType, Pool},
 };
 use anchor_lang::prelude::*;
 use anchor_spl::{
@@ -166,6 +166,22 @@ pub struct InitializeCustomizablePermissionlessConstantProductPool<'info> {
     pub system_program: Program<'info, System>,
 }
 
+#[derive(Copy, Clone, Debug, AnchorSerialize, AnchorDeserialize, InitSpace, Default, PartialEq)]
+pub struct FeeBpsFromDuration {
+    // Fee bps
+    pub fee_bps: u16, //u16::MAX = 65_535 > 10_000
+    // Activated duration (from current point)
+    pub activated_duration: u32,
+}
+
+#[derive(Copy, Clone, Debug, AnchorSerialize, AnchorDeserialize, Default, InitSpace, PartialEq)]
+pub struct FeeCurveInfoFromDuration {
+    /// Fee curve type, could be flat or linear
+    pub fee_curve_type: FeeCurveType,
+    /// Fee curve point
+    pub points: [FeeBpsFromDuration; FEE_CURVE_DURATION_NUMBER],
+}
+
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy)]
 pub struct CustomizableParams {
     /// Trading fee.
@@ -176,6 +192,8 @@ pub struct CustomizableParams {
     pub has_alpha_vault: bool,
     /// Activation type
     pub activation_type: u8,
+    /// Fee curve info
+    pub fee_curve: FeeCurveInfoFromDuration,
     /// Padding
-    pub padding: [u8; 90],
+    pub padding: [u8; 53],
 }

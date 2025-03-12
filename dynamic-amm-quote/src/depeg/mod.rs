@@ -4,7 +4,6 @@ use anyhow::{Context, Result};
 use prog_dynamic_amm::constants::depeg::BASE_CACHE_EXPIRES;
 use prog_dynamic_amm::state::CurveType;
 use prog_dynamic_amm::state::DepegType;
-use prog_dynamic_amm::state::Pool;
 use std::collections::HashMap;
 
 /// Marinade module consists of functions to support marinade depeg pool operation
@@ -29,11 +28,12 @@ fn get_stake_pool_virtual_price(
 
 /// Update depeg base virtual price
 pub fn update_base_virtual_price(
-    pool: &mut Pool,
+    curve_type: &mut CurveType,
     clock: &Clock,
     stake_data: HashMap<Pubkey, Vec<u8>>,
+    spl_stake_pool: Pubkey,
 ) -> Result<()> {
-    match &mut pool.curve_type {
+    match curve_type {
         CurveType::ConstantProduct => Ok(()),
         CurveType::Stable { depeg, .. } => {
             if !depeg.depeg_type.is_none() {
@@ -44,7 +44,7 @@ pub fn update_base_virtual_price(
 
                 if clock.unix_timestamp as u64 > cache_expire_time {
                     let virtual_price =
-                        get_stake_pool_virtual_price(depeg.depeg_type, pool.stake, stake_data)
+                        get_stake_pool_virtual_price(depeg.depeg_type, spl_stake_pool, stake_data)
                             .context("Fail to get stake pool virtual price")?;
 
                     depeg.base_cache_updated = clock.unix_timestamp as u64;
