@@ -1,6 +1,5 @@
 use self::fee_estimation::CREATE_POOL_COMPUTE_UNIT;
 use crate::*;
-use anchor_lang::AccountDeserialize;
 use anchor_lang::InstructionData;
 use anchor_lang::ToAccountMetas;
 use anchor_spl::associated_token::get_associated_token_address;
@@ -10,7 +9,6 @@ use common::dynamic_amm::pda::derive_vault_lp_key;
 use common::dynamic_vault::pda::derive_token_vault_key;
 use common::dynamic_vault::pda::derive_vault_key;
 use prog_dynamic_amm::state::CurveType;
-use prog_dynamic_vault::state::Vault;
 use solana_rpc_client::rpc_client::RpcClient;
 use solana_sdk::commitment_config::CommitmentConfig;
 use solana_sdk::compute_budget::ComputeBudgetInstruction;
@@ -59,7 +57,7 @@ pub fn process_new_dynamic_pool(args: &Args, sub_args: &CreateDynamicAmmPoolArgs
                 vault: a_vault,
                 token_vault: a_token_vault,
                 token_mint: *token_a_mint,
-                token_program: spl_token::ID,
+                token_program: anchor_spl::token::ID,
                 lp_mint: a_vault_lp_mint,
                 rent: anchor_client::solana_sdk::sysvar::rent::ID,
                 system_program: solana_program::system_program::ID,
@@ -80,7 +78,7 @@ pub fn process_new_dynamic_pool(args: &Args, sub_args: &CreateDynamicAmmPoolArgs
                 vault: b_vault,
                 token_vault: b_token_vault,
                 token_mint: *token_b_mint,
-                token_program: spl_token::ID,
+                token_program: anchor_spl::token::ID,
                 lp_mint: b_vault_lp_mint,
                 rent: anchor_client::solana_sdk::sysvar::rent::ID,
                 system_program: solana_program::system_program::ID,
@@ -115,7 +113,7 @@ pub fn process_new_dynamic_pool(args: &Args, sub_args: &CreateDynamicAmmPoolArgs
             lp_mint: pool_lp_mint,
             token_a_mint: *token_a_mint,
             token_b_mint: *token_b_mint,
-            token_program: spl_token::ID,
+            token_program: anchor_spl::token::ID,
             associated_token_program: spl_associated_token_account::ID,
             a_vault_lp: derive_vault_lp_key(a_vault, pool),
             b_vault_lp: derive_vault_lp_key(b_vault, pool),

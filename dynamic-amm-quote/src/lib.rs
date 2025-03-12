@@ -8,7 +8,7 @@ use anchor_spl::token::{Mint, TokenAccount};
 use anyhow::{anyhow, ensure, Context};
 use prog_dynamic_amm::constants::FEE_CURVE_POINT_NUMBER;
 use prog_dynamic_amm::error::PoolError;
-use prog_dynamic_amm::state::{ActivationType, FeeCurveInfo, FeeCurveType, Pool, PoolFees};
+use prog_dynamic_amm::state::{ActivationType, FeeCurveType, Pool, PoolFees};
 use prog_dynamic_vault::state::Vault;
 use spl_token_swap::curve::calculator::TradeDirection;
 use std::collections::HashMap;
@@ -262,7 +262,7 @@ pub fn compute_pool_tokens(
     Ok((token_a_amount, token_b_amount))
 }
 
-pub fn get_latest_pool_fees(state: &Pool, current_point: u64) -> Result<PoolFees> {
+pub fn get_latest_pool_fees(state: &Pool, current_point: u64) -> anyhow::Result<PoolFees> {
     if state.fee_curve.fee_curve_type == FeeCurveType::None || state.is_update_fee_completed {
         return Ok(state.fees);
     }
@@ -276,7 +276,7 @@ pub fn get_latest_pool_fees(state: &Pool, current_point: u64) -> Result<PoolFees
                 if i == 0 {
                     return points[i].fee_bps;
                 }
-                if self.fee_curve_type == FeeCurveType::Flat {
+                if state.fee_curve.fee_curve_type == FeeCurveType::Flat {
                     return points[i - 1].fee_bps;
                 }
 
@@ -287,10 +287,10 @@ pub fn get_latest_pool_fees(state: &Pool, current_point: u64) -> Result<PoolFees
 
                 let denominator = b - a;
                 if denominator == 0 {
-                    return m;
+                    return m as u16;
                 } else {
                     let numerator = n * (current_point - a) + m * (b - current_point);
-                    return numerator / denominator;
+                    return (numerator / denominator) as u16;
                 }
             }
         }
@@ -298,7 +298,9 @@ pub fn get_latest_pool_fees(state: &Pool, current_point: u64) -> Result<PoolFees
     };
 
     let latest_trade_fee_bps = get_latest_trade_bps();
-    let trade_fee_numerator = latest_trade_fee_bps.checked_mul(10).context("Overflow")?;
+    let trade_fee_numerator = u64::from(latest_trade_fee_bps)
+        .checked_mul(10)
+        .context("Overflow")?;
 
     Ok(PoolFees {
         trade_fee_numerator,

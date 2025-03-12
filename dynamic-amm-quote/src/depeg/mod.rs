@@ -4,7 +4,6 @@ use anyhow::{Context, Result};
 use prog_dynamic_amm::constants::depeg::BASE_CACHE_EXPIRES;
 use prog_dynamic_amm::state::CurveType;
 use prog_dynamic_amm::state::DepegType;
-use prog_dynamic_amm::state::Pool;
 use std::collections::HashMap;
 
 /// Marinade module consists of functions to support marinade depeg pool operation

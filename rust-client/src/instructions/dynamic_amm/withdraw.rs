@@ -66,7 +66,7 @@ pub fn process_withdraw_dynamic_pool(args: &Args, sub_args: &WithdrawDynamicAmmA
             user_b_token: get_associated_token_address(&keypair.pubkey(), &pool_state.token_b_mint),
             user: keypair.pubkey(),
             vault_program: prog_dynamic_vault::ID,
-            token_program: spl_token::ID,
+            token_program: anchor_spl::token::ID,
         }
         .to_account_metas(None),
         data: prog_dynamic_amm::instruction::RemoveBalanceLiquidity {
