@@ -24,8 +24,8 @@ importers:
         specifier: ~2.13.0
         version: 2.13.0(bufferutil@4.0.7)(fastestsmallesttextencoderdecoder@1.0.22)(utf-8-validate@5.0.10)
       '@meteora-ag/m3m3':
-        specifier: 1.0.6
-        version: 1.0.6(bufferutil@4.0.7)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)(utf-8-validate@5.0.10)
+        specifier: 1.0.7
+        version: 1.0.7(bufferutil@4.0.7)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)(utf-8-validate@5.0.10)
       '@meteora-ag/vault-sdk':
         specifier: 2.3.1
         version: 2.3.1(bufferutil@4.0.7)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)(utf-8-validate@5.0.10)
@@ -402,8 +402,8 @@ packages:
   '@metaplex-foundation/mpl-token-metadata@2.13.0':
     resolution: {integrity: sha512-Fl/8I0L9rv4bKTV/RAl5YIbJe9SnQPInKvLz+xR1fEc4/VQkuCn3RPgypfUMEKWmCznzaw4sApDxy6CFS4qmJw==}
 
-  '@meteora-ag/m3m3@1.0.6':
-    resolution: {integrity: sha512-6v0K73M2iN7csfDd/NEhu4GYd+rz25jN2IaIfIOlEkrtWy9ZA1R1XIjr/qG/fZcTDCsCsuGdQFrOkVCaf2DSaQ==}
+  '@meteora-ag/m3m3@1.0.7':
+    resolution: {integrity: sha512-Gsj4BhsfOrW/qKZZCfopWC6+iA/y2f/oRzosfUG27VKnNRX8+5wro4zxPwQnhEq4SuxuCGGpHVHEC8HMx9ev8w==}
 
   '@meteora-ag/vault-sdk@2.3.1':
     resolution: {integrity: sha512-I42o02fTpXdBcD/po/mXHnrOfVshr8vj9i7r+s7KG/FNdwC9/z+KZXvjXSTakKe/2CnLm75u3UFJly3j0KraSg==}
@@ -2569,7 +2569,7 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@meteora-ag/m3m3@1.0.6(bufferutil@4.0.7)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)(utf-8-validate@5.0.10)':
+  '@meteora-ag/m3m3@1.0.7(bufferutil@4.0.7)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)(utf-8-validate@5.0.10)':
     dependencies:
       '@coral-xyz/anchor': 0.29.0(bufferutil@4.0.7)(utf-8-validate@5.0.10)
       '@coral-xyz/borsh': 0.30.1(@solana/web3.js@1.98.0(bufferutil@4.0.7)(utf-8-validate@5.0.10))
