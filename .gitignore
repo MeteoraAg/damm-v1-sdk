@@ -7,6 +7,7 @@ node_modules
 test-ledger
 .pnpm-debug.log
 .idea
+bun.lockb
 
 ts-client/dist/
 ts-client/package-lock.json

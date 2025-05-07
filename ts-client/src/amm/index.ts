@@ -2734,7 +2734,7 @@ export default class AmmImpl implements AmmImplementation {
     return transaction.add(...stakeForFeeInstructions);
   }
 
-  public async claimLockFee(owner: PublicKey, maxAmount: BN): Promise<Transaction> {
+  public async claimLockFee(owner: PublicKey, maxAmount: BN, payer?: PublicKey): Promise<Transaction> {
     const [lockEscrowPK] = deriveLockEscrowPda(this.address, owner, this.program.programId);
 
     const preInstructions: TransactionInstruction[] = [];
@@ -2744,10 +2744,10 @@ export default class AmmImpl implements AmmImplementation {
       [tokenAAta, createTokenAAtaIx],
       [tokenBAta, createTokenBAtaIx],
     ] = await Promise.all([
-      getOrCreateATAInstruction(this.poolState.lpMint, owner, this.program.provider.connection),
-      getOrCreateATAInstruction(this.poolState.lpMint, lockEscrowPK, this.program.provider.connection),
-      getOrCreateATAInstruction(this.poolState.tokenAMint, owner, this.program.provider.connection),
-      getOrCreateATAInstruction(this.poolState.tokenBMint, owner, this.program.provider.connection),
+      getOrCreateATAInstruction(this.poolState.lpMint, owner, this.program.provider.connection, payer),
+      getOrCreateATAInstruction(this.poolState.lpMint, lockEscrowPK, this.program.provider.connection, payer),
+      getOrCreateATAInstruction(this.poolState.tokenAMint, owner, this.program.provider.connection, payer),
+      getOrCreateATAInstruction(this.poolState.tokenBMint, owner, this.program.provider.connection, payer),
     ]);
     createUserAtaIx && preInstructions.push(createUserAtaIx);
     createEscrowAtaIx && preInstructions.push(createEscrowAtaIx);

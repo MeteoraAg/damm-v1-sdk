@@ -1,6 +1,7 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    "lib": ["ES2022"], 
     "outDir": "./dist/cjs/",
     "moduleResolution": "node",
     "noEmit": false,
