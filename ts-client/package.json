@@ -17,7 +17,7 @@
     "@mercurial-finance/token-math": "6.0.0",
     "@mercurial-finance/vault-sdk": "^2.2.1",
     "@metaplex-foundation/mpl-token-metadata": "~2.13.0",
-    "@meteora-ag/m3m3": "1.0.7",
+    "@meteora-ag/m3m3": "1.0.9",
     "@meteora-ag/vault-sdk": "2.3.1",
     "@project-serum/anchor": "^0.24.2",
     "@solana/buffer-layout": "^3 || ^4",
