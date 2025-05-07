@@ -2786,7 +2786,7 @@ export default class AmmImpl implements AmmImplementation {
       .postInstructions(postInstructions)
       .transaction();
     return new Transaction({
-      feePayer: owner,
+      feePayer: payer,
       ...(await this.program.provider.connection.getLatestBlockhash(this.program.provider.connection.commitment)),
     }).add(tx);
   }
