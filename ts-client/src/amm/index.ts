@@ -2734,8 +2734,14 @@ export default class AmmImpl implements AmmImplementation {
     return transaction.add(...stakeForFeeInstructions);
   }
 
-  public async claimLockFee(owner: PublicKey, maxAmount: BN, payer?: PublicKey): Promise<Transaction> {
+  public async claimLockFee(
+    owner: PublicKey,
+    maxAmount: BN,
+    payer?: PublicKey,
+    receiver?: PublicKey,
+  ): Promise<Transaction> {
     const [lockEscrowPK] = deriveLockEscrowPda(this.address, owner, this.program.programId);
+    const feeReceiver = receiver ? receiver : owner;
 
     const preInstructions: TransactionInstruction[] = [];
     const [
@@ -2746,8 +2752,8 @@ export default class AmmImpl implements AmmImplementation {
     ] = await Promise.all([
       getOrCreateATAInstruction(this.poolState.lpMint, owner, this.program.provider.connection, payer),
       getOrCreateATAInstruction(this.poolState.lpMint, lockEscrowPK, this.program.provider.connection, payer),
-      getOrCreateATAInstruction(this.poolState.tokenAMint, owner, this.program.provider.connection, payer),
-      getOrCreateATAInstruction(this.poolState.tokenBMint, owner, this.program.provider.connection, payer),
+      getOrCreateATAInstruction(this.poolState.tokenAMint, feeReceiver, this.program.provider.connection, payer),
+      getOrCreateATAInstruction(this.poolState.tokenBMint, feeReceiver, this.program.provider.connection, payer),
     ]);
     createUserAtaIx && preInstructions.push(createUserAtaIx);
     createEscrowAtaIx && preInstructions.push(createEscrowAtaIx);
@@ -2756,7 +2762,7 @@ export default class AmmImpl implements AmmImplementation {
 
     const postInstructions: Array<TransactionInstruction> = [];
     if ([this.poolState.tokenAMint.toBase58(), this.poolState.tokenBMint.toBase58()].includes(NATIVE_MINT.toBase58())) {
-      const closeWrappedSOLIx = await unwrapSOLInstruction(owner);
+      const closeWrappedSOLIx = await unwrapSOLInstruction(feeReceiver);
       closeWrappedSOLIx && postInstructions.push(closeWrappedSOLIx);
     }
 
