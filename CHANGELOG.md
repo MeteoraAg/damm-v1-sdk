@@ -417,3 +417,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `AmmImpl.createPermissionlessConstantProductPoolWithConfig` to create constant product pool based on `config` account.
 - `AmmImpl.getFeeConfigurations` to get all fee configurations to be used in `AmmImpl.createPermissionlessConstantProductPoolWithConfig`
+
+## dynamic-amm [1.3.5] - PR #215
+
+### Changed
+
+- `AmmImpl.claimLockFee` to include `receiver` and `payer` parameters to indicate the receiver and payer of the fees.
