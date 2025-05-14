@@ -7,11 +7,7 @@ import {
   VaultIdl,
   PROGRAM_ID as VAULT_PROGRAM_ID,
 } from '@meteora-ag/vault-sdk';
-import {
-  STAKE_FOR_FEE_PROGRAM_ID,
-  IDL as StakeForFeeIDL,
-  StakeForFee as StakeForFeeIdl,
-} from '@meteora-ag/m3m3';
+import { STAKE_FOR_FEE_PROGRAM_ID, IDL as StakeForFeeIDL, StakeForFee as StakeForFeeIdl } from '@meteora-ag/m3m3';
 import { AnchorProvider, BN, Program } from '@coral-xyz/anchor';
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
@@ -24,7 +20,7 @@ import {
   createCloseAccountInstruction,
   getMinimumBalanceForRentExemptMint,
   MintLayout,
-  createInitializeMintInstruction
+  createInitializeMintInstruction,
 } from '@solana/spl-token';
 import {
   AccountInfo,
@@ -173,10 +169,15 @@ export const wrapSOLInstruction = (from: PublicKey, to: PublicKey, amount: bigin
   ];
 };
 
-export const unwrapSOLInstruction = async (owner: PublicKey) => {
+export const unwrapSOLInstruction = async (owner: PublicKey, receiver?: PublicKey) => {
   const wSolATAAccount = await getAssociatedTokenAccount(NATIVE_MINT, owner);
   if (wSolATAAccount) {
-    const closedWrappedSolInstruction = createCloseAccountInstruction(wSolATAAccount, owner, owner, []);
+    const closedWrappedSolInstruction = createCloseAccountInstruction(
+      wSolATAAccount,
+      receiver ? receiver : owner,
+      owner,
+      [],
+    );
     return closedWrappedSolInstruction;
   }
   return null;
