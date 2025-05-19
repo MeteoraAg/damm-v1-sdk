@@ -1,6 +1,6 @@
 {
   "name": "@meteora-ag/dynamic-amm-sdk",
-  "version": "1.3.5",
+  "version": "1.3.6",
   "description": "Meteora Dynamic Amm SDK is a typescript library that allows you to interact with Meteora's AMM.",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
