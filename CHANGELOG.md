@@ -423,3 +423,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - `AmmImpl.claimLockFee` to include `receiver` and `payer` parameters to indicate the receiver and payer of the fees.
+
+## dynamic-amm [1.3.6] - PR #216
+
+### Changed
+
+- `AmmImpl.claimLockFee` to include `tempWSolAcc` parameter to indicate the temporary SOL account to receive the WSOL transaction fee.
+- `unwrapSolInstruction` to include `receiver` parameter to indicate the receiver of the unwrapped SOL.
