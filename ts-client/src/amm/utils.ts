@@ -169,7 +169,7 @@ export const wrapSOLInstruction = (from: PublicKey, to: PublicKey, amount: bigin
   ];
 };
 
-export const unwrapSOLInstruction = async (owner: PublicKey, receiver?: PublicKey) => {
+export const unwrapSOLInstruction = async (owner: PublicKey, receiver: PublicKey) => {
   const wSolATAAccount = await getAssociatedTokenAccount(NATIVE_MINT, owner);
   if (wSolATAAccount) {
     const closedWrappedSolInstruction = createCloseAccountInstruction(

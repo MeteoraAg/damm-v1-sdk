@@ -2085,7 +2085,7 @@ export default class AmmImpl implements AmmImplementation {
 
     const postInstructions: Array<TransactionInstruction> = [];
     if (NATIVE_MINT.equals(destinationToken)) {
-      const unwrapSOLIx = await unwrapSOLInstruction(owner);
+      const unwrapSOLIx = await unwrapSOLInstruction(owner, owner);
       unwrapSOLIx && postInstructions.push(unwrapSOLIx);
     }
 
@@ -2359,7 +2359,7 @@ export default class AmmImpl implements AmmImplementation {
 
     const postInstructions: Array<TransactionInstruction> = [];
     if ([this.tokenAMint.address.toBase58(), this.tokenBMint.address.toBase58()].includes(NATIVE_MINT.toBase58())) {
-      const closeWrappedSOLIx = await unwrapSOLInstruction(owner);
+      const closeWrappedSOLIx = await unwrapSOLInstruction(owner, owner);
       closeWrappedSOLIx && postInstructions.push(closeWrappedSOLIx);
     }
 
@@ -2517,7 +2517,7 @@ export default class AmmImpl implements AmmImplementation {
 
     const postInstructions: Array<TransactionInstruction> = [];
     if ([this.tokenAMint.address.toBase58(), this.tokenBMint.address.toBase58()].includes(NATIVE_MINT.toBase58())) {
-      const closeWrappedSOLIx = await unwrapSOLInstruction(owner);
+      const closeWrappedSOLIx = await unwrapSOLInstruction(owner, owner);
       closeWrappedSOLIx && postInstructions.push(closeWrappedSOLIx);
     }
 
@@ -2920,7 +2920,7 @@ export default class AmmImpl implements AmmImplementation {
     let tx: Transaction;
 
     if (isTokenAOrBNative) {
-      const tempWSol = receiver ? tempWSolAcc : owner;
+      const tempWSol = receiver && !receiver.equals(owner) ? tempWSolAcc : owner;
       const feeReceiver = receiver ? receiver : owner;
 
       const result = await this.claimWithQuoteMintSol({
