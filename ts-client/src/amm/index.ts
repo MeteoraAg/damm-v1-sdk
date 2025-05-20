@@ -26,7 +26,12 @@ import {
   getAssociatedTokenAddressSync,
 } from '@solana/spl-token';
 import VaultImpl, { calculateWithdrawableAmount, getVaultPdas } from '@meteora-ag/vault-sdk';
-import StakeForFee, { deriveFeeVault, STAKE_FOR_FEE_PROGRAM_ID, StakeForFeeProgram } from '@meteora-ag/m3m3';
+import StakeForFee, {
+  deriveFeeVault,
+  InitializeVaultParams,
+  STAKE_FOR_FEE_PROGRAM_ID,
+  StakeForFeeProgram,
+} from '@meteora-ag/m3m3';
 import invariant from 'invariant';
 import {
   AccountType,
@@ -449,6 +454,7 @@ export default class AmmImpl implements AmmImplementation {
       };
       stakeLiquidity?: {
         ratio?: Decimal;
+        param: Omit<InitializeVaultParams, 'padding'>;
       };
       activationPoint?: BN;
     },
@@ -628,6 +634,13 @@ export default class AmmImpl implements AmmImplementation {
         payer,
         tokenAMint,
         tokenBMint,
+        {
+          unstakeLockDuration: opt?.stakeLiquidity?.param.unstakeLockDuration || new BN(0),
+          secondsToFullUnlock: opt?.stakeLiquidity?.param.secondsToFullUnlock || new BN(0),
+          topListLength: opt?.stakeLiquidity?.param.topListLength || 0,
+          startFeeDistributeTimestamp: opt?.stakeLiquidity?.param.startFeeDistributeTimestamp || new BN(0),
+          padding: new Array<number>(64).fill(0),
+        },
       );
 
       preInstructions.push(...createFeeVaultIxs);
