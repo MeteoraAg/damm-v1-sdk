@@ -33,7 +33,7 @@ The Dynamic AMM SDK supports three types of pools:
 
 - Constant Product Pool (Volatile Pool)
 
-- Memecoin Pool (M3M3 Pool)
+- Stake2Earn Pool
 
 - Stable Pool
 
