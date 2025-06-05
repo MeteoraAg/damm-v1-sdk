@@ -81,6 +81,7 @@ import {
   calculateLockAmounts,
   createTransactions,
   deriveCustomizablePermissionlessConstantProductPoolAddress,
+  calculateSwapInAmount,
 } from './utils';
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes';
 import Decimal from 'decimal.js';
@@ -2009,6 +2010,44 @@ export default class AmmImpl implements AmmImplementation {
       minSwapOutAmount: getMinAmountWithSlippage(amountOut, slippage),
       fee,
       priceImpact,
+    };
+  }
+
+  /**
+   * `getSwapBase` returns the amount of `inToken` that you have to send to receive particular amount if you swap
+   * `inAmountLamport` of `inToken` into the pool
+   * @param {PublicKey} outTokenMint - The mint you want to swap to.
+   * @param {BN} outAmountLamport - The amount of lamports you want to receive after swap.
+   * @param {number} [slippage] - The maximum amount of slippage you're willing to accept. (From 0 to 100, max to 2 decimal place)
+   * @returns The amount of the destination token that will be received after the swap.
+   */
+  public getSwapBase(outTokenMint: PublicKey, outAmountLamport: BN, slippage: number, swapInitiator?: PublicKey) {
+    const { amountIn, fee, } = calculateSwapInAmount(
+      outTokenMint,
+      outAmountLamport,
+      {
+        currentTime: this.accountsInfo.currentTime.toNumber(),
+        currentSlot: this.accountsInfo.currentSlot.toNumber(),
+        poolState: this.poolState,
+        depegAccounts: this.depegAccounts,
+        poolVaultALp: this.accountsInfo.poolVaultALp,
+        poolVaultBLp: this.accountsInfo.poolVaultBLp,
+        vaultA: this.vaultA.vaultState,
+        vaultB: this.vaultB.vaultState,
+        vaultALpSupply: this.accountsInfo.vaultALpSupply,
+        vaultBLpSupply: this.accountsInfo.vaultBLpSupply,
+        vaultAReserve: this.accountsInfo.vaultAReserve,
+        vaultBReserve: this.accountsInfo.vaultBReserve,
+      },
+      swapInitiator,
+    );
+    const minSwapOutAmount = getMinAmountWithSlippage(outAmountLamport, slippage);
+
+    return {
+      swapInAmount: amountIn,
+      swapOutAmount: outAmountLamport,
+      minSwapOutAmount,
+      fee,
     };
   }
 

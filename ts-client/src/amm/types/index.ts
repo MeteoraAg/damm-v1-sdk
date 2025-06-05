@@ -79,6 +79,11 @@ export interface SwapResult {
   fee: BN;
 }
 
+export interface SwapBaseInResult {
+  amountIn: BN;
+  fee: BN;
+}
+
 export type AccountsToCache = {
   apyPdaBuffer: AccountInfo<Buffer> | null;
   poolBuffer: AccountInfo<Buffer> | null;
