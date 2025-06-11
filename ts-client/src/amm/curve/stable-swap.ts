@@ -206,7 +206,7 @@ export class StableSwap implements SwapCurve {
 
     const newSwapDestAmount = BigInt(upscaledSwapDestinationAmount.toString()) - BigInt(upscaledDestAmount.toString());
     const newSwapSourceAmount = computeY(BigInt(this.amp), newSwapDestAmount, invariantD);
-    const inAmount = new BN(newSwapSourceAmount.toString()).sub(swapSourceAmount);
+    const inAmount = new BN(newSwapSourceAmount.toString()).sub(upscaledSwapSourceAmount);
 
     return tradeDirection == TradeDirection.AToB ? this.downscaleTokenA(inAmount) : this.downscaleTokenB(inAmount);
   }

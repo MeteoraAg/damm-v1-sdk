@@ -626,7 +626,6 @@ export const calculateSwapQuote = (
     swapSourceVaultLpSupply.add(sourceVaultLp),
   );
 
-  // Current?
   const actualSourceAmount = afterSwapSourceAmount.sub(beforeSwapSourceAmount);
   let sourceAmountWithFee = actualSourceAmount.sub(tradeFeeAfterProtocolFee);
 
