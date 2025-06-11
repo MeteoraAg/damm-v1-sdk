@@ -360,6 +360,104 @@ describe('Stable Swap pool', () => {
         throw new Error(error.message);
       }
     });
+
+      test('SwapIn A → B', async () => {
+      await stableSwapFeeTiered.updateState();
+      const outAmountLamport = new BN(0.1 * 10 ** stableSwapFeeTiered.tokenBMint.decimals);
+      const inTokenMint = new PublicKey(stableSwapFeeTiered.tokenAMint.address);
+      const outTokenMint = new PublicKey(stableSwapFeeTiered.tokenBMint.address);
+
+      const { swapInAmount, swapOutAmount, minSwapOutAmount } = stableSwapFeeTiered.getSwapBase(
+        outTokenMint,
+        outAmountLamport,
+        DEFAULT_SLIPPAGE,
+      );
+      expect(swapInAmount.toNumber()).toBeGreaterThan(0);
+      expect(swapOutAmount.toNumber()).toBeGreaterThan(0);
+
+      const swapTx = await stableSwapFeeTiered.swap(
+        mockWallet.publicKey,
+        inTokenMint,
+        swapInAmount,
+        minSwapOutAmount,
+      );
+
+      try {
+        const beforeTokenBBalance = await provider.connection
+          .getTokenAccountBalance(mockWalletUsdcATA)
+          .then((v) => new BN(v.value.amount));
+        const beforeTokenABalance = await provider.connection
+          .getTokenAccountBalance(mockWalletUsdtATA)
+          .then((v) => new BN(v.value.amount));
+
+        const swapResult = await provider.sendAndConfirm(swapTx);
+        console.log('Swap Result of A → B', swapResult);
+
+        const afterTokenBBalance = await provider.connection
+          .getTokenAccountBalance(mockWalletUsdcATA)
+          .then((v) => new BN(v.value.amount));
+        const afterTokenABalance = await provider.connection
+          .getTokenAccountBalance(mockWalletUsdtATA)
+          .then((v) => new BN(v.value.amount));
+
+        const tokenBReceived = afterTokenBBalance.sub(beforeTokenBBalance);
+        const tokenASent = beforeTokenABalance.sub(afterTokenABalance);
+        expect(tokenBReceived.toNumber()).toBeGreaterThanOrEqual(minSwapOutAmount.toNumber());
+        expect(tokenASent.toString()).toBe(swapInAmount.toString());
+      } catch (error: any) {
+        console.trace(error);
+        throw new Error(error.message);
+      }
+    });
+
+    test('SwapIn B → A', async () => {
+      await stableSwapFeeTiered.updateState();
+      const outAmountLamport = new BN(0.1 * 10 ** stableSwapFeeTiered.tokenAMint.decimals);
+      const inTokenMint = new PublicKey(stableSwapFeeTiered.tokenBMint.address);
+      const outTokenMint = new PublicKey(stableSwapFeeTiered.tokenAMint.address);
+
+      const { swapInAmount, swapOutAmount, minSwapOutAmount } = stableSwapFeeTiered.getSwapQuote(
+        outTokenMint,
+        outAmountLamport,
+        DEFAULT_SLIPPAGE,
+      );
+      expect(swapOutAmount.toNumber()).toBeGreaterThan(0);
+      expect(swapInAmount.toNumber()).toBeGreaterThan(0);
+
+      const swapTx = await stableSwapFeeTiered.swap(
+        mockWallet.publicKey,
+        inTokenMint,
+        swapInAmount,
+        minSwapOutAmount,
+      );
+
+      try {
+        const beforeTokenABalance = await provider.connection
+          .getTokenAccountBalance(mockWalletUsdtATA)
+          .then((v) => new BN(v.value.amount));
+        const beforeTokenBBalance = await provider.connection
+          .getTokenAccountBalance(mockWalletUsdcATA)
+          .then((v) => new BN(v.value.amount));
+
+        const swapResult = await provider.sendAndConfirm(swapTx);
+        console.log('Swap Result of B → A', swapResult);
+
+        const afterTokenABalance = await provider.connection
+          .getTokenAccountBalance(mockWalletUsdtATA)
+          .then((v) => new BN(v.value.amount));
+        const afterTokenBBalance = await provider.connection
+          .getTokenAccountBalance(mockWalletUsdcATA)
+          .then((v) => new BN(v.value.amount));
+
+        const tokenAReceived = afterTokenABalance.sub(beforeTokenABalance);
+        const tokenBSent = beforeTokenBBalance.sub(afterTokenBBalance);
+        expect(tokenAReceived.toNumber()).toBeGreaterThanOrEqual(minSwapOutAmount.toNumber());
+        expect(tokenBSent.toString()).toBe(swapInAmount.toString());
+      } catch (error: any) {
+        console.trace(error);
+        throw new Error(error.message);
+      }
+    });
   });
 });
 

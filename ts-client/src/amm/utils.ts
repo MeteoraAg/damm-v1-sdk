@@ -60,6 +60,7 @@ import {
   PoolInformation,
   PoolState,
   StableSwapCurve,
+  SwapBaseInResult,
   SwapQuoteParam,
   SwapResult,
   TokenMultiplier,
@@ -488,6 +489,33 @@ export const calculateSwapQuoteForGoingToCreateMemecoinPool = (
   };
 };
 
+
+const getSwapCurve = (params: SwapQuoteParam, swapInitiator?: PublicKey): SwapCurve => {
+  const { poolState, currentTime, depegAccounts, currentSlot } = params;
+
+  if ('stable' in poolState.curveType) {
+    const { amp, depeg, tokenMultiplier } = poolState.curveType['stable'] as any;
+    return new StableSwap(
+      amp.toNumber(),
+      tokenMultiplier,
+      depeg,
+      depegAccounts,
+      new BN(currentTime),
+      poolState.stake,
+    );
+  }
+
+  // Bootstrapping pool
+  const activationType = poolState.bootstrapping.activationType;
+  const currentPoint = activationType == ActivationType.Timestamp ? new BN(currentTime) : new BN(currentSlot);
+  const canQuoteEarlier = swapInitiator ? swapInitiator.equals(poolState.bootstrapping.whitelistedVault) : false;
+  if (!canQuoteEarlier) {
+    invariant(currentPoint.gte(poolState.bootstrapping.activationPoint), 'Swap is disabled');
+  }
+
+  return new ConstantProductSwap();
+}
+
 /**
  * It calculates the amount of tokens you will receive after swapping your tokens
  * @param {PublicKey} inTokenMint - The mint of the token you're swapping in.
@@ -522,38 +550,15 @@ export const calculateSwapQuote = (
     poolVaultALp,
     poolVaultBLp,
     currentTime,
-    depegAccounts,
     vaultAReserve,
     vaultBReserve,
-    currentSlot,
   } = params;
 
   const { tokenAMint, tokenBMint } = poolState;
   invariant(inTokenMint.equals(tokenAMint) || inTokenMint.equals(tokenBMint), ERROR.INVALID_MINT);
   invariant(poolState.enabled, 'Pool disabled');
 
-  let swapCurve: SwapCurve;
-  if ('stable' in poolState.curveType) {
-    const { amp, depeg, tokenMultiplier } = poolState.curveType['stable'] as any;
-    swapCurve = new StableSwap(
-      amp.toNumber(),
-      tokenMultiplier,
-      depeg,
-      depegAccounts,
-      new BN(currentTime),
-      poolState.stake,
-    );
-  } else {
-    // Bootstrapping pool
-    const activationType = poolState.bootstrapping.activationType;
-    const currentPoint = activationType == ActivationType.Timestamp ? new BN(currentTime) : new BN(currentSlot);
-    const canQuoteEarlier = swapInitiator ? swapInitiator.equals(poolState.bootstrapping.whitelistedVault) : false;
-    if (!canQuoteEarlier) {
-      invariant(currentPoint.gte(poolState.bootstrapping.activationPoint), 'Swap is disabled');
-    }
-
-    swapCurve = new ConstantProductSwap();
-  }
+  const swapCurve = getSwapCurve(params, swapInitiator);
 
   const vaultAWithdrawableAmount = calculateWithdrawableAmount(currentTime, vaultA);
   const vaultBWithdrawableAmount = calculateWithdrawableAmount(currentTime, vaultB);
@@ -661,6 +666,150 @@ export const calculateSwapQuote = (
     amountOut: actualDestinationAmount,
     fee: tradeFeeAfterProtocolFee,
     priceImpact,
+  };
+};
+
+/**
+ * Calculates the amount of input tokens required to receive a specific amount of output tokens.
+ * @param {PublicKey} outTokenMint - The mint of the token you want to receive.
+ * @param {BN} outAmountLamport - The desired amount of the output token.
+ * @param {SwapQuoteParam} params - SwapQuoteParam
+ * @param {PoolState} params.poolState - pool state that fetch from program
+ * @param {VaultState} params.vaultA - vault A state that fetch from vault program
+ * @param {VaultState} params.vaultB - vault B state that fetch from vault program
+ * @param {BN} params.poolVaultALp - The amount of LP tokens in the pool for token A
+ * @param {BN} params.poolVaultBLp - The amount of LP tokens in the pool for token B
+ * @param {BN} params.vaultALpSupply - vault A lp supply
+ * @param {BN} params.vaultBLpSupply - vault B lp supply
+ * @param {BN} params.vaultAReserve - vault A reserve
+ * @param {BN} params.vaultBReserve - vault B reserve
+ * @param {BN} params.currentTime - on chain time
+ * @param {BN} params.currentSlot - on chain slot
+ * @param {BN} params.depegAccounts - A map of the depeg accounts
+ * @returns The amount of input tokens required for the swap.
+ */
+export const calculateSwapInAmount = (
+  outTokenMint: PublicKey,
+  outAmountLamport: BN,
+  params: SwapQuoteParam,
+  swapInitiator?: PublicKey,
+): SwapBaseInResult => {
+  const {
+    vaultA,
+    vaultB,
+    vaultALpSupply,
+    vaultBLpSupply,
+    poolState,
+    poolVaultALp,
+    poolVaultBLp,
+    currentTime,
+    vaultAReserve,
+    vaultBReserve,
+  } = params;
+
+  const { tokenAMint, tokenBMint } = poolState;
+  invariant(outTokenMint.equals(tokenAMint) || outTokenMint.equals(tokenBMint), 'Invalid mint');
+  invariant(poolState.enabled, 'Pool disabled');
+
+  const swapCurve = getSwapCurve(params, swapInitiator);
+
+  const vaultAWithdrawableAmount = calculateWithdrawableAmount(currentTime, vaultA);
+  const vaultBWithdrawableAmount = calculateWithdrawableAmount(currentTime, vaultB);
+
+  const tokenAAmount = getAmountByShare(poolVaultALp, vaultAWithdrawableAmount, vaultALpSupply);
+  const tokenBAmount = getAmountByShare(poolVaultBLp, vaultBWithdrawableAmount, vaultBLpSupply);
+
+  const isFromAToB = outTokenMint.equals(tokenBMint);
+  const [
+    destAmount,
+    swapSourceVaultLpAmount,
+    swapSourceAmount,
+    swapDestinationAmount,
+    swapSourceVault,
+    swapDestinationVault,
+    swapSourceVaultLpSupply,
+    swapDestinationVaultLpSupply,
+    tradeDirection,
+  ] = isFromAToB
+    ? [
+        outAmountLamport,
+        poolVaultALp,
+        tokenAAmount,
+        tokenBAmount,
+        vaultA,
+        vaultB,
+        vaultALpSupply,
+        vaultBLpSupply,
+        TradeDirection.AToB,
+      ]
+    : [
+        outAmountLamport,
+        poolVaultBLp,
+        tokenBAmount,
+        tokenAAmount,
+        vaultB,
+        vaultA,
+        vaultBLpSupply,
+        vaultALpSupply,
+        TradeDirection.BToA,
+      ];
+
+  const destinationVaultWithdrawableAmount = calculateWithdrawableAmount(
+    currentTime,
+    swapDestinationVault,
+  );
+  const destinationVaultLp = getUnmintAmount(
+    destAmount,
+    destinationVaultWithdrawableAmount,
+    swapDestinationVaultLpSupply,
+  );
+
+  const destinationAmount = getAmountByShare(
+    destinationVaultLp,
+    destinationVaultWithdrawableAmount,
+    swapDestinationVaultLpSupply,
+  );
+
+  const netAmountIn = swapCurve.computeInAmount(
+    destinationAmount,
+    swapSourceAmount,
+    swapDestinationAmount,
+    tradeDirection,
+  );
+
+  const tradeFee = calculateTradingFee(netAmountIn, poolState);
+  const protocolFee = calculateProtocolTradingFee(tradeFee, poolState);
+  const userFee = tradeFee.sub(protocolFee);
+  const totalAmountIn = netAmountIn.add(userFee);
+
+  const sourceVaultWithdrawableAmount = calculateWithdrawableAmount(currentTime, swapSourceVault);
+  const sourceVaultLp = getUnmintAmount(
+    totalAmountIn,
+    sourceVaultWithdrawableAmount,
+    swapSourceVaultLpSupply,
+  );
+  const afterSwapSourceAmount = getAmountByShare(
+    sourceVaultLp.add(swapSourceVaultLpAmount),
+    sourceVaultWithdrawableAmount.add(totalAmountIn),
+    swapSourceVaultLpSupply.add(sourceVaultLp),
+  );
+  const actualSourceAmount = afterSwapSourceAmount.sub(swapSourceAmount);
+
+  const maxSwapOutAmount = calculateMaxSwapOutAmount(
+    tradeDirection == TradeDirection.AToB ? tokenBMint : tokenAMint,
+    tokenAMint,
+    tokenBMint,
+    tokenAAmount,
+    tokenBAmount,
+    vaultAReserve,
+    vaultBReserve,
+  );
+
+  invariant(destinationAmount.lt(maxSwapOutAmount), 'Out amount > vault reserve');
+
+  return {
+    amountIn: actualSourceAmount,
+    fee: userFee,
   };
 };
 

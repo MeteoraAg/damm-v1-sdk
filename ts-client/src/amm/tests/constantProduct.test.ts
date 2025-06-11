@@ -273,6 +273,93 @@ describe('Constant product pool', () => {
         throw new Error(error.message);
       }
     });
+
+    test('SwapIn A → B', async () => {
+      await cpPoolFeeTiered.updateState();
+      const outAmountLamport = new BN(0.1 * 10 ** cpPoolFeeTiered.tokenBMint.decimals);
+      const inTokenMint = new PublicKey(cpPoolFeeTiered.tokenAMint.address);
+      const outTokenMint = new PublicKey(cpPoolFeeTiered.tokenBMint.address);
+
+      const { minSwapOutAmount, swapInAmount } = cpPoolFeeTiered.getSwapBase(
+        outTokenMint,
+        outAmountLamport,
+        DEFAULT_SLIPPAGE,
+      );
+      expect(swapInAmount.toNumber()).toBeGreaterThan(0);
+
+      const swapTx = await cpPoolFeeTiered.swap(mockWallet.publicKey, inTokenMint, swapInAmount, minSwapOutAmount);
+
+      try {
+        const beforeTokenBBalance = await provider.connection
+          .getTokenAccountBalance(mockWalletUsdcATA)
+          .then((v) => new BN(v.value.amount));
+        const beforeTokenABalance = await provider.connection
+          .getTokenAccountBalance(mockWalletBtcATA)
+          .then((v) => new BN(v.value.amount));
+
+        const swapResult = await provider.sendAndConfirm(swapTx);
+        console.log('Swap Result of A → B', swapResult);
+
+        const afterTokenBBalance = await provider.connection
+          .getTokenAccountBalance(mockWalletUsdcATA)
+          .then((v) => new BN(v.value.amount));
+        const afterTokenABalance = await provider.connection
+          .getTokenAccountBalance(mockWalletBtcATA)
+          .then((v) => new BN(v.value.amount));
+
+        const tokenBReceived = afterTokenBBalance.sub(beforeTokenBBalance);
+        const tokenAGave = beforeTokenABalance.sub(afterTokenABalance);
+        expect(tokenBReceived.toNumber()).toBeGreaterThanOrEqual(minSwapOutAmount.toNumber());
+        expect(tokenAGave.toString()).toBe(swapInAmount.toString());
+      } catch (error: any) {
+        console.trace(error);
+        throw new Error(error.message);
+      }
+    });
+
+    test('SwapIn B → A', async () => {
+      await cpPoolFeeTiered.updateState();
+      const outAmountLamport = new BN(0.1 * 10 ** cpPoolFeeTiered.tokenAMint.decimals);
+      const inTokenMint = new PublicKey(cpPoolFeeTiered.tokenBMint.address);
+      const outTokenMint = new PublicKey(cpPoolFeeTiered.tokenAMint.address);
+
+      const { swapInAmount, swapOutAmount, minSwapOutAmount } = cpPoolFeeTiered.getSwapBase(
+        outTokenMint,
+        outAmountLamport,
+        DEFAULT_SLIPPAGE,
+      );
+      expect(swapInAmount.toNumber()).toBeGreaterThan(0);
+      expect(swapOutAmount.toNumber()).toBeGreaterThan(0);
+
+      const swapTx = await cpPoolFeeTiered.swap(mockWallet.publicKey, inTokenMint, swapInAmount, minSwapOutAmount);
+
+      try {
+        const beforeTokenABalance = await provider.connection
+          .getTokenAccountBalance(mockWalletBtcATA)
+          .then((v) => new BN(v.value.amount));
+        const beforeTokenBBalance = await provider.connection
+          .getTokenAccountBalance(mockWalletUsdcATA)
+          .then((v) => new BN(v.value.amount));
+
+        const swapResult = await provider.sendAndConfirm(swapTx);
+        console.log('Swap Result of B → A', swapResult);
+
+        const afterTokenABalance = await provider.connection
+          .getTokenAccountBalance(mockWalletBtcATA)
+          .then((v) => new BN(v.value.amount));
+        const afterTokenBBalance = await provider.connection
+          .getTokenAccountBalance(mockWalletUsdcATA)
+          .then((v) => new BN(v.value.amount));
+
+        const tokenAReceived = afterTokenABalance.sub(beforeTokenABalance);
+        const tokenBGave = beforeTokenBBalance.sub(afterTokenBBalance);
+        expect(tokenAReceived.toNumber()).toBeGreaterThanOrEqual(minSwapOutAmount.toNumber());
+        expect(tokenBGave.toString()).toBe(swapOutAmount.toString());
+      } catch (error: any) {
+        console.trace(error);
+        throw new Error(error.message);
+      }
+    });
   });
 
   describe('With config', () => {
