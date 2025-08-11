@@ -3021,6 +3021,13 @@ export default class AmmImpl implements AmmImplementation {
     createTokenAAtaIx && preInstructions.push(createTokenAAtaIx);
     createTokenBAtaIx && preInstructions.push(createTokenBAtaIx);
 
+    const postInstructions: TransactionInstruction[] = [];
+    if (this.poolState.tokenAMint.equals(NATIVE_MINT) || this.poolState.tokenBMint.equals(NATIVE_MINT)) {
+      // unwarp sol to receiver
+      const closeWrappedSOLIx = await unwrapSOLInstruction(owner, receiver);
+      closeWrappedSOLIx && postInstructions.push(closeWrappedSOLIx);
+    }
+
     const accounts = {
       pool: this.address,
       lockEscrow: lockEscrowPK,
@@ -3048,6 +3055,7 @@ export default class AmmImpl implements AmmImplementation {
       .claimFee(maxAmount)
       .accounts(accounts)
       .preInstructions(preInstructions)
+      .postInstructions(postInstructions)
       .transaction();
 
     return new Transaction({
