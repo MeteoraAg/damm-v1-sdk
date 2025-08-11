@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## @meteora-ag/dynamic-amm-sdk [1.4.0] - PR[#224](https://github.com/MeteoraAg/dynamic-amm-sdk/pull/224)
+
+### Changed
+
+- add post instructions to `claimLockFee2` function
+
 ## @meteora-ag/dynamic-amm-sdk [1.3.9] - PR[#222](https://github.com/MeteoraAg/dynamic-amm-sdk/pull/222)
 
 ### Changed
