@@ -2933,14 +2933,24 @@ export default class AmmImpl implements AmmImplementation {
     let tx: Transaction;
 
     if (isTokenAOrBNative) {
-      const tempWSol = receiver && !receiver.equals(owner) ? tempWSolAcc : owner;
+      let tempWSol: PublicKey;
+
+      if (receiver && !receiver.equals(owner)) {
+        if (!tempWSolAcc) {
+          throw new Error('tempWSolAcc is required when receiver is different from owner for native token pools');
+        }
+        tempWSol = tempWSolAcc;
+      } else {
+        tempWSol = owner;
+      }
+
       const feeReceiver = receiver ? receiver : owner;
 
       const result = await this.claimWithQuoteMintSol({
         owner,
         payer,
         receiver: feeReceiver,
-        tempWSolAcc: tempWSol!,
+        tempWSolAcc: tempWSol,
         lockEscrowPK,
       });
 
