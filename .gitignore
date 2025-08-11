@@ -11,7 +11,7 @@ bun.lockb
 
 ts-client/dist/
 ts-client/package-lock.json
-
+ts-client/scripts
 ts-client/.env
 
 commands
