@@ -47,7 +47,7 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: ${{ env.RUST_TOOLCHAIN_VERSION }}
-          components: clippy
+          components: rustfmt, clippy
           override: true
       # Cargo build cache
       - name: Cargo Cache
