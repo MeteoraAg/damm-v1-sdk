@@ -3,8 +3,13 @@
 use anchor_lang::prelude::*;
 use std::fmt::Debug;
 
-/// Max strategy number that a vault can support
-pub const MAX_STRATEGY: usize = 30;
+/// Max strategy number that a vault can support.
+/// The 30th legacy strategy slot is reused for `version`, `total_lp_supply` and `_padding0`.
+pub const MAX_STRATEGY: usize = 29;
+/// Legacy vault: LP supply is read from `lp_mint.supply`
+pub const VAULT_VERSION_LEGACY: u8 = 0;
+/// Vault tracks LP supply internally in `total_lp_supply`
+pub const VAULT_VERSION_TRACKED_LP_SUPPLY: u8 = 1;
 /// Max bump numer that a strategy can support
 pub const MAX_BUMPS: usize = 10;
 /// DENOMINATOR of degradation
@@ -30,6 +35,12 @@ pub struct Vault {
     pub lp_mint: Pubkey,
     /// The list of strategy addresses that vault supports, vault can support up to MAX_STRATEGY strategies at the same time.
     pub strategies: [Pubkey; MAX_STRATEGY],
+    /// Vault version. 0 = legacy (LP supply from lp_mint.supply), 1 = LP supply tracked in `total_lp_supply`
+    pub version: u8,
+    /// Total LP supply tracked by the vault (only valid when version = 1)
+    pub total_lp_supply: u64,
+    /// Padding, keeps the layout compatible with the legacy 30th strategy slot
+    pub _padding0: [u8; 23],
     /// The base address to create vault seeds
     pub base: Pubkey,
     /// Admin of vault
@@ -41,6 +52,19 @@ pub struct Vault {
 }
 
 impl Vault {
+    /// Get the LP supply used for share pricing, based on vault version.
+    /// Returns None when the tracked supply is smaller than the LP mint supply (invalid accounting).
+    pub fn get_lp_supply(&self, lp_mint_supply: u64) -> Option<u64> {
+        if self.version == VAULT_VERSION_TRACKED_LP_SUPPLY {
+            if self.total_lp_supply < lp_mint_supply {
+                return None;
+            }
+            Some(self.total_lp_supply)
+        } else {
+            Some(lp_mint_supply)
+        }
+    }
+
     /// Get amount by share
     pub fn get_amount_by_share(
         &self,

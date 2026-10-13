@@ -28,7 +28,7 @@ pub struct Padding {
     /// Padding 0
     pub padding_0: [u8; 6], // 6
     /// Padding 1
-    pub padding_1: [u64; 21], // 168
+    pub padding_1: [u64; 20], // 160
     /// Padding 2
     pub padding_2: [u64; 21], // 168
 }
@@ -96,6 +96,8 @@ pub struct Pool {
     /// Bootstrapping config
     pub bootstrapping: Bootstrapping,
     pub partner_info: PartnerInfo,
+    /// LP mint supply tracked by the pool
+    pub lp_mint_supply: u64,
     /// Padding for future pool field
     pub padding: Padding,
     /// The type of the swap curve supported by the pool.

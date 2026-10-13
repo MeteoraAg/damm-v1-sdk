@@ -60,11 +60,21 @@ pub fn process_get_dynamic_pool_info(args: &Args, sub_args: &PoolInfoDynamicAmmA
 
     let current_time: u64 = clock.unix_timestamp.try_into().unwrap();
 
+    let vault_a_lp_supply = vault_a
+        .get_lp_supply(vault_a_lp_mint.supply)
+        .context("Invalid vault LP supply accounting")
+        .unwrap();
+
+    let vault_b_lp_supply = vault_b
+        .get_lp_supply(vault_b_lp_mint.supply)
+        .context("Invalid vault LP supply accounting")
+        .unwrap();
+
     let token_a_amount = vault_a
         .get_amount_by_share(
             current_time,
             pool_vault_a_lp_token.amount,
-            vault_a_lp_mint.supply,
+            vault_a_lp_supply,
         )
         .context("Fail to get token a amount")
         .unwrap();
@@ -73,7 +83,7 @@ pub fn process_get_dynamic_pool_info(args: &Args, sub_args: &PoolInfoDynamicAmmA
         .get_amount_by_share(
             current_time,
             pool_vault_b_lp_token.amount,
-            vault_b_lp_mint.supply,
+            vault_b_lp_supply,
         )
         .context("Fail to get token b amount")
         .unwrap();
