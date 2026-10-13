@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
-## @meteora-ag/dynamic-amm-sdk [2.0.0] - PR[#228](https://github.com/MeteoraAg/damm-v1-sdk/pull/228)
+## @meteora-ag/dynamic-amm-sdk [2.0.0] - PR[#229](https://github.com/MeteoraAg/damm-v1-sdk/pull/229)
 
 ### Added
 
@@ -41,7 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `AmmIdl` is the Anchor 0.30+ IDL JSON and `Amm` is its type. Load it with `@coral-xyz/anchor` 0.30 or later: `new Program({ ...AmmIdl, address }, provider)`
 - `calculateSwapQuote` callers must pass `vaultALpSupply` and `vaultBLpSupply` from `getVaultLpSupply`
 
-## dynamic-amm-quote [0.0.6] - PR[#228](https://github.com/MeteoraAg/damm-v1-sdk/pull/228)
+## dynamic-amm-quote [0.0.6] - PR[#229](https://github.com/MeteoraAg/damm-v1-sdk/pull/229)
 
 ### Changed
 

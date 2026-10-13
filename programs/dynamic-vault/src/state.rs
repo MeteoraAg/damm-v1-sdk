@@ -6,8 +6,6 @@ use std::fmt::Debug;
 /// Max strategy number that a vault can support.
 /// The 30th legacy strategy slot is reused for `version`, `total_lp_supply` and `_padding0`.
 pub const MAX_STRATEGY: usize = 29;
-/// Legacy vault: LP supply is read from `lp_mint.supply`
-pub const VAULT_VERSION_LEGACY: u8 = 0;
 /// Vault tracks LP supply internally in `total_lp_supply`
 pub const VAULT_VERSION_TRACKED_LP_SUPPLY: u8 = 1;
 /// Max bump numer that a strategy can support

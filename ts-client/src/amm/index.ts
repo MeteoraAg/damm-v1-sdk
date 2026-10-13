@@ -1956,7 +1956,7 @@ export default class AmmImpl implements AmmImplementation {
   }
 
   /**
-   * It gets the LP supply tracked by the pool, which the program uses to price LP shares
+   * It gets the LP supply tracked by the pool
    * @returns The `lpMintSupply` of the pool.
    */
   public async getLpSupply() {
