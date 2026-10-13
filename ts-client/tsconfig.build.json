@@ -13,5 +13,6 @@
     "noImplicitAny": false,
     "skipLibCheck": true
   },
-  "exclude": ["**/*.test.ts"]
+  "include": ["index.ts", "src"],
+  "exclude": ["**/*.test.ts", "scripts"]
 }

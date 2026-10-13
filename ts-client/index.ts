@@ -19,8 +19,10 @@ import {
   checkPoolExists,
   getTokensMintFromPoolAddress,
   derivePoolAddress,
+  getVaultLpSupply,
 } from './src/amm/utils';
-import { Amm, IDL as AmmIdl } from './src/amm/idl';
+import { Amm } from './src/amm/idl';
+import AmmIdl from './src/amm/idl.json';
 
 export default AmmImpl;
 export {
@@ -38,6 +40,7 @@ export {
   checkPoolExists,
   getTokensMintFromPoolAddress,
   derivePoolAddress,
+  getVaultLpSupply,
   // Constant
   PROGRAM_ID,
   MAINNET_POOL,

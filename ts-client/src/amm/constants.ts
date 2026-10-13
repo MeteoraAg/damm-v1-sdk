@@ -62,4 +62,8 @@ export const STABLE_SWAP_ALLOWED_TRADE_FEE_BPS = [1, 4, 10, 100];
 
 export const METAPLEX_PROGRAM = new PublicKey('metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s');
 
+export const VAULT_PROGRAM = new PublicKey('24Uqj9JCLxUeoC3hGfh5W3s9FM9uCHDS2SG3LYwBpyTi');
+
+export const VAULT_VERSION_TRACKED_LP_SUPPLY = 1;
+
 export const U64_MAX = new BN('18446744073709551615'); // max amount in program side

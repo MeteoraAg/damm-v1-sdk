@@ -1,7 +1,7 @@
 import VaultImpl from '@meteora-ag/vault-sdk';
 import { AccountLayout, MintLayout, NATIVE_MINT, RawAccount, RawMint } from '@solana/spl-token';
 import { clusterApiUrl, Connection, PublicKey, SYSVAR_CLOCK_PUBKEY } from '@solana/web3.js';
-import { calculateSwapQuoteForGoingToCreateMemecoinPool } from '../utils';
+import { calculateSwapQuoteForGoingToCreateMemecoinPool, createProgram, getVaultLpSupply } from '../utils';
 import { BN } from 'bn.js';
 import { Clock, ClockLayout } from '../types';
 import AmmImpl from '..';
@@ -12,6 +12,7 @@ describe('Bundle pool quote', () => {
 
   it('Able to quote', async () => {
     const quoteDynamicVault = await VaultImpl.create(connection, quoteMint);
+    const quoteVault = await createProgram(connection).ammProgram.account.vault.fetch(quoteDynamicVault.vaultPda);
     const inAmount = new BN('50000'); // 0.00005 SOL
     const tokenAAmount = new BN('1000000000000000'); // 1000000000 memecoin
     const tokenBAmount = new BN('50000'); // 0.00005 SOL
@@ -48,7 +49,7 @@ describe('Bundle pool quote', () => {
         vaultB: {
           vault: quoteDynamicVault.vaultState,
           reserve: new BN(vaultReserve.amount.toString()),
-          lpSupply: new BN(vaultMint.supply.toString()),
+          lpSupply: getVaultLpSupply(quoteVault, new BN(vaultMint.supply.toString())),
         },
         currentTime: clock.unixTimestamp.toNumber(),
       },

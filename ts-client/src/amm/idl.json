@@ -1,0 +1,6726 @@
+{
+  "address": "Eo7WjKq67rjJQSZxS6z3YkapzY3eMj6Xy8X5EQVn5UaB",
+  "metadata": {
+    "name": "amm",
+    "version": "0.5.7",
+    "spec": "0.1.0",
+    "description": "Mercurial Dynamic AMM"
+  },
+  "docs": [
+    "Program for AMM"
+  ],
+  "instructions": [
+    {
+      "name": "add_balance_liquidity",
+      "docs": [
+        "Deposit tokens to the pool in a balanced ratio."
+      ],
+      "discriminator": [
+        168,
+        227,
+        50,
+        62,
+        189,
+        171,
+        84,
+        176
+      ],
+      "accounts": [
+        {
+          "name": "pool",
+          "docs": [
+            "Pool account (PDA)"
+          ],
+          "writable": true
+        },
+        {
+          "name": "lp_mint",
+          "docs": [
+            "LP token mint of the pool"
+          ],
+          "writable": true,
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "user_pool_lp",
+          "docs": [
+            "user pool lp token account. lp will be burned from this account upon success liquidity removal."
+          ],
+          "writable": true
+        },
+        {
+          "name": "a_vault_lp",
+          "docs": [
+            "LP token account of vault A. Used to receive/burn the vault LP upon deposit/withdraw from the vault."
+          ],
+          "writable": true,
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "b_vault_lp",
+          "docs": [
+            "LP token account of vault B. Used to receive/burn the vault LP upon deposit/withdraw from the vault."
+          ],
+          "writable": true,
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "a_vault",
+          "docs": [
+            "Vault account for token a. token a of the pool will be deposit / withdraw from this vault account."
+          ],
+          "writable": true,
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "b_vault",
+          "docs": [
+            "Vault account for token b. token b of the pool will be deposit / withdraw from this vault account."
+          ],
+          "writable": true,
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "a_vault_lp_mint",
+          "docs": [
+            "LP token mint of vault a"
+          ],
+          "writable": true
+        },
+        {
+          "name": "b_vault_lp_mint",
+          "docs": [
+            "LP token mint of vault b"
+          ],
+          "writable": true
+        },
+        {
+          "name": "a_token_vault",
+          "docs": [
+            "Token vault account of vault A"
+          ],
+          "writable": true
+        },
+        {
+          "name": "b_token_vault",
+          "docs": [
+            "Token vault account of vault B"
+          ],
+          "writable": true
+        },
+        {
+          "name": "user_a_token",
+          "docs": [
+            "User token A account. Token will be transfer from this account if it is add liquidity operation. Else, token will be transfer into this account."
+          ],
+          "writable": true
+        },
+        {
+          "name": "user_b_token",
+          "docs": [
+            "User token B account. Token will be transfer from this account if it is add liquidity operation. Else, token will be transfer into this account."
+          ],
+          "writable": true
+        },
+        {
+          "name": "user",
+          "docs": [
+            "User account. Must be owner of user_a_token, and user_b_token."
+          ],
+          "signer": true
+        },
+        {
+          "name": "vault_program",
+          "docs": [
+            "Vault program. the pool will deposit/withdraw liquidity from the vault."
+          ],
+          "address": "24Uqj9JCLxUeoC3hGfh5W3s9FM9uCHDS2SG3LYwBpyTi"
+        },
+        {
+          "name": "token_program",
+          "docs": [
+            "Token program."
+          ],
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": [
+        {
+          "name": "pool_token_amount",
+          "type": "u64"
+        },
+        {
+          "name": "maximum_token_a_amount",
+          "type": "u64"
+        },
+        {
+          "name": "maximum_token_b_amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "add_imbalance_liquidity",
+      "docs": [
+        "Deposit tokens to the pool in an imbalance ratio. Only supported by pool with stable swap curve."
+      ],
+      "discriminator": [
+        79,
+        35,
+        122,
+        84,
+        173,
+        15,
+        93,
+        191
+      ],
+      "accounts": [
+        {
+          "name": "pool",
+          "docs": [
+            "Pool account (PDA)"
+          ],
+          "writable": true
+        },
+        {
+          "name": "lp_mint",
+          "docs": [
+            "LP token mint of the pool"
+          ],
+          "writable": true,
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "user_pool_lp",
+          "docs": [
+            "user pool lp token account. lp will be burned from this account upon success liquidity removal."
+          ],
+          "writable": true
+        },
+        {
+          "name": "a_vault_lp",
+          "docs": [
+            "LP token account of vault A. Used to receive/burn the vault LP upon deposit/withdraw from the vault."
+          ],
+          "writable": true,
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "b_vault_lp",
+          "docs": [
+            "LP token account of vault B. Used to receive/burn the vault LP upon deposit/withdraw from the vault."
+          ],
+          "writable": true,
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "a_vault",
+          "docs": [
+            "Vault account for token a. token a of the pool will be deposit / withdraw from this vault account."
+          ],
+          "writable": true,
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "b_vault",
+          "docs": [
+            "Vault account for token b. token b of the pool will be deposit / withdraw from this vault account."
+          ],
+          "writable": true,
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "a_vault_lp_mint",
+          "docs": [
+            "LP token mint of vault a"
+          ],
+          "writable": true
+        },
+        {
+          "name": "b_vault_lp_mint",
+          "docs": [
+            "LP token mint of vault b"
+          ],
+          "writable": true
+        },
+        {
+          "name": "a_token_vault",
+          "docs": [
+            "Token vault account of vault A"
+          ],
+          "writable": true
+        },
+        {
+          "name": "b_token_vault",
+          "docs": [
+            "Token vault account of vault B"
+          ],
+          "writable": true
+        },
+        {
+          "name": "user_a_token",
+          "docs": [
+            "User token A account. Token will be transfer from this account if it is add liquidity operation. Else, token will be transfer into this account."
+          ],
+          "writable": true
+        },
+        {
+          "name": "user_b_token",
+          "docs": [
+            "User token B account. Token will be transfer from this account if it is add liquidity operation. Else, token will be transfer into this account."
+          ],
+          "writable": true
+        },
+        {
+          "name": "user",
+          "docs": [
+            "User account. Must be owner of user_a_token, and user_b_token."
+          ],
+          "signer": true
+        },
+        {
+          "name": "vault_program",
+          "docs": [
+            "Vault program. the pool will deposit/withdraw liquidity from the vault."
+          ],
+          "address": "24Uqj9JCLxUeoC3hGfh5W3s9FM9uCHDS2SG3LYwBpyTi"
+        },
+        {
+          "name": "token_program",
+          "docs": [
+            "Token program."
+          ],
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": [
+        {
+          "name": "minimum_pool_token_amount",
+          "type": "u64"
+        },
+        {
+          "name": "token_a_amount",
+          "type": "u64"
+        },
+        {
+          "name": "token_b_amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "bootstrap_liquidity",
+      "docs": [
+        "Bootstrap the pool when liquidity is depleted."
+      ],
+      "discriminator": [
+        4,
+        228,
+        215,
+        71,
+        225,
+        253,
+        119,
+        206
+      ],
+      "accounts": [
+        {
+          "name": "pool",
+          "docs": [
+            "Pool account (PDA)"
+          ],
+          "writable": true
+        },
+        {
+          "name": "lp_mint",
+          "docs": [
+            "LP token mint of the pool"
+          ],
+          "writable": true,
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "user_pool_lp",
+          "docs": [
+            "user pool lp token account. lp will be burned from this account upon success liquidity removal."
+          ],
+          "writable": true
+        },
+        {
+          "name": "a_vault_lp",
+          "docs": [
+            "LP token account of vault A. Used to receive/burn the vault LP upon deposit/withdraw from the vault."
+          ],
+          "writable": true,
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "b_vault_lp",
+          "docs": [
+            "LP token account of vault B. Used to receive/burn the vault LP upon deposit/withdraw from the vault."
+          ],
+          "writable": true,
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "a_vault",
+          "docs": [
+            "Vault account for token a. token a of the pool will be deposit / withdraw from this vault account."
+          ],
+          "writable": true,
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "b_vault",
+          "docs": [
+            "Vault account for token b. token b of the pool will be deposit / withdraw from this vault account."
+          ],
+          "writable": true,
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "a_vault_lp_mint",
+          "docs": [
+            "LP token mint of vault a"
+          ],
+          "writable": true
+        },
+        {
+          "name": "b_vault_lp_mint",
+          "docs": [
+            "LP token mint of vault b"
+          ],
+          "writable": true
+        },
+        {
+          "name": "a_token_vault",
+          "docs": [
+            "Token vault account of vault A"
+          ],
+          "writable": true
+        },
+        {
+          "name": "b_token_vault",
+          "docs": [
+            "Token vault account of vault B"
+          ],
+          "writable": true
+        },
+        {
+          "name": "user_a_token",
+          "docs": [
+            "User token A account. Token will be transfer from this account if it is add liquidity operation. Else, token will be transfer into this account."
+          ],
+          "writable": true
+        },
+        {
+          "name": "user_b_token",
+          "docs": [
+            "User token B account. Token will be transfer from this account if it is add liquidity operation. Else, token will be transfer into this account."
+          ],
+          "writable": true
+        },
+        {
+          "name": "user",
+          "docs": [
+            "User account. Must be owner of user_a_token, and user_b_token."
+          ],
+          "signer": true
+        },
+        {
+          "name": "vault_program",
+          "docs": [
+            "Vault program. the pool will deposit/withdraw liquidity from the vault."
+          ],
+          "address": "24Uqj9JCLxUeoC3hGfh5W3s9FM9uCHDS2SG3LYwBpyTi"
+        },
+        {
+          "name": "token_program",
+          "docs": [
+            "Token program."
+          ],
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": [
+        {
+          "name": "token_a_amount",
+          "type": "u64"
+        },
+        {
+          "name": "token_b_amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "claim_fee",
+      "docs": [
+        "Claim fee"
+      ],
+      "discriminator": [
+        169,
+        32,
+        79,
+        137,
+        136,
+        232,
+        70,
+        137
+      ],
+      "accounts": [
+        {
+          "name": "pool",
+          "docs": [
+            "Pool account"
+          ],
+          "writable": true,
+          "relations": [
+            "lock_escrow"
+          ]
+        },
+        {
+          "name": "lp_mint",
+          "docs": [
+            "LP token mint of the pool"
+          ],
+          "writable": true,
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "lock_escrow",
+          "docs": [
+            "Lock account"
+          ],
+          "writable": true
+        },
+        {
+          "name": "owner",
+          "docs": [
+            "Owner of lock account"
+          ],
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "lock_escrow"
+          ]
+        },
+        {
+          "name": "source_tokens",
+          "docs": [
+            "owner lp token account"
+          ],
+          "writable": true
+        },
+        {
+          "name": "escrow_vault",
+          "docs": [
+            "Escrow vault"
+          ],
+          "writable": true,
+          "relations": [
+            "lock_escrow"
+          ]
+        },
+        {
+          "name": "token_program",
+          "docs": [
+            "Token program."
+          ],
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "a_token_vault",
+          "docs": [
+            "Token vault account of vault A"
+          ],
+          "writable": true
+        },
+        {
+          "name": "b_token_vault",
+          "docs": [
+            "Token vault account of vault B"
+          ],
+          "writable": true
+        },
+        {
+          "name": "a_vault",
+          "docs": [
+            "Vault account for token a. token a of the pool will be deposit / withdraw from this vault account."
+          ],
+          "writable": true,
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "b_vault",
+          "docs": [
+            "Vault account for token b. token b of the pool will be deposit / withdraw from this vault account."
+          ],
+          "writable": true,
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "a_vault_lp",
+          "docs": [
+            "LP token account of vault A. Used to receive/burn the vault LP upon deposit/withdraw from the vault."
+          ],
+          "writable": true,
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "b_vault_lp",
+          "docs": [
+            "LP token account of vault B. Used to receive/burn the vault LP upon deposit/withdraw from the vault."
+          ],
+          "writable": true,
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "a_vault_lp_mint",
+          "docs": [
+            "LP token mint of vault a"
+          ],
+          "writable": true
+        },
+        {
+          "name": "b_vault_lp_mint",
+          "docs": [
+            "LP token mint of vault b"
+          ],
+          "writable": true
+        },
+        {
+          "name": "user_a_token",
+          "docs": [
+            "User token A account. Token will be transfer from this account if it is add liquidity operation. Else, token will be transfer into this account."
+          ],
+          "writable": true
+        },
+        {
+          "name": "user_b_token",
+          "docs": [
+            "User token B account. Token will be transfer from this account if it is add liquidity operation. Else, token will be transfer into this account."
+          ],
+          "writable": true
+        },
+        {
+          "name": "vault_program",
+          "docs": [
+            "Vault program. the pool will deposit/withdraw liquidity from the vault."
+          ],
+          "address": "24Uqj9JCLxUeoC3hGfh5W3s9FM9uCHDS2SG3LYwBpyTi"
+        }
+      ],
+      "args": [
+        {
+          "name": "max_amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "claim_protocol_fee2",
+      "docs": [
+        "Claim protocol fee 2"
+      ],
+      "discriminator": [
+        235,
+        194,
+        54,
+        69,
+        65,
+        10,
+        236,
+        112
+      ],
+      "accounts": [
+        {
+          "name": "receiver_token_account",
+          "docs": [
+            "Receiver token account for the claimed token. Validated through the protocol_fee program."
+          ],
+          "writable": true
+        },
+        {
+          "name": "token_a_mint",
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "token_b_mint",
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "token_a_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "token_b_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "pool",
+          "docs": [
+            "Pool account (PDA)"
+          ]
+        },
+        {
+          "name": "protocol_token_a_fee",
+          "writable": true,
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "protocol_token_b_fee",
+          "writable": true,
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "a_vault_lp",
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "signer",
+          "signer": true,
+          "address": "FkU5rQCWQM131skHCpcEbK8P1JrQGsBgqXe55w525SSF"
+        }
+      ],
+      "args": [
+        {
+          "name": "max_amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "close_config",
+      "docs": [
+        "Close config"
+      ],
+      "discriminator": [
+        145,
+        9,
+        72,
+        157,
+        95,
+        125,
+        61,
+        85
+      ],
+      "accounts": [
+        {
+          "name": "config",
+          "writable": true
+        },
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "rent_receiver",
+          "writable": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "close_operator_account",
+      "docs": [
+        "Close operator account"
+      ],
+      "discriminator": [
+        171,
+        9,
+        213,
+        74,
+        120,
+        23,
+        3,
+        29
+      ],
+      "accounts": [
+        {
+          "name": "operator",
+          "writable": true
+        },
+        {
+          "name": "signer",
+          "signer": true
+        },
+        {
+          "name": "rent_receiver",
+          "writable": true
+        },
+        {
+          "name": "event_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  95,
+                  95,
+                  101,
+                  118,
+                  101,
+                  110,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "program"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "create_config",
+      "docs": [
+        "Create config"
+      ],
+      "discriminator": [
+        201,
+        207,
+        243,
+        114,
+        75,
+        111,
+        47,
+        189
+      ],
+      "accounts": [
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "config_parameters.index"
+              }
+            ]
+          }
+        },
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "config_parameters",
+          "type": {
+            "defined": {
+              "name": "ConfigParameters"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "create_lock_escrow",
+      "docs": [
+        "Create lock account"
+      ],
+      "discriminator": [
+        54,
+        87,
+        165,
+        19,
+        69,
+        227,
+        218,
+        224
+      ],
+      "accounts": [
+        {
+          "name": "pool",
+          "docs": [
+            "Pool account"
+          ]
+        },
+        {
+          "name": "lock_escrow",
+          "docs": [
+            "Lock account"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  111,
+                  99,
+                  107,
+                  95,
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "pool"
+              },
+              {
+                "kind": "account",
+                "path": "owner"
+              }
+            ]
+          }
+        },
+        {
+          "name": "owner"
+        },
+        {
+          "name": "lp_mint",
+          "docs": [
+            "LP token mint of the pool"
+          ],
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "payer",
+          "docs": [
+            "Payer account"
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "docs": [
+            "System program."
+          ],
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "create_mint_metadata",
+      "docs": [
+        "Create mint metadata account for old pools"
+      ],
+      "discriminator": [
+        13,
+        70,
+        168,
+        41,
+        250,
+        100,
+        148,
+        90
+      ],
+      "accounts": [
+        {
+          "name": "pool",
+          "docs": [
+            "Pool account"
+          ]
+        },
+        {
+          "name": "lp_mint",
+          "docs": [
+            "LP mint account of the pool"
+          ],
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "a_vault_lp",
+          "docs": [
+            "Vault A LP account of the pool"
+          ],
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "mint_metadata",
+          "writable": true
+        },
+        {
+          "name": "metadata_program",
+          "address": "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s"
+        },
+        {
+          "name": "system_program",
+          "docs": [
+            "System program."
+          ],
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "payer",
+          "docs": [
+            "Payer"
+          ],
+          "writable": true,
+          "signer": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "create_operator_account",
+      "docs": [
+        "Create operator account"
+      ],
+      "discriminator": [
+        221,
+        64,
+        246,
+        149,
+        240,
+        153,
+        229,
+        163
+      ],
+      "accounts": [
+        {
+          "name": "operator",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  111,
+                  112,
+                  101,
+                  114,
+                  97,
+                  116,
+                  111,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "whitelisted_address"
+              }
+            ]
+          }
+        },
+        {
+          "name": "whitelisted_address"
+        },
+        {
+          "name": "signer",
+          "signer": true
+        },
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "event_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  95,
+                  95,
+                  101,
+                  118,
+                  101,
+                  110,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "program"
+        }
+      ],
+      "args": [
+        {
+          "name": "permission",
+          "type": "u128"
+        }
+      ]
+    },
+    {
+      "name": "enable_or_disable_pool",
+      "docs": [
+        "Enable or disable a pool. A disabled pool allow only remove balanced liquidity operation."
+      ],
+      "discriminator": [
+        128,
+        6,
+        228,
+        131,
+        55,
+        161,
+        52,
+        169
+      ],
+      "accounts": [
+        {
+          "name": "pool",
+          "docs": [
+            "Pool account (PDA)"
+          ],
+          "writable": true
+        },
+        {
+          "name": "admin",
+          "docs": [
+            "Admin account. Must be owner of the pool."
+          ],
+          "signer": true
+        }
+      ],
+      "args": [
+        {
+          "name": "enable",
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "name": "get_pool_info",
+      "docs": [
+        "Get the general information of the pool."
+      ],
+      "discriminator": [
+        9,
+        48,
+        220,
+        101,
+        22,
+        240,
+        78,
+        200
+      ],
+      "accounts": [
+        {
+          "name": "pool",
+          "docs": [
+            "Pool account (PDA)"
+          ]
+        },
+        {
+          "name": "lp_mint",
+          "docs": [
+            "LP token mint of the pool"
+          ],
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "a_vault_lp",
+          "docs": [
+            "LP token account of vault A. Used to receive/burn the vault LP upon deposit/withdraw from the vault."
+          ],
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "b_vault_lp",
+          "docs": [
+            "LP token account of vault B. Used to receive/burn the vault LP upon deposit/withdraw from the vault."
+          ],
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "a_vault",
+          "docs": [
+            "Vault account for token a. token a of the pool will be deposit / withdraw from this vault account."
+          ],
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "b_vault",
+          "docs": [
+            "Vault account for token b. token b of the pool will be deposit / withdraw from this vault account."
+          ],
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "a_vault_lp_mint",
+          "docs": [
+            "LP token mint of vault a"
+          ]
+        },
+        {
+          "name": "b_vault_lp_mint",
+          "docs": [
+            "LP token mint of vault b"
+          ]
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "initialize_customizable_permissionless_constant_product_pool",
+      "docs": [
+        "Initialize permissionless pool with customizable params"
+      ],
+      "discriminator": [
+        145,
+        24,
+        172,
+        194,
+        219,
+        125,
+        3,
+        190
+      ],
+      "accounts": [
+        {
+          "name": "pool",
+          "docs": [
+            "Pool account (PDA address)"
+          ],
+          "writable": true
+        },
+        {
+          "name": "lp_mint",
+          "docs": [
+            "LP token mint of the pool"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  112,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_a_mint",
+          "docs": [
+            "Token A mint of the pool. Eg: USDT"
+          ]
+        },
+        {
+          "name": "token_b_mint",
+          "docs": [
+            "Token B mint of the pool. Eg: USDC"
+          ]
+        },
+        {
+          "name": "a_vault",
+          "docs": [
+            "Vault account for token A. Token A of the pool will be deposit / withdraw from this vault account."
+          ],
+          "writable": true
+        },
+        {
+          "name": "b_vault",
+          "docs": [
+            "Vault account for token B. Token B of the pool will be deposit / withdraw from this vault account."
+          ],
+          "writable": true
+        },
+        {
+          "name": "a_token_vault",
+          "docs": [
+            "Token vault account of vault A"
+          ],
+          "writable": true
+        },
+        {
+          "name": "b_token_vault",
+          "docs": [
+            "Token vault account of vault B"
+          ],
+          "writable": true
+        },
+        {
+          "name": "a_vault_lp_mint",
+          "docs": [
+            "LP token mint of vault A"
+          ],
+          "writable": true
+        },
+        {
+          "name": "b_vault_lp_mint",
+          "docs": [
+            "LP token mint of vault B"
+          ],
+          "writable": true
+        },
+        {
+          "name": "a_vault_lp",
+          "docs": [
+            "LP token account of vault A. Used to receive/burn the vault LP upon deposit/withdraw from the vault."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "a_vault"
+              },
+              {
+                "kind": "account",
+                "path": "pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "b_vault_lp",
+          "docs": [
+            "LP token account of vault B. Used to receive/burn vault LP upon deposit/withdraw from the vault."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "b_vault"
+              },
+              {
+                "kind": "account",
+                "path": "pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "payer_token_a",
+          "docs": [
+            "Payer token account for pool token A mint. Used to bootstrap the pool with initial liquidity."
+          ],
+          "writable": true
+        },
+        {
+          "name": "payer_token_b",
+          "docs": [
+            "Admin token account for pool token B mint. Used to bootstrap the pool with initial liquidity."
+          ],
+          "writable": true
+        },
+        {
+          "name": "payer_pool_lp",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "payer"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "lp_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "protocol_token_a_fee",
+          "docs": [
+            "Protocol fee token account for token A. Used to receive trading fee."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  101,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "token_a_mint"
+              },
+              {
+                "kind": "account",
+                "path": "pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "protocol_token_b_fee",
+          "docs": [
+            "Protocol fee token account for token B. Used to receive trading fee."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  101,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "token_b_mint"
+              },
+              {
+                "kind": "account",
+                "path": "pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "payer",
+          "docs": [
+            "Admin account. This account will be the admin of the pool, and the payer for PDA during initialize pool."
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "rent",
+          "docs": [
+            "Rent account."
+          ],
+          "address": "SysvarRent111111111111111111111111111111111"
+        },
+        {
+          "name": "mint_metadata",
+          "writable": true
+        },
+        {
+          "name": "metadata_program"
+        },
+        {
+          "name": "vault_program",
+          "docs": [
+            "Vault program. The pool will deposit/withdraw liquidity from the vault."
+          ],
+          "address": "24Uqj9JCLxUeoC3hGfh5W3s9FM9uCHDS2SG3LYwBpyTi"
+        },
+        {
+          "name": "token_program",
+          "docs": [
+            "Token program."
+          ],
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "associated_token_program",
+          "docs": [
+            "Associated token program."
+          ],
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "system_program",
+          "docs": [
+            "System program."
+          ],
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "token_a_amount",
+          "type": "u64"
+        },
+        {
+          "name": "token_b_amount",
+          "type": "u64"
+        },
+        {
+          "name": "params",
+          "type": {
+            "defined": {
+              "name": "CustomizableParams"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "initialize_permissioned_pool",
+      "docs": [
+        "Initialize a new permissioned pool."
+      ],
+      "discriminator": [
+        77,
+        85,
+        178,
+        157,
+        50,
+        48,
+        212,
+        126
+      ],
+      "accounts": [
+        {
+          "name": "pool",
+          "docs": [
+            "Pool account (arbitrary address)"
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "lp_mint",
+          "docs": [
+            "LP token mint of the pool"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  112,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_a_mint",
+          "docs": [
+            "Token A mint of the pool. Eg: USDT"
+          ]
+        },
+        {
+          "name": "token_b_mint",
+          "docs": [
+            "Token B mint of the pool. Eg: USDC"
+          ]
+        },
+        {
+          "name": "a_vault",
+          "docs": [
+            "Vault account for token A. Token A of the pool will be deposit / withdraw from this vault account."
+          ],
+          "writable": true
+        },
+        {
+          "name": "b_vault",
+          "docs": [
+            "Vault account for token B. Token B of the pool will be deposit / withdraw from this vault account."
+          ],
+          "writable": true
+        },
+        {
+          "name": "a_vault_lp_mint",
+          "docs": [
+            "LP token mint of vault A"
+          ],
+          "writable": true
+        },
+        {
+          "name": "b_vault_lp_mint",
+          "docs": [
+            "LP token mint of vault B"
+          ],
+          "writable": true
+        },
+        {
+          "name": "a_vault_lp",
+          "docs": [
+            "LP token account of vault A. Used to receive/burn the vault LP upon deposit/withdraw from the vault."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "a_vault"
+              },
+              {
+                "kind": "account",
+                "path": "pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "b_vault_lp",
+          "docs": [
+            "LP token account of vault B. Used to receive/burn vault LP upon deposit/withdraw from the vault."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "b_vault"
+              },
+              {
+                "kind": "account",
+                "path": "pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "admin_token_a",
+          "docs": [
+            "Admin token account for pool token A mint. Used to bootstrap the pool with initial liquidity."
+          ],
+          "writable": true
+        },
+        {
+          "name": "admin_token_b",
+          "docs": [
+            "Admin token account for pool token B mint. Used to bootstrap the pool with initial liquidity."
+          ],
+          "writable": true
+        },
+        {
+          "name": "admin_pool_lp",
+          "docs": [
+            "Admin pool LP token account. Used to receive LP during first deposit (initialize pool)",
+            "Admin pool LP token account. Used to receive LP during first deposit (initialize pool)"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "admin"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "lp_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "protocol_token_a_fee",
+          "docs": [
+            "Protocol fee token account for token A. Used to receive trading fee."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  101,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "token_a_mint"
+              },
+              {
+                "kind": "account",
+                "path": "pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "protocol_token_b_fee",
+          "docs": [
+            "Protocol fee token account for token B. Used to receive trading fee."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  101,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "token_b_mint"
+              },
+              {
+                "kind": "account",
+                "path": "pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "admin",
+          "docs": [
+            "Admin account. This account will be the admin of the pool, and the payer for PDA during initialize pool."
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "fee_owner"
+        },
+        {
+          "name": "rent",
+          "docs": [
+            "Rent account."
+          ],
+          "address": "SysvarRent111111111111111111111111111111111"
+        },
+        {
+          "name": "mint_metadata",
+          "writable": true
+        },
+        {
+          "name": "metadata_program"
+        },
+        {
+          "name": "vault_program",
+          "docs": [
+            "Vault program. The pool will deposit/withdraw liquidity from the vault."
+          ],
+          "address": "24Uqj9JCLxUeoC3hGfh5W3s9FM9uCHDS2SG3LYwBpyTi"
+        },
+        {
+          "name": "token_program",
+          "docs": [
+            "Token program."
+          ],
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "associated_token_program",
+          "docs": [
+            "Associated token program."
+          ],
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "system_program",
+          "docs": [
+            "System program."
+          ],
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "curve_type",
+          "type": {
+            "defined": {
+              "name": "CurveType"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "initialize_permissionless_constant_product_pool_with_config",
+      "docs": [
+        "Initialize permissionless pool with config"
+      ],
+      "discriminator": [
+        7,
+        166,
+        138,
+        171,
+        206,
+        171,
+        236,
+        244
+      ],
+      "accounts": [
+        {
+          "name": "pool",
+          "docs": [
+            "Pool account (PDA address)"
+          ],
+          "writable": true
+        },
+        {
+          "name": "config"
+        },
+        {
+          "name": "lp_mint",
+          "docs": [
+            "LP token mint of the pool"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  112,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_a_mint",
+          "docs": [
+            "Token A mint of the pool. Eg: USDT"
+          ]
+        },
+        {
+          "name": "token_b_mint",
+          "docs": [
+            "Token B mint of the pool. Eg: USDC"
+          ]
+        },
+        {
+          "name": "a_vault",
+          "docs": [
+            "Vault account for token A. Token A of the pool will be deposit / withdraw from this vault account."
+          ],
+          "writable": true
+        },
+        {
+          "name": "b_vault",
+          "docs": [
+            "Vault account for token B. Token B of the pool will be deposit / withdraw from this vault account."
+          ],
+          "writable": true
+        },
+        {
+          "name": "a_token_vault",
+          "docs": [
+            "Token vault account of vault A"
+          ],
+          "writable": true
+        },
+        {
+          "name": "b_token_vault",
+          "docs": [
+            "Token vault account of vault B"
+          ],
+          "writable": true
+        },
+        {
+          "name": "a_vault_lp_mint",
+          "docs": [
+            "LP token mint of vault A"
+          ],
+          "writable": true
+        },
+        {
+          "name": "b_vault_lp_mint",
+          "docs": [
+            "LP token mint of vault B"
+          ],
+          "writable": true
+        },
+        {
+          "name": "a_vault_lp",
+          "docs": [
+            "LP token account of vault A. Used to receive/burn the vault LP upon deposit/withdraw from the vault."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "a_vault"
+              },
+              {
+                "kind": "account",
+                "path": "pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "b_vault_lp",
+          "docs": [
+            "LP token account of vault B. Used to receive/burn vault LP upon deposit/withdraw from the vault."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "b_vault"
+              },
+              {
+                "kind": "account",
+                "path": "pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "payer_token_a",
+          "docs": [
+            "Payer token account for pool token A mint. Used to bootstrap the pool with initial liquidity."
+          ],
+          "writable": true
+        },
+        {
+          "name": "payer_token_b",
+          "docs": [
+            "Admin token account for pool token B mint. Used to bootstrap the pool with initial liquidity."
+          ],
+          "writable": true
+        },
+        {
+          "name": "payer_pool_lp",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "payer"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "lp_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "protocol_token_a_fee",
+          "docs": [
+            "Protocol fee token account for token A. Used to receive trading fee."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  101,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "token_a_mint"
+              },
+              {
+                "kind": "account",
+                "path": "pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "protocol_token_b_fee",
+          "docs": [
+            "Protocol fee token account for token B. Used to receive trading fee."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  101,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "token_b_mint"
+              },
+              {
+                "kind": "account",
+                "path": "pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "payer",
+          "docs": [
+            "Admin account. This account will be the admin of the pool, and the payer for PDA during initialize pool."
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "rent",
+          "docs": [
+            "Rent account."
+          ],
+          "address": "SysvarRent111111111111111111111111111111111"
+        },
+        {
+          "name": "mint_metadata",
+          "writable": true
+        },
+        {
+          "name": "metadata_program"
+        },
+        {
+          "name": "vault_program",
+          "docs": [
+            "Vault program. The pool will deposit/withdraw liquidity from the vault."
+          ],
+          "address": "24Uqj9JCLxUeoC3hGfh5W3s9FM9uCHDS2SG3LYwBpyTi"
+        },
+        {
+          "name": "token_program",
+          "docs": [
+            "Token program."
+          ],
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "associated_token_program",
+          "docs": [
+            "Associated token program."
+          ],
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "system_program",
+          "docs": [
+            "System program."
+          ],
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "token_a_amount",
+          "type": "u64"
+        },
+        {
+          "name": "token_b_amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "initialize_permissionless_constant_product_pool_with_config2",
+      "docs": [
+        "Initialize permissionless pool with config 2"
+      ],
+      "discriminator": [
+        48,
+        149,
+        220,
+        130,
+        61,
+        11,
+        9,
+        178
+      ],
+      "accounts": [
+        {
+          "name": "pool",
+          "docs": [
+            "Pool account (PDA address)"
+          ],
+          "writable": true
+        },
+        {
+          "name": "config"
+        },
+        {
+          "name": "lp_mint",
+          "docs": [
+            "LP token mint of the pool"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  112,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_a_mint",
+          "docs": [
+            "Token A mint of the pool. Eg: USDT"
+          ]
+        },
+        {
+          "name": "token_b_mint",
+          "docs": [
+            "Token B mint of the pool. Eg: USDC"
+          ]
+        },
+        {
+          "name": "a_vault",
+          "docs": [
+            "Vault account for token A. Token A of the pool will be deposit / withdraw from this vault account."
+          ],
+          "writable": true
+        },
+        {
+          "name": "b_vault",
+          "docs": [
+            "Vault account for token B. Token B of the pool will be deposit / withdraw from this vault account."
+          ],
+          "writable": true
+        },
+        {
+          "name": "a_token_vault",
+          "docs": [
+            "Token vault account of vault A"
+          ],
+          "writable": true
+        },
+        {
+          "name": "b_token_vault",
+          "docs": [
+            "Token vault account of vault B"
+          ],
+          "writable": true
+        },
+        {
+          "name": "a_vault_lp_mint",
+          "docs": [
+            "LP token mint of vault A"
+          ],
+          "writable": true
+        },
+        {
+          "name": "b_vault_lp_mint",
+          "docs": [
+            "LP token mint of vault B"
+          ],
+          "writable": true
+        },
+        {
+          "name": "a_vault_lp",
+          "docs": [
+            "LP token account of vault A. Used to receive/burn the vault LP upon deposit/withdraw from the vault."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "a_vault"
+              },
+              {
+                "kind": "account",
+                "path": "pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "b_vault_lp",
+          "docs": [
+            "LP token account of vault B. Used to receive/burn vault LP upon deposit/withdraw from the vault."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "b_vault"
+              },
+              {
+                "kind": "account",
+                "path": "pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "payer_token_a",
+          "docs": [
+            "Payer token account for pool token A mint. Used to bootstrap the pool with initial liquidity."
+          ],
+          "writable": true
+        },
+        {
+          "name": "payer_token_b",
+          "docs": [
+            "Admin token account for pool token B mint. Used to bootstrap the pool with initial liquidity."
+          ],
+          "writable": true
+        },
+        {
+          "name": "payer_pool_lp",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "payer"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "lp_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "protocol_token_a_fee",
+          "docs": [
+            "Protocol fee token account for token A. Used to receive trading fee."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  101,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "token_a_mint"
+              },
+              {
+                "kind": "account",
+                "path": "pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "protocol_token_b_fee",
+          "docs": [
+            "Protocol fee token account for token B. Used to receive trading fee."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  101,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "token_b_mint"
+              },
+              {
+                "kind": "account",
+                "path": "pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "payer",
+          "docs": [
+            "Admin account. This account will be the admin of the pool, and the payer for PDA during initialize pool."
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "rent",
+          "docs": [
+            "Rent account."
+          ],
+          "address": "SysvarRent111111111111111111111111111111111"
+        },
+        {
+          "name": "mint_metadata",
+          "writable": true
+        },
+        {
+          "name": "metadata_program"
+        },
+        {
+          "name": "vault_program",
+          "docs": [
+            "Vault program. The pool will deposit/withdraw liquidity from the vault."
+          ],
+          "address": "24Uqj9JCLxUeoC3hGfh5W3s9FM9uCHDS2SG3LYwBpyTi"
+        },
+        {
+          "name": "token_program",
+          "docs": [
+            "Token program."
+          ],
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "associated_token_program",
+          "docs": [
+            "Associated token program."
+          ],
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "system_program",
+          "docs": [
+            "System program."
+          ],
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "token_a_amount",
+          "type": "u64"
+        },
+        {
+          "name": "token_b_amount",
+          "type": "u64"
+        },
+        {
+          "name": "activation_point",
+          "type": {
+            "option": "u64"
+          }
+        }
+      ]
+    },
+    {
+      "name": "initialize_permissionless_pool",
+      "docs": [
+        "Initialize a new permissionless pool."
+      ],
+      "discriminator": [
+        118,
+        173,
+        41,
+        157,
+        173,
+        72,
+        97,
+        103
+      ],
+      "accounts": [
+        {
+          "name": "pool",
+          "docs": [
+            "Pool account (PDA address)"
+          ],
+          "writable": true
+        },
+        {
+          "name": "lp_mint",
+          "docs": [
+            "LP token mint of the pool"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  112,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_a_mint",
+          "docs": [
+            "Token A mint of the pool. Eg: USDT"
+          ]
+        },
+        {
+          "name": "token_b_mint",
+          "docs": [
+            "Token B mint of the pool. Eg: USDC"
+          ]
+        },
+        {
+          "name": "a_vault",
+          "docs": [
+            "Vault account for token A. Token A of the pool will be deposit / withdraw from this vault account."
+          ],
+          "writable": true
+        },
+        {
+          "name": "b_vault",
+          "docs": [
+            "Vault account for token B. Token B of the pool will be deposit / withdraw from this vault account."
+          ],
+          "writable": true
+        },
+        {
+          "name": "a_token_vault",
+          "docs": [
+            "Token vault account of vault A"
+          ],
+          "writable": true
+        },
+        {
+          "name": "b_token_vault",
+          "docs": [
+            "Token vault account of vault B"
+          ],
+          "writable": true
+        },
+        {
+          "name": "a_vault_lp_mint",
+          "docs": [
+            "LP token mint of vault A"
+          ],
+          "writable": true
+        },
+        {
+          "name": "b_vault_lp_mint",
+          "docs": [
+            "LP token mint of vault B"
+          ],
+          "writable": true
+        },
+        {
+          "name": "a_vault_lp",
+          "docs": [
+            "LP token account of vault A. Used to receive/burn the vault LP upon deposit/withdraw from the vault."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "a_vault"
+              },
+              {
+                "kind": "account",
+                "path": "pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "b_vault_lp",
+          "docs": [
+            "LP token account of vault B. Used to receive/burn vault LP upon deposit/withdraw from the vault."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "b_vault"
+              },
+              {
+                "kind": "account",
+                "path": "pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "payer_token_a",
+          "docs": [
+            "Payer token account for pool token A mint. Used to bootstrap the pool with initial liquidity."
+          ],
+          "writable": true
+        },
+        {
+          "name": "payer_token_b",
+          "docs": [
+            "Admin token account for pool token B mint. Used to bootstrap the pool with initial liquidity."
+          ],
+          "writable": true
+        },
+        {
+          "name": "payer_pool_lp",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "payer"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "lp_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "protocol_token_a_fee",
+          "docs": [
+            "Protocol fee token account for token A. Used to receive trading fee."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  101,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "token_a_mint"
+              },
+              {
+                "kind": "account",
+                "path": "pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "protocol_token_b_fee",
+          "docs": [
+            "Protocol fee token account for token B. Used to receive trading fee."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  101,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "token_b_mint"
+              },
+              {
+                "kind": "account",
+                "path": "pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "payer",
+          "docs": [
+            "Admin account. This account will be the admin of the pool, and the payer for PDA during initialize pool."
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "fee_owner"
+        },
+        {
+          "name": "rent",
+          "docs": [
+            "Rent account."
+          ],
+          "address": "SysvarRent111111111111111111111111111111111"
+        },
+        {
+          "name": "mint_metadata",
+          "writable": true
+        },
+        {
+          "name": "metadata_program"
+        },
+        {
+          "name": "vault_program",
+          "docs": [
+            "Vault program. The pool will deposit/withdraw liquidity from the vault."
+          ],
+          "address": "24Uqj9JCLxUeoC3hGfh5W3s9FM9uCHDS2SG3LYwBpyTi"
+        },
+        {
+          "name": "token_program",
+          "docs": [
+            "Token program."
+          ],
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "associated_token_program",
+          "docs": [
+            "Associated token program."
+          ],
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "system_program",
+          "docs": [
+            "System program."
+          ],
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "curve_type",
+          "type": {
+            "defined": {
+              "name": "CurveType"
+            }
+          }
+        },
+        {
+          "name": "token_a_amount",
+          "type": "u64"
+        },
+        {
+          "name": "token_b_amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "initialize_permissionless_pool_with_fee_tier",
+      "docs": [
+        "Initialize a new permissionless pool with customized fee tier"
+      ],
+      "discriminator": [
+        6,
+        135,
+        68,
+        147,
+        229,
+        82,
+        169,
+        113
+      ],
+      "accounts": [
+        {
+          "name": "pool",
+          "docs": [
+            "Pool account (PDA address)"
+          ],
+          "writable": true
+        },
+        {
+          "name": "lp_mint",
+          "docs": [
+            "LP token mint of the pool"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  112,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_a_mint",
+          "docs": [
+            "Token A mint of the pool. Eg: USDT"
+          ]
+        },
+        {
+          "name": "token_b_mint",
+          "docs": [
+            "Token B mint of the pool. Eg: USDC"
+          ]
+        },
+        {
+          "name": "a_vault",
+          "docs": [
+            "Vault account for token A. Token A of the pool will be deposit / withdraw from this vault account."
+          ],
+          "writable": true
+        },
+        {
+          "name": "b_vault",
+          "docs": [
+            "Vault account for token B. Token B of the pool will be deposit / withdraw from this vault account."
+          ],
+          "writable": true
+        },
+        {
+          "name": "a_token_vault",
+          "docs": [
+            "Token vault account of vault A"
+          ],
+          "writable": true
+        },
+        {
+          "name": "b_token_vault",
+          "docs": [
+            "Token vault account of vault B"
+          ],
+          "writable": true
+        },
+        {
+          "name": "a_vault_lp_mint",
+          "docs": [
+            "LP token mint of vault A"
+          ],
+          "writable": true
+        },
+        {
+          "name": "b_vault_lp_mint",
+          "docs": [
+            "LP token mint of vault B"
+          ],
+          "writable": true
+        },
+        {
+          "name": "a_vault_lp",
+          "docs": [
+            "LP token account of vault A. Used to receive/burn the vault LP upon deposit/withdraw from the vault."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "a_vault"
+              },
+              {
+                "kind": "account",
+                "path": "pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "b_vault_lp",
+          "docs": [
+            "LP token account of vault B. Used to receive/burn vault LP upon deposit/withdraw from the vault."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "b_vault"
+              },
+              {
+                "kind": "account",
+                "path": "pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "payer_token_a",
+          "docs": [
+            "Payer token account for pool token A mint. Used to bootstrap the pool with initial liquidity."
+          ],
+          "writable": true
+        },
+        {
+          "name": "payer_token_b",
+          "docs": [
+            "Admin token account for pool token B mint. Used to bootstrap the pool with initial liquidity."
+          ],
+          "writable": true
+        },
+        {
+          "name": "payer_pool_lp",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "payer"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "lp_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "protocol_token_a_fee",
+          "docs": [
+            "Protocol fee token account for token A. Used to receive trading fee."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  101,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "token_a_mint"
+              },
+              {
+                "kind": "account",
+                "path": "pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "protocol_token_b_fee",
+          "docs": [
+            "Protocol fee token account for token B. Used to receive trading fee."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  101,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "token_b_mint"
+              },
+              {
+                "kind": "account",
+                "path": "pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "payer",
+          "docs": [
+            "Admin account. This account will be the admin of the pool, and the payer for PDA during initialize pool."
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "fee_owner"
+        },
+        {
+          "name": "rent",
+          "docs": [
+            "Rent account."
+          ],
+          "address": "SysvarRent111111111111111111111111111111111"
+        },
+        {
+          "name": "mint_metadata",
+          "writable": true
+        },
+        {
+          "name": "metadata_program"
+        },
+        {
+          "name": "vault_program",
+          "docs": [
+            "Vault program. The pool will deposit/withdraw liquidity from the vault."
+          ],
+          "address": "24Uqj9JCLxUeoC3hGfh5W3s9FM9uCHDS2SG3LYwBpyTi"
+        },
+        {
+          "name": "token_program",
+          "docs": [
+            "Token program."
+          ],
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "associated_token_program",
+          "docs": [
+            "Associated token program."
+          ],
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "system_program",
+          "docs": [
+            "System program."
+          ],
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "curve_type",
+          "type": {
+            "defined": {
+              "name": "CurveType"
+            }
+          }
+        },
+        {
+          "name": "trade_fee_bps",
+          "type": "u64"
+        },
+        {
+          "name": "token_a_amount",
+          "type": "u64"
+        },
+        {
+          "name": "token_b_amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "lock",
+      "docs": [
+        "Lock Lp token"
+      ],
+      "discriminator": [
+        21,
+        19,
+        208,
+        43,
+        237,
+        62,
+        255,
+        87
+      ],
+      "accounts": [
+        {
+          "name": "pool",
+          "docs": [
+            "Pool account"
+          ],
+          "writable": true,
+          "relations": [
+            "lock_escrow"
+          ]
+        },
+        {
+          "name": "lp_mint",
+          "docs": [
+            "LP token mint of the pool"
+          ],
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "lock_escrow",
+          "docs": [
+            "Lock account"
+          ],
+          "writable": true
+        },
+        {
+          "name": "owner",
+          "docs": [
+            "Can be anyone"
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "source_tokens",
+          "docs": [
+            "owner lp token account"
+          ],
+          "writable": true
+        },
+        {
+          "name": "escrow_vault",
+          "docs": [
+            "Escrow vault"
+          ],
+          "writable": true,
+          "relations": [
+            "lock_escrow"
+          ]
+        },
+        {
+          "name": "token_program",
+          "docs": [
+            "Token program."
+          ],
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "a_vault",
+          "docs": [
+            "Vault account for token a. token a of the pool will be deposit / withdraw from this vault account."
+          ],
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "b_vault",
+          "docs": [
+            "Vault account for token b. token b of the pool will be deposit / withdraw from this vault account."
+          ],
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "a_vault_lp",
+          "docs": [
+            "LP token account of vault A. Used to receive/burn the vault LP upon deposit/withdraw from the vault."
+          ],
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "b_vault_lp",
+          "docs": [
+            "LP token account of vault B. Used to receive/burn the vault LP upon deposit/withdraw from the vault."
+          ],
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "a_vault_lp_mint",
+          "docs": [
+            "LP token mint of vault a"
+          ]
+        },
+        {
+          "name": "b_vault_lp_mint",
+          "docs": [
+            "LP token mint of vault b"
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "max_amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "override_curve_param",
+      "docs": [
+        "Update swap curve parameters. This function do not allow update of curve type. For example: stable swap curve to constant product curve. Only supported by pool with stable swap curve.",
+        "Only amp is allowed to be override. The other attributes of stable swap curve will be ignored."
+      ],
+      "discriminator": [
+        98,
+        86,
+        204,
+        51,
+        94,
+        71,
+        69,
+        187
+      ],
+      "accounts": [
+        {
+          "name": "pool",
+          "docs": [
+            "Pool account (PDA)"
+          ],
+          "writable": true
+        },
+        {
+          "name": "admin",
+          "docs": [
+            "Admin account."
+          ],
+          "signer": true
+        }
+      ],
+      "args": [
+        {
+          "name": "curve_type",
+          "type": {
+            "defined": {
+              "name": "CurveType"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "partner_claim_fee",
+      "docs": [
+        "Partner claim fee"
+      ],
+      "discriminator": [
+        57,
+        53,
+        176,
+        30,
+        123,
+        70,
+        52,
+        64
+      ],
+      "accounts": [
+        {
+          "name": "pool",
+          "docs": [
+            "Pool account (PDA)"
+          ],
+          "writable": true
+        },
+        {
+          "name": "a_vault_lp",
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "protocol_token_a_fee",
+          "writable": true,
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "protocol_token_b_fee",
+          "writable": true,
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "partner_token_a",
+          "writable": true
+        },
+        {
+          "name": "partner_token_b",
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "partner_authority",
+          "signer": true
+        }
+      ],
+      "args": [
+        {
+          "name": "max_amount_a",
+          "type": "u64"
+        },
+        {
+          "name": "max_amount_b",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "remove_balance_liquidity",
+      "docs": [
+        "Withdraw tokens from the pool in a balanced ratio. User will still able to withdraw from pool even the pool is disabled. This allow user to exit their liquidity when there's some unforeseen event happen."
+      ],
+      "discriminator": [
+        133,
+        109,
+        44,
+        179,
+        56,
+        238,
+        114,
+        33
+      ],
+      "accounts": [
+        {
+          "name": "pool",
+          "docs": [
+            "Pool account (PDA)"
+          ],
+          "writable": true
+        },
+        {
+          "name": "lp_mint",
+          "docs": [
+            "LP token mint of the pool"
+          ],
+          "writable": true,
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "user_pool_lp",
+          "docs": [
+            "user pool lp token account. lp will be burned from this account upon success liquidity removal."
+          ],
+          "writable": true
+        },
+        {
+          "name": "a_vault_lp",
+          "docs": [
+            "LP token account of vault A. Used to receive/burn the vault LP upon deposit/withdraw from the vault."
+          ],
+          "writable": true,
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "b_vault_lp",
+          "docs": [
+            "LP token account of vault B. Used to receive/burn the vault LP upon deposit/withdraw from the vault."
+          ],
+          "writable": true,
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "a_vault",
+          "docs": [
+            "Vault account for token a. token a of the pool will be deposit / withdraw from this vault account."
+          ],
+          "writable": true,
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "b_vault",
+          "docs": [
+            "Vault account for token b. token b of the pool will be deposit / withdraw from this vault account."
+          ],
+          "writable": true,
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "a_vault_lp_mint",
+          "docs": [
+            "LP token mint of vault a"
+          ],
+          "writable": true
+        },
+        {
+          "name": "b_vault_lp_mint",
+          "docs": [
+            "LP token mint of vault b"
+          ],
+          "writable": true
+        },
+        {
+          "name": "a_token_vault",
+          "docs": [
+            "Token vault account of vault A"
+          ],
+          "writable": true
+        },
+        {
+          "name": "b_token_vault",
+          "docs": [
+            "Token vault account of vault B"
+          ],
+          "writable": true
+        },
+        {
+          "name": "user_a_token",
+          "docs": [
+            "User token A account. Token will be transfer from this account if it is add liquidity operation. Else, token will be transfer into this account."
+          ],
+          "writable": true
+        },
+        {
+          "name": "user_b_token",
+          "docs": [
+            "User token B account. Token will be transfer from this account if it is add liquidity operation. Else, token will be transfer into this account."
+          ],
+          "writable": true
+        },
+        {
+          "name": "user",
+          "docs": [
+            "User account. Must be owner of user_a_token, and user_b_token."
+          ],
+          "signer": true
+        },
+        {
+          "name": "vault_program",
+          "docs": [
+            "Vault program. the pool will deposit/withdraw liquidity from the vault."
+          ],
+          "address": "24Uqj9JCLxUeoC3hGfh5W3s9FM9uCHDS2SG3LYwBpyTi"
+        },
+        {
+          "name": "token_program",
+          "docs": [
+            "Token program."
+          ],
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": [
+        {
+          "name": "pool_token_amount",
+          "type": "u64"
+        },
+        {
+          "name": "minimum_a_token_out",
+          "type": "u64"
+        },
+        {
+          "name": "minimum_b_token_out",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "remove_liquidity_single_side",
+      "docs": [
+        "Withdraw only single token from the pool. Only supported by pool with stable swap curve."
+      ],
+      "discriminator": [
+        84,
+        84,
+        177,
+        66,
+        254,
+        185,
+        10,
+        251
+      ],
+      "accounts": [
+        {
+          "name": "pool",
+          "docs": [
+            "Pool account (PDA)"
+          ],
+          "writable": true
+        },
+        {
+          "name": "lp_mint",
+          "docs": [
+            "LP token mint of the pool"
+          ],
+          "writable": true,
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "user_pool_lp",
+          "docs": [
+            "User pool lp token account. LP will be burned from this account upon success liquidity removal."
+          ],
+          "writable": true
+        },
+        {
+          "name": "a_vault_lp",
+          "docs": [
+            "LP token account of vault A. Used to receive/burn the vault LP upon deposit/withdraw from the vault."
+          ],
+          "writable": true,
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "b_vault_lp",
+          "docs": [
+            "LP token account of vault B. Used to receive/burn the vault LP upon deposit/withdraw from the vault."
+          ],
+          "writable": true,
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "a_vault",
+          "docs": [
+            "Vault account for token A. Token A of the pool will be deposit / withdraw from this vault account."
+          ],
+          "writable": true,
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "b_vault",
+          "docs": [
+            "Vault account for token B. Token B of the pool will be deposit / withdraw from this vault account."
+          ],
+          "writable": true,
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "a_vault_lp_mint",
+          "docs": [
+            "LP token mint of vault A"
+          ],
+          "writable": true
+        },
+        {
+          "name": "b_vault_lp_mint",
+          "docs": [
+            "LP token mint of vault B"
+          ],
+          "writable": true
+        },
+        {
+          "name": "a_token_vault",
+          "docs": [
+            "Token vault account of vault A"
+          ],
+          "writable": true
+        },
+        {
+          "name": "b_token_vault",
+          "docs": [
+            "Token vault account of vault B"
+          ],
+          "writable": true
+        },
+        {
+          "name": "user_destination_token",
+          "docs": [
+            "User token account to receive token upon success liquidity removal."
+          ],
+          "writable": true
+        },
+        {
+          "name": "user",
+          "docs": [
+            "User account. Must be owner of the user_pool_lp account."
+          ],
+          "signer": true
+        },
+        {
+          "name": "vault_program",
+          "docs": [
+            "Vault program. The pool will deposit/withdraw liquidity from the vault."
+          ],
+          "address": "24Uqj9JCLxUeoC3hGfh5W3s9FM9uCHDS2SG3LYwBpyTi"
+        },
+        {
+          "name": "token_program",
+          "docs": [
+            "Token program."
+          ],
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": [
+        {
+          "name": "pool_token_amount",
+          "type": "u64"
+        },
+        {
+          "name": "minimum_out_amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "set_pool_fees",
+      "docs": [
+        "Update trading fee charged for liquidity provider, and admin."
+      ],
+      "discriminator": [
+        102,
+        44,
+        158,
+        54,
+        205,
+        37,
+        126,
+        78
+      ],
+      "accounts": [
+        {
+          "name": "pool",
+          "docs": [
+            "Pool account (PDA)"
+          ],
+          "writable": true
+        },
+        {
+          "name": "fee_operator",
+          "docs": [
+            "Fee operator account"
+          ],
+          "signer": true
+        }
+      ],
+      "args": [
+        {
+          "name": "fees",
+          "type": {
+            "defined": {
+              "name": "PoolFees"
+            }
+          }
+        },
+        {
+          "name": "new_partner_fee_numerator",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "set_whitelisted_vault",
+      "docs": [
+        "Set whitelisted vault"
+      ],
+      "discriminator": [
+        12,
+        148,
+        94,
+        42,
+        55,
+        57,
+        83,
+        247
+      ],
+      "accounts": [
+        {
+          "name": "pool",
+          "writable": true
+        },
+        {
+          "name": "admin",
+          "signer": true
+        }
+      ],
+      "args": [
+        {
+          "name": "whitelisted_vault",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "swap",
+      "docs": [
+        "Swap token A to B, or vice versa. An amount of trading fee will be charged for liquidity provider, and the admin of the pool."
+      ],
+      "discriminator": [
+        248,
+        198,
+        158,
+        145,
+        225,
+        117,
+        135,
+        200
+      ],
+      "accounts": [
+        {
+          "name": "pool",
+          "docs": [
+            "Pool account (PDA)"
+          ],
+          "writable": true
+        },
+        {
+          "name": "user_source_token",
+          "docs": [
+            "User token account. Token from this account will be transfer into the vault by the pool in exchange for another token of the pool."
+          ],
+          "writable": true
+        },
+        {
+          "name": "user_destination_token",
+          "docs": [
+            "User token account. The exchanged token will be transfer into this account from the pool."
+          ],
+          "writable": true
+        },
+        {
+          "name": "a_vault",
+          "docs": [
+            "Vault account for token a. token a of the pool will be deposit / withdraw from this vault account."
+          ],
+          "writable": true,
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "b_vault",
+          "docs": [
+            "Vault account for token b. token b of the pool will be deposit / withdraw from this vault account."
+          ],
+          "writable": true,
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "a_token_vault",
+          "docs": [
+            "Token vault account of vault A"
+          ],
+          "writable": true
+        },
+        {
+          "name": "b_token_vault",
+          "docs": [
+            "Token vault account of vault B"
+          ],
+          "writable": true
+        },
+        {
+          "name": "a_vault_lp_mint",
+          "docs": [
+            "Lp token mint of vault a"
+          ],
+          "writable": true
+        },
+        {
+          "name": "b_vault_lp_mint",
+          "docs": [
+            "Lp token mint of vault b"
+          ],
+          "writable": true
+        },
+        {
+          "name": "a_vault_lp",
+          "docs": [
+            "LP token account of vault A. Used to receive/burn the vault LP upon deposit/withdraw from the vault."
+          ],
+          "writable": true,
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "b_vault_lp",
+          "docs": [
+            "LP token account of vault B. Used to receive/burn the vault LP upon deposit/withdraw from the vault."
+          ],
+          "writable": true,
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "protocol_token_fee",
+          "docs": [
+            "Protocol fee token account. Used to receive trading fee. It's mint field must matched with user_source_token mint field."
+          ],
+          "writable": true
+        },
+        {
+          "name": "user",
+          "docs": [
+            "User account. Must be owner of user_source_token."
+          ],
+          "signer": true
+        },
+        {
+          "name": "vault_program",
+          "docs": [
+            "Vault program. the pool will deposit/withdraw liquidity from the vault."
+          ],
+          "address": "24Uqj9JCLxUeoC3hGfh5W3s9FM9uCHDS2SG3LYwBpyTi"
+        },
+        {
+          "name": "token_program",
+          "docs": [
+            "Token program."
+          ],
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": [
+        {
+          "name": "in_amount",
+          "type": "u64"
+        },
+        {
+          "name": "minimum_out_amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "update_activation_point",
+      "docs": [
+        "Update activation slot"
+      ],
+      "discriminator": [
+        150,
+        62,
+        125,
+        219,
+        171,
+        220,
+        26,
+        237
+      ],
+      "accounts": [
+        {
+          "name": "pool",
+          "docs": [
+            "Pool account (PDA)"
+          ],
+          "writable": true
+        },
+        {
+          "name": "admin",
+          "docs": [
+            "Admin account."
+          ],
+          "signer": true
+        }
+      ],
+      "args": [
+        {
+          "name": "new_activation_point",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "withdraw_protocol_fees",
+      "docs": [
+        "Withdraw protocol fee"
+      ],
+      "discriminator": [
+        11,
+        68,
+        165,
+        98,
+        18,
+        208,
+        134,
+        73
+      ],
+      "accounts": [
+        {
+          "name": "pool",
+          "docs": [
+            "Pool account (PDA)"
+          ]
+        },
+        {
+          "name": "a_vault_lp",
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "protocol_token_a_fee",
+          "writable": true,
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "protocol_token_b_fee",
+          "writable": true,
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "token_a_mint",
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "token_b_mint",
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "treasury_token_a",
+          "writable": true
+        },
+        {
+          "name": "treasury_token_b",
+          "writable": true
+        },
+        {
+          "name": "operator"
+        },
+        {
+          "name": "signer",
+          "signer": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": [
+        {
+          "name": "max_amount_a",
+          "type": "u64"
+        },
+        {
+          "name": "max_amount_b",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "zap_protocol_fee",
+      "discriminator": [
+        213,
+        155,
+        187,
+        34,
+        56,
+        182,
+        91,
+        240
+      ],
+      "accounts": [
+        {
+          "name": "pool"
+        },
+        {
+          "name": "a_vault_lp",
+          "relations": [
+            "pool"
+          ]
+        },
+        {
+          "name": "protocol_token_fee",
+          "writable": true
+        },
+        {
+          "name": "token_mint"
+        },
+        {
+          "name": "receiver_token",
+          "writable": true
+        },
+        {
+          "name": "operator",
+          "docs": [
+            "zap claim fee operator"
+          ]
+        },
+        {
+          "name": "signer",
+          "docs": [
+            "Operator"
+          ],
+          "signer": true
+        },
+        {
+          "name": "token_program",
+          "docs": [
+            "Token program"
+          ],
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "sysvar_instructions",
+          "address": "Sysvar1nstructions1111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "max_amount",
+          "type": "u64"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Config",
+      "discriminator": [
+        155,
+        12,
+        170,
+        224,
+        30,
+        250,
+        204,
+        130
+      ]
+    },
+    {
+      "name": "LockEscrow",
+      "discriminator": [
+        190,
+        106,
+        121,
+        6,
+        200,
+        182,
+        21,
+        75
+      ]
+    },
+    {
+      "name": "Operator",
+      "discriminator": [
+        219,
+        31,
+        188,
+        145,
+        69,
+        139,
+        204,
+        117
+      ]
+    },
+    {
+      "name": "Pool",
+      "discriminator": [
+        241,
+        154,
+        109,
+        4,
+        17,
+        177,
+        109,
+        188
+      ]
+    },
+    {
+      "name": "Vault",
+      "discriminator": [
+        211,
+        8,
+        232,
+        43,
+        2,
+        152,
+        117,
+        119
+      ]
+    }
+  ],
+  "events": [
+    {
+      "name": "AddLiquidity",
+      "discriminator": [
+        31,
+        94,
+        125,
+        90,
+        227,
+        52,
+        61,
+        186
+      ]
+    },
+    {
+      "name": "BootstrapLiquidity",
+      "discriminator": [
+        121,
+        127,
+        38,
+        136,
+        92,
+        55,
+        14,
+        247
+      ]
+    },
+    {
+      "name": "ClaimFee",
+      "discriminator": [
+        75,
+        122,
+        154,
+        48,
+        140,
+        74,
+        123,
+        163
+      ]
+    },
+    {
+      "name": "ClaimProtocolFee2",
+      "discriminator": [
+        45,
+        244,
+        0,
+        189,
+        44,
+        147,
+        96,
+        67
+      ]
+    },
+    {
+      "name": "CloseConfig",
+      "discriminator": [
+        249,
+        181,
+        108,
+        89,
+        4,
+        150,
+        90,
+        174
+      ]
+    },
+    {
+      "name": "CreateConfig",
+      "discriminator": [
+        199,
+        152,
+        10,
+        19,
+        39,
+        39,
+        157,
+        104
+      ]
+    },
+    {
+      "name": "CreateLockEscrow",
+      "discriminator": [
+        74,
+        94,
+        106,
+        141,
+        49,
+        17,
+        98,
+        109
+      ]
+    },
+    {
+      "name": "Lock",
+      "discriminator": [
+        220,
+        183,
+        67,
+        215,
+        153,
+        207,
+        56,
+        234
+      ]
+    },
+    {
+      "name": "MigrateFeeAccount",
+      "discriminator": [
+        223,
+        234,
+        232,
+        26,
+        252,
+        105,
+        180,
+        125
+      ]
+    },
+    {
+      "name": "OverrideCurveParam",
+      "discriminator": [
+        247,
+        20,
+        165,
+        248,
+        75,
+        5,
+        54,
+        246
+      ]
+    },
+    {
+      "name": "PartnerClaimFees",
+      "discriminator": [
+        135,
+        131,
+        10,
+        94,
+        119,
+        209,
+        202,
+        48
+      ]
+    },
+    {
+      "name": "PoolCreated",
+      "discriminator": [
+        202,
+        44,
+        41,
+        88,
+        104,
+        220,
+        157,
+        82
+      ]
+    },
+    {
+      "name": "PoolEnabled",
+      "discriminator": [
+        2,
+        151,
+        18,
+        83,
+        204,
+        134,
+        92,
+        191
+      ]
+    },
+    {
+      "name": "PoolInfo",
+      "discriminator": [
+        207,
+        20,
+        87,
+        97,
+        251,
+        212,
+        234,
+        45
+      ]
+    },
+    {
+      "name": "RemoveLiquidity",
+      "discriminator": [
+        116,
+        244,
+        97,
+        232,
+        103,
+        31,
+        152,
+        58
+      ]
+    },
+    {
+      "name": "SetPoolFees",
+      "discriminator": [
+        245,
+        26,
+        198,
+        164,
+        88,
+        18,
+        75,
+        9
+      ]
+    },
+    {
+      "name": "Swap",
+      "discriminator": [
+        81,
+        108,
+        227,
+        190,
+        205,
+        208,
+        10,
+        196
+      ]
+    },
+    {
+      "name": "TransferAdmin",
+      "discriminator": [
+        228,
+        169,
+        131,
+        244,
+        61,
+        56,
+        65,
+        254
+      ]
+    },
+    {
+      "name": "WithdrawProtocolFees",
+      "discriminator": [
+        30,
+        240,
+        207,
+        196,
+        139,
+        239,
+        79,
+        28
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "MathOverflow",
+      "msg": "Math operation overflow"
+    },
+    {
+      "code": 6001,
+      "name": "InvalidFee",
+      "msg": "Invalid fee setup"
+    },
+    {
+      "code": 6002,
+      "name": "InvalidInvariant",
+      "msg": "Invalid invariant d"
+    },
+    {
+      "code": 6003,
+      "name": "FeeCalculationFailure",
+      "msg": "Fee calculation failure"
+    },
+    {
+      "code": 6004,
+      "name": "ExceededSlippage",
+      "msg": "Exceeded slippage tolerance"
+    },
+    {
+      "code": 6005,
+      "name": "InvalidCalculation",
+      "msg": "Invalid curve calculation"
+    },
+    {
+      "code": 6006,
+      "name": "ZeroTradingTokens",
+      "msg": "Given pool token amount results in zero trading tokens"
+    },
+    {
+      "code": 6007,
+      "name": "ConversionError",
+      "msg": "Math conversion overflow"
+    },
+    {
+      "code": 6008,
+      "name": "FaultyLpMint",
+      "msg": "LP mint authority must be 'A' vault lp, without freeze authority, and 0 supply"
+    },
+    {
+      "code": 6009,
+      "name": "MismatchedTokenMint",
+      "msg": "Token mint mismatched"
+    },
+    {
+      "code": 6010,
+      "name": "MismatchedLpMint",
+      "msg": "LP mint mismatched"
+    },
+    {
+      "code": 6011,
+      "name": "MismatchedOwner",
+      "msg": "Invalid lp token owner"
+    },
+    {
+      "code": 6012,
+      "name": "InvalidVaultAccount",
+      "msg": "Invalid vault account"
+    },
+    {
+      "code": 6013,
+      "name": "InvalidVaultLpAccount",
+      "msg": "Invalid vault lp account"
+    },
+    {
+      "code": 6014,
+      "name": "InvalidPoolLpMintAccount",
+      "msg": "Invalid pool lp mint account"
+    },
+    {
+      "code": 6015,
+      "name": "PoolDisabled",
+      "msg": "Pool disabled"
+    },
+    {
+      "code": 6016,
+      "name": "InvalidAdminAccount",
+      "msg": "Invalid admin account"
+    },
+    {
+      "code": 6017,
+      "name": "InvalidProtocolFeeAccount",
+      "msg": "Invalid protocol fee account"
+    },
+    {
+      "code": 6018,
+      "name": "SameAdminAccount",
+      "msg": "Same admin account"
+    },
+    {
+      "code": 6019,
+      "name": "IdenticalSourceDestination",
+      "msg": "Identical user source and destination token account"
+    },
+    {
+      "code": 6020,
+      "name": "ApyCalculationError",
+      "msg": "Apy calculation error"
+    },
+    {
+      "code": 6021,
+      "name": "InsufficientSnapshot",
+      "msg": "Insufficient virtual price snapshot"
+    },
+    {
+      "code": 6022,
+      "name": "NonUpdatableCurve",
+      "msg": "Current curve is non-updatable"
+    },
+    {
+      "code": 6023,
+      "name": "MisMatchedCurve",
+      "msg": "New curve is mismatched with old curve"
+    },
+    {
+      "code": 6024,
+      "name": "InvalidAmplification",
+      "msg": "Amplification is invalid"
+    },
+    {
+      "code": 6025,
+      "name": "UnsupportedOperation",
+      "msg": "Operation is not supported"
+    },
+    {
+      "code": 6026,
+      "name": "ExceedMaxAChanges",
+      "msg": "Exceed max amplification changes"
+    },
+    {
+      "code": 6027,
+      "name": "InvalidRemainingAccountsLen",
+      "msg": "Invalid remaining accounts length"
+    },
+    {
+      "code": 6028,
+      "name": "InvalidRemainingAccounts",
+      "msg": "Invalid remaining account"
+    },
+    {
+      "code": 6029,
+      "name": "MismatchedDepegMint",
+      "msg": "Token mint B doesn't matches depeg type token mint"
+    },
+    {
+      "code": 6030,
+      "name": "InvalidApyAccount",
+      "msg": "Invalid APY account"
+    },
+    {
+      "code": 6031,
+      "name": "InvalidTokenMultiplier",
+      "msg": "Invalid token multiplier"
+    },
+    {
+      "code": 6032,
+      "name": "InvalidDepegInformation",
+      "msg": "Invalid depeg information"
+    },
+    {
+      "code": 6033,
+      "name": "UpdateTimeConstraint",
+      "msg": "Update time constraint violated"
+    },
+    {
+      "code": 6034,
+      "name": "ExceedMaxFeeBps",
+      "msg": "Exceeded max fee bps"
+    },
+    {
+      "code": 6035,
+      "name": "InvalidAdmin",
+      "msg": "Invalid admin"
+    },
+    {
+      "code": 6036,
+      "name": "PoolIsNotPermissioned",
+      "msg": "Pool is not permissioned"
+    },
+    {
+      "code": 6037,
+      "name": "InvalidDepositAmount",
+      "msg": "Invalid deposit amount"
+    },
+    {
+      "code": 6038,
+      "name": "InvalidFeeOwner",
+      "msg": "Invalid fee owner"
+    },
+    {
+      "code": 6039,
+      "name": "NonDepletedPool",
+      "msg": "Pool is not depleted"
+    },
+    {
+      "code": 6040,
+      "name": "AmountNotPeg",
+      "msg": "Token amount is not 1:1"
+    },
+    {
+      "code": 6041,
+      "name": "AmountIsZero",
+      "msg": "Amount is zero"
+    },
+    {
+      "code": 6042,
+      "name": "TypeCastFailed",
+      "msg": "Type cast error"
+    },
+    {
+      "code": 6043,
+      "name": "AmountIsNotEnough",
+      "msg": "Amount is not enough"
+    },
+    {
+      "code": 6044,
+      "name": "InvalidActivationDuration",
+      "msg": "Invalid activation duration"
+    },
+    {
+      "code": 6045,
+      "name": "PoolIsNotLaunchPool",
+      "msg": "Pool is not launch pool"
+    },
+    {
+      "code": 6046,
+      "name": "UnableToModifyActivationPoint",
+      "msg": "Unable to modify activation point"
+    },
+    {
+      "code": 6047,
+      "name": "InvalidAuthorityToCreateThePool",
+      "msg": "Invalid authority to create the pool"
+    },
+    {
+      "code": 6048,
+      "name": "InvalidActivationType",
+      "msg": "Invalid activation type"
+    },
+    {
+      "code": 6049,
+      "name": "InvalidActivationPoint",
+      "msg": "Invalid activation point"
+    },
+    {
+      "code": 6050,
+      "name": "PreActivationSwapStarted",
+      "msg": "Pre activation swap window started"
+    },
+    {
+      "code": 6051,
+      "name": "InvalidPoolType",
+      "msg": "Invalid pool type"
+    },
+    {
+      "code": 6052,
+      "name": "InvalidQuoteMint",
+      "msg": "Quote token must be SOL,USDC"
+    },
+    {
+      "code": 6053,
+      "name": "InvalidTokenMetadataProgram",
+      "msg": "Invalid token metadata program"
+    },
+    {
+      "code": 6054,
+      "name": "InvalidPermission",
+      "msg": "Invalid permission"
+    },
+    {
+      "code": 6055,
+      "name": "InvalidZapOutParameters",
+      "msg": "Invalid zap out parameters"
+    },
+    {
+      "code": 6056,
+      "name": "IncorrectATA",
+      "msg": "Incorrect ATA"
+    },
+    {
+      "code": 6057,
+      "name": "InvalidWithdrawProtocolFeeZapAccounts",
+      "msg": "Invalid withdraw protocol fee zap accounts"
+    },
+    {
+      "code": 6058,
+      "name": "MintRestrictedFromZap",
+      "msg": "SOL,USDC protocol fee cannot be withdrawn via zap"
+    },
+    {
+      "code": 6059,
+      "name": "CpiDisabled",
+      "msg": "CPI disabled"
+    },
+    {
+      "code": 6060,
+      "name": "MissingZapOutInstruction",
+      "msg": "Missing zap out instruction"
+    },
+    {
+      "code": 6061,
+      "name": "InvalidZapAccounts",
+      "msg": "Invalid zap accounts"
+    },
+    {
+      "code": 6062,
+      "name": "InvalidClaimProtocolFeeAccounts",
+      "msg": "Invalid claim protocol fee accounts"
+    },
+    {
+      "code": 6063,
+      "name": "LpMintSupplyAccountingNotPatched",
+      "msg": "Pool LP mint supply accounting is not patched"
+    },
+    {
+      "code": 6064,
+      "name": "InvalidLpOwner",
+      "msg": "User is not the owner of the pool LP token account"
+    },
+    {
+      "code": 6065,
+      "name": "InvalidVaultLpSupplyAccounting",
+      "msg": "Invalid vault LP supply accounting"
+    }
+  ],
+  "types": [
+    {
+      "name": "AddLiquidity",
+      "docs": [
+        "Add liquidity event"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "lp_mint_amount",
+            "docs": [
+              "LP amount user received upon add liquidity."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "token_a_amount",
+            "docs": [
+              "Amount of token A user deposited."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "token_b_amount",
+            "docs": [
+              "Amount of token B user deposited."
+            ],
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "BootstrapLiquidity",
+      "docs": [
+        "Bootstrap liquidity event"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "lp_mint_amount",
+            "docs": [
+              "LP amount user received upon add liquidity."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "token_a_amount",
+            "docs": [
+              "Amount of token A user deposited."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "token_b_amount",
+            "docs": [
+              "Amount of token B user deposited."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "pool",
+            "docs": [
+              "Pool address"
+            ],
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Bootstrapping",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "activation_point",
+            "docs": [
+              "Activation point, can be slot or timestamp"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "whitelisted_vault",
+            "docs": [
+              "Whitelisted vault to be able to buy pool before activation_point"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "pool_creator",
+            "docs": [
+              "Need to store pool creator in lauch pool, so they can modify liquidity before activation_point"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "activation_type",
+            "docs": [
+              "Activation type, 0 means by slot, 1 means by timestamp"
+            ],
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ClaimFee",
+      "docs": [
+        "Claim fee"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "pool",
+            "docs": [
+              "Pool address"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "owner",
+            "docs": [
+              "Owner of lock escrow"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "docs": [
+              "Lp amount"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "a_fee",
+            "docs": [
+              "A fee"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "b_fee",
+            "docs": [
+              "B fee"
+            ],
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ClaimProtocolFee2",
+      "docs": [
+        "Claim protocol fee 2"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "pool",
+            "docs": [
+              "Pool address"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "receiver_token_account",
+            "docs": [
+              "Receiver token account"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "token_mint",
+            "docs": [
+              "Token mint"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "docs": [
+              "Amount of protocol fee being withdrawn"
+            ],
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "CloseConfig",
+      "docs": [
+        "Close config"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "config",
+            "docs": [
+              "Config pubkey"
+            ],
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Config",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "pool_fees",
+            "type": {
+              "defined": {
+                "name": "PoolFees"
+              }
+            }
+          },
+          {
+            "name": "activation_duration",
+            "type": "u64"
+          },
+          {
+            "name": "vault_config_key",
+            "type": "pubkey"
+          },
+          {
+            "name": "pool_creator_authority",
+            "docs": [
+              "Only pool_creator_authority can use the current config to initialize new pool. When it's Pubkey::default, it's a public config."
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "activation_type",
+            "docs": [
+              "Activation type"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "partner_fee_numerator",
+            "type": "u64"
+          },
+          {
+            "name": "_padding",
+            "type": {
+              "array": [
+                "u8",
+                219
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "ConfigParameters",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "trade_fee_numerator",
+            "type": "u64"
+          },
+          {
+            "name": "protocol_trade_fee_numerator",
+            "type": "u64"
+          },
+          {
+            "name": "activation_duration",
+            "type": "u64"
+          },
+          {
+            "name": "vault_config_key",
+            "type": "pubkey"
+          },
+          {
+            "name": "pool_creator_authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "activation_type",
+            "type": "u8"
+          },
+          {
+            "name": "index",
+            "type": "u64"
+          },
+          {
+            "name": "partner_fee_numerator",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "CreateConfig",
+      "docs": [
+        "Create config"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "trade_fee_numerator",
+            "docs": [
+              "New trade fee numerator"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "protocol_trade_fee_numerator",
+            "docs": [
+              "New protocol fee numerator"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "config",
+            "docs": [
+              "Config pubkey"
+            ],
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "CreateLockEscrow",
+      "docs": [
+        "Create lock escrow"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "pool",
+            "docs": [
+              "Pool address"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "owner",
+            "docs": [
+              "Owner of lock escrow"
+            ],
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "CurveType",
+      "docs": [
+        "Type of the swap curve"
+      ],
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "ConstantProduct"
+          },
+          {
+            "name": "Stable",
+            "fields": [
+              {
+                "name": "amp",
+                "docs": [
+                  "Amplification coefficient"
+                ],
+                "type": "u64"
+              },
+              {
+                "name": "token_multiplier",
+                "docs": [
+                  "Multiplier for the pool token. Used to normalized token with different decimal into the same precision."
+                ],
+                "type": {
+                  "defined": {
+                    "name": "TokenMultiplier"
+                  }
+                }
+              },
+              {
+                "name": "depeg",
+                "docs": [
+                  "Depeg pool information. Contains functions to allow token amount to be repeg using stake / interest bearing token virtual price"
+                ],
+                "type": {
+                  "defined": {
+                    "name": "Depeg"
+                  }
+                }
+              },
+              {
+                "name": "last_amp_updated_timestamp",
+                "docs": [
+                  "The last amp updated timestamp. Used to prevent update_curve_info called infinitely many times within a short period"
+                ],
+                "type": "u64"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "CustomizableParams",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "trade_fee_numerator",
+            "docs": [
+              "Trading fee."
+            ],
+            "type": "u32"
+          },
+          {
+            "name": "activation_point",
+            "docs": [
+              "The pool start trading."
+            ],
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
+            "name": "has_alpha_vault",
+            "docs": [
+              "Whether the pool support alpha vault"
+            ],
+            "type": "bool"
+          },
+          {
+            "name": "activation_type",
+            "docs": [
+              "Activation type"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "padding",
+            "docs": [
+              "Padding"
+            ],
+            "type": {
+              "array": [
+                "u8",
+                90
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Depeg",
+      "docs": [
+        "Contains information for depeg pool"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "base_virtual_price",
+            "docs": [
+              "The virtual price of staking / interest bearing token"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "base_cache_updated",
+            "docs": [
+              "The last time base_virtual_price is updated"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "depeg_type",
+            "docs": [
+              "Type of the depeg pool"
+            ],
+            "type": {
+              "defined": {
+                "name": "DepegType"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "DepegType",
+      "docs": [
+        "Type of depeg pool"
+      ],
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "None"
+          },
+          {
+            "name": "Marinade"
+          },
+          {
+            "name": "Lido"
+          },
+          {
+            "name": "SplStake"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Lock",
+      "docs": [
+        "Lock"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "pool",
+            "docs": [
+              "Pool address"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "owner",
+            "docs": [
+              "Owner of lock escrow"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "docs": [
+              "Locked amount"
+            ],
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "LockEscrow",
+      "docs": [
+        "State of lock escrow account"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "pool",
+            "docs": [
+              "Pool address"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "owner",
+            "docs": [
+              "Owner address"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "escrow_vault",
+            "docs": [
+              "Vault address, store the lock user lock"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "bump",
+            "docs": [
+              "bump, used to sign"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "total_locked_amount",
+            "docs": [
+              "Total locked amount"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "lp_per_token",
+            "docs": [
+              "Lp per token, virtual price of lp token"
+            ],
+            "type": "u128"
+          },
+          {
+            "name": "unclaimed_fee_pending",
+            "docs": [
+              "Unclaimed fee pending"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "a_fee",
+            "docs": [
+              "Total a fee claimed so far"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "b_fee",
+            "docs": [
+              "Total b fee claimed so far"
+            ],
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "LockedProfitTracker",
+      "docs": [
+        "LockedProfitTracker struct"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "last_updated_locked_profit",
+            "docs": [
+              "The total locked profit from the last report"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "last_report",
+            "docs": [
+              "The last timestamp (in seconds) rebalancing"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "locked_profit_degradation",
+            "docs": [
+              "Rate per second of degradation"
+            ],
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MigrateFeeAccount",
+      "docs": [
+        "Migrate fee account event"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "pool",
+            "docs": [
+              "Pool address"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "new_admin_token_a_fee",
+            "docs": [
+              "New admin token a fee"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "new_admin_token_b_fee",
+            "docs": [
+              "New admin token b fee"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "token_a_amount",
+            "docs": [
+              "Transfer token a fee amount"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "token_b_amount",
+            "docs": [
+              "Transfer token b fee amount"
+            ],
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Operator",
+      "serialization": "bytemuck",
+      "repr": {
+        "kind": "c"
+      },
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "whitelisted_address",
+            "type": "pubkey"
+          },
+          {
+            "name": "permission",
+            "type": "u128"
+          },
+          {
+            "name": "padding",
+            "type": {
+              "array": [
+                "u64",
+                2
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "OverrideCurveParam",
+      "docs": [
+        "Override curve param event"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "new_amp",
+            "docs": [
+              "The new amplification for stable curve"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "updated_timestamp",
+            "docs": [
+              "Updated timestamp"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "pool",
+            "docs": [
+              "Pool address"
+            ],
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Padding",
+      "docs": [
+        "Padding for future pool fields"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "padding_0",
+            "docs": [
+              "Padding 0"
+            ],
+            "type": {
+              "array": [
+                "u8",
+                6
+              ]
+            }
+          },
+          {
+            "name": "padding_1",
+            "docs": [
+              "Padding 1"
+            ],
+            "type": {
+              "array": [
+                "u64",
+                20
+              ]
+            }
+          },
+          {
+            "name": "padding_2",
+            "docs": [
+              "Padding 2"
+            ],
+            "type": {
+              "array": [
+                "u64",
+                21
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "PartnerClaimFees",
+      "docs": [
+        "Partner claim fees"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "pool",
+            "docs": [
+              "Pool address"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "fee_a",
+            "docs": [
+              "Fee B"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "fee_b",
+            "docs": [
+              "Fee B"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "partner",
+            "docs": [
+              "Partner"
+            ],
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PartnerInfo",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "fee_numerator",
+            "type": "u64"
+          },
+          {
+            "name": "partner_authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "pending_fee_a",
+            "type": "u64"
+          },
+          {
+            "name": "pending_fee_b",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Pool",
+      "docs": [
+        "State of pool account"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "lp_mint",
+            "docs": [
+              "LP token mint of the pool"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "token_a_mint",
+            "docs": [
+              "Token A mint of the pool. Eg: USDT"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "token_b_mint",
+            "docs": [
+              "Token B mint of the pool. Eg: USDC"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "a_vault",
+            "docs": [
+              "Vault account for token A. Token A of the pool will be deposit / withdraw from this vault account."
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "b_vault",
+            "docs": [
+              "Vault account for token B. Token B of the pool will be deposit / withdraw from this vault account."
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "a_vault_lp",
+            "docs": [
+              "LP token account of vault A. Used to receive/burn the vault LP upon deposit/withdraw from the vault."
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "b_vault_lp",
+            "docs": [
+              "LP token account of vault B. Used to receive/burn the vault LP upon deposit/withdraw from the vault."
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "a_vault_lp_bump",
+            "docs": [
+              "\"A\" vault lp bump. Used to create signer seeds."
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "enabled",
+            "docs": [
+              "Flag to determine whether the pool is enabled, or disabled."
+            ],
+            "type": "bool"
+          },
+          {
+            "name": "protocol_token_a_fee",
+            "docs": [
+              "Protocol fee token account for token A. Used to receive trading fee."
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "protocol_token_b_fee",
+            "docs": [
+              "Protocol fee token account for token B. Used to receive trading fee."
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "fee_last_updated_at",
+            "docs": [
+              "Fee last updated timestamp"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "_padding0",
+            "type": {
+              "array": [
+                "u8",
+                24
+              ]
+            }
+          },
+          {
+            "name": "fees",
+            "docs": [
+              "Store the fee charges setting."
+            ],
+            "type": {
+              "defined": {
+                "name": "PoolFees"
+              }
+            }
+          },
+          {
+            "name": "pool_type",
+            "docs": [
+              "Pool type"
+            ],
+            "type": {
+              "defined": {
+                "name": "PoolType"
+              }
+            }
+          },
+          {
+            "name": "stake",
+            "docs": [
+              "Stake pubkey of SPL stake pool"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "total_locked_lp",
+            "docs": [
+              "Total locked lp token"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "bootstrapping",
+            "docs": [
+              "bootstrapping config"
+            ],
+            "type": {
+              "defined": {
+                "name": "Bootstrapping"
+              }
+            }
+          },
+          {
+            "name": "partner_info",
+            "type": {
+              "defined": {
+                "name": "PartnerInfo"
+              }
+            }
+          },
+          {
+            "name": "lp_mint_supply",
+            "docs": [
+              "LP mint supply tracked by the pool"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "padding",
+            "docs": [
+              "Padding for future pool field"
+            ],
+            "type": {
+              "defined": {
+                "name": "Padding"
+              }
+            }
+          },
+          {
+            "name": "curve_type",
+            "docs": [
+              "The type of the swap curve supported by the pool."
+            ],
+            "type": {
+              "defined": {
+                "name": "CurveType"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "PoolCreated",
+      "docs": [
+        "New pool created event"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "lp_mint",
+            "docs": [
+              "LP token mint of the pool"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "token_a_mint",
+            "docs": [
+              "Token A mint of the pool. Eg: USDT"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "token_b_mint",
+            "docs": [
+              "Token B mint of the pool. Eg: USDC"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "pool_type",
+            "docs": [
+              "Pool type"
+            ],
+            "type": {
+              "defined": {
+                "name": "PoolType"
+              }
+            }
+          },
+          {
+            "name": "pool",
+            "docs": [
+              "Pool address"
+            ],
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PoolEnabled",
+      "docs": [
+        "Pool enabled state change event"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "pool",
+            "docs": [
+              "Pool address"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "enabled",
+            "docs": [
+              "Pool enabled state"
+            ],
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PoolFees",
+      "docs": [
+        "Information regarding fee charges"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "trade_fee_numerator",
+            "docs": [
+              "Trade fees are extra token amounts that are held inside the token",
+              "accounts during a trade, making the value of liquidity tokens rise.",
+              "Trade fee numerator"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "trade_fee_denominator",
+            "docs": [
+              "Trade fee denominator"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "protocol_trade_fee_numerator",
+            "docs": [
+              "Protocol trading fees are extra token amounts that are held inside the token",
+              "accounts during a trade, with the equivalent in pool tokens minted to",
+              "the protocol of the program.",
+              "Protocol trade fee numerator"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "protocol_trade_fee_denominator",
+            "docs": [
+              "Protocol trade fee denominator"
+            ],
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PoolInfo",
+      "docs": [
+        "Pool info event"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "token_a_amount",
+            "docs": [
+              "Total token A amount in the pool"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "token_b_amount",
+            "docs": [
+              "Total token B amount in the pool"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "virtual_price",
+            "docs": [
+              "Current virtual price"
+            ],
+            "type": "f64"
+          },
+          {
+            "name": "current_timestamp",
+            "docs": [
+              "Current unix timestamp"
+            ],
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PoolType",
+      "docs": [
+        "Pool type"
+      ],
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Permissioned"
+          },
+          {
+            "name": "Permissionless"
+          }
+        ]
+      }
+    },
+    {
+      "name": "RemoveLiquidity",
+      "docs": [
+        "Remove liquidity event"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "lp_unmint_amount",
+            "docs": [
+              "LP amount burned from user upon add remove liquidity."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "token_a_out_amount",
+            "docs": [
+              "Amount of token A user received."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "token_b_out_amount",
+            "docs": [
+              "Amount of token B user received."
+            ],
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "SetPoolFees",
+      "docs": [
+        "Set pool fees event"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "trade_fee_numerator",
+            "docs": [
+              "New trade fee numerator"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "trade_fee_denominator",
+            "docs": [
+              "New trade fee denominator"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "protocol_trade_fee_numerator",
+            "docs": [
+              "New protocol fee numerator"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "protocol_trade_fee_denominator",
+            "docs": [
+              "New protocol fee denominator"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "pool",
+            "docs": [
+              "Pool address"
+            ],
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Swap",
+      "docs": [
+        "Swap event"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "in_amount",
+            "docs": [
+              "Token amount user deposited to the pool for token exchange."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "out_amount",
+            "docs": [
+              "Token amount user received from the pool."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "trade_fee",
+            "docs": [
+              "Trading fee charged for liquidity provider."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "protocol_fee",
+            "docs": [
+              "Trading fee charged for the protocol."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "host_fee",
+            "docs": [
+              "Host fee charged"
+            ],
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "TokenMultiplier",
+      "docs": [
+        "Multiplier for the pool token. Used to normalized token with different decimal into the same precision."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "token_a_multiplier",
+            "docs": [
+              "Multiplier for token A of the pool."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "token_b_multiplier",
+            "docs": [
+              "Multiplier for token B of the pool."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "precision_factor",
+            "docs": [
+              "Record the highest token decimal in the pool. For example, Token A is 6 decimal, token B is 9 decimal. This will save value of 9."
+            ],
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "TransferAdmin",
+      "docs": [
+        "Transfer admin event"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "admin",
+            "docs": [
+              "Old admin of the pool"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "new_admin",
+            "docs": [
+              "New admin of the pool"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "pool",
+            "docs": [
+              "Pool address"
+            ],
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Vault",
+      "docs": [
+        "Vault struct"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "enabled",
+            "docs": [
+              "The flag, if admin set enable = false, then the user can only withdraw and cannot deposit in the vault."
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "bumps",
+            "docs": [
+              "Vault nonce, to create vault seeds"
+            ],
+            "type": {
+              "defined": {
+                "name": "VaultBumps"
+              }
+            }
+          },
+          {
+            "name": "total_amount",
+            "docs": [
+              "The total liquidity of the vault, including remaining tokens in token_vault and the liquidity in all strategies."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "token_vault",
+            "docs": [
+              "Token account, hold liquidity in vault reserve"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "fee_vault",
+            "docs": [
+              "Hold lp token of vault, each time rebalance crank is called, vault calculate performance fee and mint corresponding lp token amount to fee_vault. fee_vault is owned by treasury address"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "token_mint",
+            "docs": [
+              "Token mint that vault supports"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "lp_mint",
+            "docs": [
+              "Lp mint of vault"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "strategies",
+            "docs": [
+              "The list of strategy addresses that vault supports, vault can support up to MAX_STRATEGY strategies at the same time."
+            ],
+            "type": {
+              "array": [
+                "pubkey",
+                29
+              ]
+            }
+          },
+          {
+            "name": "version",
+            "docs": [
+              "Vault version. 0 = legacy (LP supply from lp_mint.supply), 1 = LP supply tracked in `total_lp_supply`"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "total_lp_supply",
+            "docs": [
+              "Total LP supply tracked by the vault (only valid when version = 1)"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "_padding0",
+            "docs": [
+              "Padding, keeps the layout compatible with the legacy 30th strategy slot"
+            ],
+            "type": {
+              "array": [
+                "u8",
+                23
+              ]
+            }
+          },
+          {
+            "name": "base",
+            "docs": [
+              "The base address to create vault seeds"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "admin",
+            "docs": [
+              "Admin of vault"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "operator",
+            "docs": [
+              "Person who can send the crank. Operator can only send liquidity to strategies that admin defined, and claim reward to account of treasury address"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "locked_profit_tracker",
+            "docs": [
+              "Stores information for locked profit."
+            ],
+            "type": {
+              "defined": {
+                "name": "LockedProfitTracker"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "VaultBumps",
+      "docs": [
+        "Vault bumps struct"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "vault_bump",
+            "docs": [
+              "vault_bump"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "token_vault_bump",
+            "docs": [
+              "token_vault_bump"
+            ],
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "WithdrawProtocolFees",
+      "docs": [
+        "Withdraw protocol fees"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "pool",
+            "docs": [
+              "Pool address"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "protocol_a_fee",
+            "docs": [
+              "Protocol A fee being withdrawn"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "protocol_b_fee",
+            "docs": [
+              "Protocol B fee being withdrawn"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "protocol_a_fee_owner",
+            "docs": [
+              "Protocol A fee owner"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "protocol_b_fee_owner",
+            "docs": [
+              "Protocol B fee owner"
+            ],
+            "type": "pubkey"
+          }
+        ]
+      }
+    }
+  ]
+}

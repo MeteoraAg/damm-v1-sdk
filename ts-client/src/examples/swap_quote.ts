@@ -6,8 +6,8 @@ import {
 import BN from "bn.js";
 import { Wallet, AnchorProvider, Program } from '@coral-xyz/anchor';
 import AmmImpl from '../amm';
-import { Amm as AmmIdl, IDL as AmmIDL } from '../amm/idl';
-import { PROGRAM_ID } from "../amm/constants";
+import { Amm as AmmIdl } from '../amm/idl';
+import AmmIDL from '../amm/idl.json';
 
 const mainnetConnection = new Connection('https://api.mainnet-beta.solana.com');
 const mockWallet = new Wallet(new Keypair());
@@ -16,7 +16,7 @@ const provider = new AnchorProvider(mainnetConnection, mockWallet, {
 });
 
 async function swapQuote(poolAddress: PublicKey, swapAmount: BN, swapAtoB: boolean) {
-  const ammProgram = new Program<AmmIdl>(AmmIDL, PROGRAM_ID, provider);
+  const ammProgram = new Program<AmmIdl>(AmmIDL as AmmIdl, provider);
   let poolState = await ammProgram.account.pool.fetch(poolAddress);
   const pool = await AmmImpl.create(provider.connection, poolAddress);
   let inTokenMint = swapAtoB ? poolState.tokenAMint : poolState.tokenBMint;
