@@ -14,7 +14,7 @@ on:
       - feat/protocol-fee-part-of-lp-fees
 
 env:
-  SOLANA_CLI_VERSION: 1.16.3
+  SOLANA_CLI_VERSION: 2.1.0
   RUST_TOOLCHAIN_VERSION: 1.76.0
 
 jobs:
@@ -48,6 +48,7 @@ jobs:
         with:
           toolchain: ${{ env.RUST_TOOLCHAIN_VERSION }}
           components: clippy
+          override: true
       # Cargo build cache
       - name: Cargo Cache
         uses: actions/cache@v4
