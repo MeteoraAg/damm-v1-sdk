@@ -270,14 +270,20 @@ export const calculatePoolInfo = (
   return poolInformation;
 };
 
+export const calculateFee = (amount: BN, feeNumerator: BN, feeDenominator: BN): BN => {
+  if (feeNumerator.isZero() || amount.isZero()) return new BN(0);
+  const fee = amount.mul(feeNumerator).div(feeDenominator);
+  return fee.isZero() ? new BN(1) : fee;
+};
+
 export const calculateProtocolTradingFee = (amount: BN, poolState: PoolState): BN => {
   const { protocolTradeFeeDenominator, protocolTradeFeeNumerator } = poolState.fees;
-  return amount.mul(protocolTradeFeeNumerator).div(protocolTradeFeeDenominator);
+  return calculateFee(amount, protocolTradeFeeNumerator, protocolTradeFeeDenominator);
 };
 
 export const calculateTradingFee = (amount: BN, poolState: PoolState): BN => {
   const { tradeFeeDenominator, tradeFeeNumerator } = poolState.fees;
-  return amount.mul(tradeFeeNumerator).div(tradeFeeDenominator);
+  return calculateFee(amount, tradeFeeNumerator, tradeFeeDenominator);
 };
 
 export const calculateUnclaimedLockEscrowFee = (
@@ -453,8 +459,8 @@ export const calculateSwapQuoteForGoingToCreateMemecoinPool = (
     ? [inAmountLamport, tokenAAmount, tokenBAmount, vaultA, vaultB]
     : [inAmountLamport, tokenBAmount, tokenAAmount, vaultB, vaultA];
 
-  const tradeFee = sourceAmount.mul(fees.tradeFeeNumerator).div(fees.tradeFeeDenominator);
-  const protocolFee = tradeFee.mul(fees.protocolTradeFeeNumerator).div(fees.protocolTradeFeeDenominator);
+  const tradeFee = calculateFee(sourceAmount, fees.tradeFeeNumerator, fees.tradeFeeDenominator);
+  const protocolFee = calculateFee(tradeFee, fees.protocolTradeFeeNumerator, fees.protocolTradeFeeDenominator);
   const sourceAmountLessProtocolFee = sourceAmount.sub(protocolFee);
 
   const beforeSwapSourceAmount = swapSourceAmount;

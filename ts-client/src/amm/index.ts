@@ -81,6 +81,7 @@ import {
   createTransactions,
   deriveCustomizablePermissionlessConstantProductPoolAddress,
   getVaultLpSupply,
+  calculateFee,
 } from './utils';
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes';
 import Decimal from 'decimal.js';
@@ -2542,9 +2543,10 @@ export default class AmmImpl implements AmmImplementation {
       closeWrappedSOLIx && postInstructions.push(closeWrappedSOLIx);
     }
 
+    const minimumOutAmount = tokenBOutAmount.isZero() ? tokenAOutAmount : tokenBOutAmount;
     const programMethod =
       this.isStablePool && (tokenAOutAmount.isZero() || tokenBOutAmount.isZero())
-        ? this.program.methods.removeLiquiditySingleSide(lpTokenAmount, new BN(0)).accountsPartial({
+        ? this.program.methods.removeLiquiditySingleSide(lpTokenAmount, minimumOutAmount).accountsPartial({
             aTokenVault: this.vaultA.vaultState.tokenVault,
             aVault: this.poolState.aVault,
             aVaultLp: this.poolState.aVaultLp,
@@ -3082,12 +3084,12 @@ export default class AmmImpl implements AmmImplementation {
 
   private calculateProtocolTradingFee(amount: BN): BN {
     const { protocolTradeFeeDenominator, protocolTradeFeeNumerator } = this.poolState.fees;
-    return amount.mul(protocolTradeFeeNumerator).div(protocolTradeFeeDenominator);
+    return calculateFee(amount, protocolTradeFeeNumerator, protocolTradeFeeDenominator);
   }
 
   private calculateTradingFee(amount: BN): BN {
     const { tradeFeeDenominator, tradeFeeNumerator } = this.poolState.fees;
-    return amount.mul(tradeFeeNumerator).div(tradeFeeDenominator);
+    return calculateFee(amount, tradeFeeNumerator, tradeFeeDenominator);
   }
 
   private computeActualInAmount(
@@ -3112,12 +3114,14 @@ export default class AmmImpl implements AmmImplementation {
   private getShareByAmount(amount: BN, tokenAmount: BN, lpSupply: BN, roundUp?: boolean): BN {
     if (tokenAmount.isZero()) return new BN(0);
 
-    return roundUp ? amount.mul(lpSupply).divRound(tokenAmount) : amount.mul(lpSupply).div(tokenAmount);
+    const { div, mod } = amount.mul(lpSupply).divmod(tokenAmount);
+    return roundUp && !mod.isZero() ? div.addn(1) : div;
   }
 
   private getAmountByShare(amount: BN, tokenAmount: BN, lpSupply: BN, roundUp?: boolean): BN {
     if (lpSupply.isZero()) return new BN(0);
 
-    return roundUp ? amount.mul(tokenAmount).divRound(lpSupply) : amount.mul(tokenAmount).div(lpSupply);
+    const { div, mod } = amount.mul(tokenAmount).divmod(lpSupply);
+    return roundUp && !mod.isZero() ? div.addn(1) : div;
   }
 }

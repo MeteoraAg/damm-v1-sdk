@@ -36,6 +36,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `moveLockedLP`, the program has no `move_locked_lp` endpoint
 
+### Fixed
+
+- Stable pool single side `withdraw` passes the requested out amount as `minimum_out_amount` instead of 0
+- Swap quotes charge a minimum trading and protocol fee of 1 token, as the program does
+- Balanced deposit quotes round token amounts up, as the program does
+
 ### Breaking Changes
 
 - `AmmIdl` is the Anchor 0.30+ IDL JSON and `Amm` is its type. Load it with `@coral-xyz/anchor` 0.30 or later: `new Program({ ...AmmIdl, address }, provider)`
