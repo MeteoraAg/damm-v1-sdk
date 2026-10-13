@@ -1,8 +1,9 @@
-import { IDL } from '../amm/idl';
+import { Amm } from './idl';
+import IDL from './idl.json';
 import { AnchorError } from '@coral-xyz/anchor';
 import { PROGRAM_ID } from './constants';
 
-type Codes = (typeof IDL.errors)[number]['code'];
+type Codes = Amm['errors'][number]['code'];
 
 class DynamicAmmError extends Error {
   public errorCode: number;

@@ -9,7 +9,7 @@ import {
 import { Connection, PublicKey } from '@solana/web3.js';
 import { AnchorProvider, BN } from '@coral-xyz/anchor';
 import DynamicAmmError from '../error';
-import { IDL } from '../idl';
+import IDL from '../idl.json';
 import { createMint, getMint, Mint, mintTo } from '@solana/spl-token';
 import { derivePoolAddress } from '../utils';
 

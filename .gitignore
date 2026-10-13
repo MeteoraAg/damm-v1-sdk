@@ -15,3 +15,5 @@ ts-client/scripts
 ts-client/.env
 
 commands
+
+.pnpm-store/

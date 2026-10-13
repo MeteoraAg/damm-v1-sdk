@@ -1,13 +1,4 @@
-import {
-  getAmountByShare,
-  calculateWithdrawableAmount,
-  VaultState,
-  getUnmintAmount,
-  IDL as VaultIDL,
-  VaultIdl,
-  PROGRAM_ID as VAULT_PROGRAM_ID,
-} from '@meteora-ag/vault-sdk';
-import { STAKE_FOR_FEE_PROGRAM_ID, IDL as StakeForFeeIDL, StakeForFee as StakeForFeeIdl } from '@meteora-ag/m3m3';
+import { getAmountByShare, calculateWithdrawableAmount, VaultState, getUnmintAmount } from '@meteora-ag/vault-sdk';
 import { AnchorProvider, BN, Program } from '@coral-xyz/anchor';
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
@@ -45,6 +36,7 @@ import {
   METAPLEX_PROGRAM,
   SEEDS,
   U64_MAX,
+  VAULT_VERSION_TRACKED_LP_SUPPLY,
 } from './constants';
 import { ConstantProductSwap, StableSwap, SwapCurve, TradeDirection } from './curve';
 import {
@@ -63,8 +55,10 @@ import {
   SwapQuoteParam,
   SwapResult,
   TokenMultiplier,
+  VaultAccount,
 } from './types';
-import { Amm as AmmIdl, IDL as AmmIDL } from './idl';
+import { Amm as AmmIdl } from './idl';
+import AmmIDL from './idl.json';
 import Decimal from 'decimal.js';
 import {
   createCreateMetadataAccountV3Instruction,
@@ -76,12 +70,13 @@ import {
 
 export const createProgram = (connection: Connection, programId?: string) => {
   const provider = new AnchorProvider(connection, {} as any, AnchorProvider.defaultOptions());
-  const ammProgram = new Program<AmmIdl>(AmmIDL, programId ?? PROGRAM_ID, provider);
-  const vaultProgram = new Program<VaultIdl>(VaultIDL, VAULT_PROGRAM_ID, provider);
-  const stakeForFeeProgram = new Program<StakeForFeeIdl>(StakeForFeeIDL, STAKE_FOR_FEE_PROGRAM_ID, provider);
+  const ammProgram = new Program<AmmIdl>({ ...AmmIDL, address: programId ?? PROGRAM_ID } as AmmIdl, provider);
 
-  return { provider, ammProgram, vaultProgram, stakeForFeeProgram };
+  return { provider, ammProgram };
 };
+
+export const getVaultLpSupply = (vault: VaultAccount, lpMintSupply: BN) =>
+  vault.version === VAULT_VERSION_TRACKED_LP_SUPPLY ? vault.totalLpSupply : lpMintSupply;
 
 /**
  * It takes an amount and a slippage rate, and returns the maximum amount that can be received with
@@ -498,8 +493,8 @@ export const calculateSwapQuoteForGoingToCreateMemecoinPool = (
  * @param {VaultState} params.vaultB - vault B state that fetch from vault program
  * @param {BN} params.poolVaultALp - The amount of LP tokens in the pool for token A (`PoolState.aVaultLp` accountInfo)
  * @param {BN} params.poolVaultBLp - The amount of LP tokens in the pool for token B (`PoolState.bVaultLp` accountInfo)
- * @param {BN} params.vaultALpSupply - vault A lp supply (`VaultState.lpMint` accountInfo)
- * @param {BN} params.vaultBLpSupply - vault B lp supply (`VaultState.lpMint` accountInfo)
+ * @param {BN} params.vaultALpSupply - vault A lp supply (use `getVaultLpSupply`)
+ * @param {BN} params.vaultBLpSupply - vault B lp supply (use `getVaultLpSupply`)
  * @param {BN} params.vaultAReserve - vault A reserve (`VaultState.tokenVault` accountInfo)
  * @param {BN} params.vaultBReserve - vault B reserve (`VaultState.tokenVault` accountInfo)
  * @param {BN} params.currentTime - on chain time (use `SYSVAR_CLOCK_PUBKEY`)
