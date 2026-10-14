@@ -54,6 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `compute_quote` prices vault LP with `Vault::get_lp_supply` (program 0.5.7)
 - `Vault` state uses the 0.5.7 layout with `version` and `total_lp_supply`, `Pool` state adds `lp_mint_supply`
 - `rust-client` deposit and pool info use the same LP supplies as the program
+- `PoolError` includes the program errors up to `InvalidVaultLpSupplyAccounting` (6065)
 
 ## @meteora-ag/dynamic-amm-sdk [1.4.0] - PR[#224](https://github.com/MeteoraAg/dynamic-amm-sdk/pull/224)
 

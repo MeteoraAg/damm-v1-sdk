@@ -230,9 +230,9 @@ export const computeActualDepositAmount = (
  * @param {number} currentTime - the on solana chain time in seconds (SYSVAR_CLOCK_PUBKEY)
  * @param {BN} poolVaultALp - The amount of LP tokens in the pool for token A
  * @param {BN} poolVaultBLp - The amount of Lp tokens in the pool for token B,
- * @param {BN} vaultALpSupply - The total amount of Vault A LP tokens in the pool.
- * @param {BN} vaultBLpSupply - The total amount of Vault B LP token in the pool.
- * @param {BN} poolLpSupply - The total amount of LP tokens in the pool.
+ * @param {BN} vaultALpSupply - vault A lp supply (use `getVaultLpSupply`)
+ * @param {BN} vaultBLpSupply - vault B lp supply (use `getVaultLpSupply`)
+ * @param {BN} poolLpSupply - pool lp supply (`PoolState.lpMintSupply`)
  * @param {SwapCurve} swapCurve - SwapCurve - the swap curve used to calculate the virtual price
  * @param {VaultState} vaultA - VaultState of vault A
  * @param {VaultState} vaultB - VaultState of Vault B

@@ -212,4 +212,43 @@ pub enum PoolError {
 
     #[msg("Quote token must be SOL,USDC")]
     InvalidQuoteMint,
+
+    #[msg("Invalid token metadata program")]
+    InvalidTokenMetadataProgram,
+
+    #[msg("Invalid permission")]
+    InvalidPermission,
+
+    #[msg("Invalid zap out parameters")]
+    InvalidZapOutParameters,
+
+    #[msg("Incorrect ATA")]
+    IncorrectATA,
+
+    #[msg("Invalid withdraw protocol fee zap accounts")]
+    InvalidWithdrawProtocolFeeZapAccounts,
+
+    #[msg("SOL,USDC protocol fee cannot be withdrawn via zap")]
+    MintRestrictedFromZap,
+
+    #[msg("CPI disabled")]
+    CpiDisabled,
+
+    #[msg("Missing zap out instruction")]
+    MissingZapOutInstruction,
+
+    #[msg("Invalid zap accounts")]
+    InvalidZapAccounts,
+
+    #[msg("Invalid claim protocol fee accounts")]
+    InvalidClaimProtocolFeeAccounts,
+
+    #[msg("Pool LP mint supply accounting is not patched")]
+    LpMintSupplyAccountingNotPatched,
+
+    #[msg("User is not the owner of the pool LP token account")]
+    InvalidLpOwner,
+
+    #[msg("Invalid vault LP supply accounting")]
+    InvalidVaultLpSupplyAccounting,
 }
