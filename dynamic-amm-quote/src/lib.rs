@@ -15,7 +15,7 @@ use std::collections::HashMap;
 pub struct VaultInfo {
     /// Amount of vault lp hold by the pool
     pub lp_amount: u64,
-    /// Vault lp mint supply
+    /// Vault LP supply (`Vault::get_lp_supply`)
     pub lp_supply: u64,
     /// Vault state
     pub vault: Vault,
@@ -97,11 +97,19 @@ pub fn compute_quote(
         "In token mint not matches with pool token mints"
     );
 
+    let vault_a_lp_supply = vault_a
+        .get_lp_supply(vault_a_lp_mint.supply)
+        .context("Invalid vault LP supply accounting")?;
+
+    let vault_b_lp_supply = vault_b
+        .get_lp_supply(vault_b_lp_mint.supply)
+        .context("Invalid vault LP supply accounting")?;
+
     let token_a_amount = vault_a
         .get_amount_by_share(
             current_time,
             pool_vault_a_lp_token.amount,
-            vault_a_lp_mint.supply,
+            vault_a_lp_supply,
         )
         .context("Fail to get token a amount")?;
 
@@ -109,7 +117,7 @@ pub fn compute_quote(
         .get_amount_by_share(
             current_time,
             pool_vault_b_lp_token.amount,
-            vault_b_lp_mint.supply,
+            vault_b_lp_supply,
         )
         .context("Fail to get token b amount")?;
 
@@ -123,8 +131,8 @@ pub fn compute_quote(
         mut in_vault,
         out_vault,
         in_vault_lp,
-        in_vault_lp_mint,
-        out_vault_lp_mint,
+        in_vault_lp_supply,
+        out_vault_lp_supply,
         out_vault_token_account,
         in_token_total_amount,
         out_token_total_amount,
@@ -133,8 +141,8 @@ pub fn compute_quote(
             vault_a,
             vault_b,
             pool_vault_a_lp_token,
-            vault_a_lp_mint,
-            vault_b_lp_mint,
+            vault_a_lp_supply,
+            vault_b_lp_supply,
             vault_b_token,
             token_a_amount,
             token_b_amount,
@@ -143,8 +151,8 @@ pub fn compute_quote(
             vault_b,
             vault_a,
             pool_vault_b_lp_token,
-            vault_b_lp_mint,
-            vault_a_lp_mint,
+            vault_b_lp_supply,
+            vault_a_lp_supply,
             vault_a_token,
             token_b_amount,
             token_a_amount,
@@ -176,7 +184,7 @@ pub fn compute_quote(
         .get_unmint_amount(
             current_time,
             in_amount_after_protocol_fee,
-            in_vault_lp_mint.supply,
+            in_vault_lp_supply,
         )
         .context("Fail to get in_vault_lp")?;
 
@@ -191,10 +199,9 @@ pub fn compute_quote(
             in_lp
                 .checked_add(in_vault_lp.amount)
                 .context("Fail to get new in_vault_lp")?,
-            in_vault_lp_mint
-                .supply
+            in_vault_lp_supply
                 .checked_add(in_lp)
-                .context("Fail to get new in_vault_lp_mint")?,
+                .context("Fail to get new in_vault_lp_supply")?,
         )
         .context("Fail to get after_in_token_total_amount")?;
 
@@ -224,12 +231,12 @@ pub fn compute_quote(
         .get_unmint_amount(
             current_time,
             destination_amount_swapped.try_into()?,
-            out_vault_lp_mint.supply,
+            out_vault_lp_supply,
         )
         .context("Fail to get out_vault_lp")?;
 
     let out_amount = out_vault
-        .get_amount_by_share(current_time, out_vault_lp, out_vault_lp_mint.supply)
+        .get_amount_by_share(current_time, out_vault_lp, out_vault_lp_supply)
         .context("Fail to get out_amount")?;
 
     ensure!(

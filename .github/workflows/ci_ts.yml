@@ -24,12 +24,12 @@ jobs:
     outputs:
       sdk: ${{steps.changed-files-specific.outputs.any_changed}}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@0717577d45739eb3c851188b29f50ed6c0b2194e # v2.8.0
         with:
           fetch-depth: 0
       - name: Get specific changed files
         id: changed-files-specific
-        uses: tj-actions/changed-files@v18.6
+        uses: tj-actions/changed-files@a2f1692a6f703b7a14e155ae404e6bb15538b763 # v18.6
         with:
           files: |
             ts-client
@@ -39,12 +39,15 @@ jobs:
     needs: sdk_changed_files
     if: needs.sdk_changed_files.outputs.sdk == 'true'
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@0717577d45739eb3c851188b29f50ed6c0b2194e # v2.8.0
       - uses: ./.github/actions/setup-solana
       - uses: ./.github/actions/setup-dep
       - uses: ./.github/actions/setup-anchor
       # This much more faster than anchor localnet
       - run: solana-test-validator --bpf-program 24Uqj9JCLxUeoC3hGfh5W3s9FM9uCHDS2SG3LYwBpyTi ./dynamic-amm-quote/tests/fixtures/dynamic_vault.so --bpf-program Eo7WjKq67rjJQSZxS6z3YkapzY3eMj6Xy8X5EQVn5UaB ./dynamic-amm-quote/tests/fixtures/dynamic_amm.so --bpf-program metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s ./dynamic-amm-quote/tests/fixtures/metaplex.so --account-dir ./dynamic-amm-quote/tests/fixtures/accounts --reset & sleep 2
         shell: bash
-      - run: cd ts-client && npm install && npm run test
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4.3.0
+        with:
+          version: 12
+      - run: cd ts-client && pnpm install --frozen-lockfile && pnpm run test
         shell: bash

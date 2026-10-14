@@ -14,7 +14,7 @@ on:
       - feat/protocol-fee-part-of-lp-fees
 
 env:
-  SOLANA_CLI_VERSION: 1.16.3
+  SOLANA_CLI_VERSION: 2.1.0
   RUST_TOOLCHAIN_VERSION: 1.76.0
 
 jobs:
@@ -23,12 +23,12 @@ jobs:
     outputs:
       program: ${{steps.changed-files-specific.outputs.any_changed}}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@0717577d45739eb3c851188b29f50ed6c0b2194e # v2.8.0
         with:
           fetch-depth: 0
       - name: Get specific changed files
         id: changed-files-specific
-        uses: tj-actions/changed-files@v18.6
+        uses: tj-actions/changed-files@a2f1692a6f703b7a14e155ae404e6bb15538b763 # v18.6
         with:
           files: |
             rust-client
@@ -40,17 +40,18 @@ jobs:
     runs-on: ubuntu-latest
     if: needs.changed_files_rust.outputs.program == 'true'
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@0717577d45739eb3c851188b29f50ed6c0b2194e # v2.8.0
       - uses: ./.github/actions/setup-dep
       - uses: ./.github/actions/setup-solana
       # Install rust + toolchain
-      - uses: actions-rs/toolchain@v1
+      - uses: actions-rs/toolchain@16499b5e05bf2e26879000db0c1d13f7e13fa3af # v1.0.7
         with:
           toolchain: ${{ env.RUST_TOOLCHAIN_VERSION }}
-          components: clippy
+          components: rustfmt, clippy
+          override: true
       # Cargo build cache
       - name: Cargo Cache
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: |
             ~/.cargo/

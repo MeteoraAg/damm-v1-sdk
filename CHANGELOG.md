@@ -19,6 +19,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## @meteora-ag/dynamic-amm-sdk [2.0.0] - PR[#229](https://github.com/MeteoraAg/damm-v1-sdk/pull/229)
+
+### Added
+
+- `getVaultLpSupply` to get the vault LP supply used for share pricing
+
+### Changed
+
+- Sync IDL with DAMM v1 program 0.5.7
+- Bump `@coral-xyz/anchor` and `@coral-xyz/borsh` to 0.31.1
+- Quotes price pool LP with `pool.lpMintSupply` (program 0.5.6) and vault LP with `vault.totalLpSupply` for version 1 vaults (program 0.5.7)
+- `getLpSupply` and `poolState.lpSupply` return `pool.lpMintSupply`
+
+### Removed
+
+- `moveLockedLP`, the program has no `move_locked_lp` endpoint
+
+### Fixed
+
+- Stable pool single side `withdraw` passes the requested out amount as `minimum_out_amount` instead of 0
+- Swap quotes charge a minimum trading and protocol fee of 1 token, as the program does
+- Balanced deposit quotes round token amounts up, as the program does
+
+### Breaking Changes
+
+- `AmmIdl` is the Anchor 0.30+ IDL JSON and `Amm` is its type. Load it with `@coral-xyz/anchor` 0.30 or later: `new Program({ ...AmmIdl, address }, provider)`
+- `calculateSwapQuote` and `calculatePoolInfo` callers must pass `vaultALpSupply` and `vaultBLpSupply` from `getVaultLpSupply`
+- `calculatePoolInfo`, `StableSwap.computeImbalanceDeposit`, and `StableSwap.computeWithdrawOne` take pool `lpSupply` from `pool.lpMintSupply` (`getLpSupply` / `poolState.lpSupply`)
+
+## dynamic-amm-quote [0.0.6] - PR[#229](https://github.com/MeteoraAg/damm-v1-sdk/pull/229)
+
+### Changed
+
+- `compute_quote` prices vault LP with `Vault::get_lp_supply` (program 0.5.7)
+- `Vault` state uses the 0.5.7 layout with `version` and `total_lp_supply`, `Pool` state adds `lp_mint_supply`
+- `rust-client` deposit and pool info use the same LP supplies as the program
+- `PoolError` includes the program errors up to `InvalidVaultLpSupplyAccounting` (6065)
+
 ## @meteora-ag/dynamic-amm-sdk [1.4.0] - PR[#224](https://github.com/MeteoraAg/dynamic-amm-sdk/pull/224)
 
 ### Changed

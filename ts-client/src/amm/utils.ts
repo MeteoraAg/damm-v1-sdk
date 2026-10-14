@@ -1,13 +1,4 @@
-import {
-  getAmountByShare,
-  calculateWithdrawableAmount,
-  VaultState,
-  getUnmintAmount,
-  IDL as VaultIDL,
-  VaultIdl,
-  PROGRAM_ID as VAULT_PROGRAM_ID,
-} from '@meteora-ag/vault-sdk';
-import { STAKE_FOR_FEE_PROGRAM_ID, IDL as StakeForFeeIDL, StakeForFee as StakeForFeeIdl } from '@meteora-ag/m3m3';
+import { getAmountByShare, calculateWithdrawableAmount, VaultState, getUnmintAmount } from '@meteora-ag/vault-sdk';
 import { AnchorProvider, BN, Program } from '@coral-xyz/anchor';
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
@@ -45,6 +36,7 @@ import {
   METAPLEX_PROGRAM,
   SEEDS,
   U64_MAX,
+  VAULT_VERSION_TRACKED_LP_SUPPLY,
 } from './constants';
 import { ConstantProductSwap, StableSwap, SwapCurve, TradeDirection } from './curve';
 import {
@@ -63,8 +55,10 @@ import {
   SwapQuoteParam,
   SwapResult,
   TokenMultiplier,
+  VaultAccount,
 } from './types';
-import { Amm as AmmIdl, IDL as AmmIDL } from './idl';
+import { Amm as AmmIdl } from './idl';
+import AmmIDL from './idl.json';
 import Decimal from 'decimal.js';
 import {
   createCreateMetadataAccountV3Instruction,
@@ -76,12 +70,13 @@ import {
 
 export const createProgram = (connection: Connection, programId?: string) => {
   const provider = new AnchorProvider(connection, {} as any, AnchorProvider.defaultOptions());
-  const ammProgram = new Program<AmmIdl>(AmmIDL, programId ?? PROGRAM_ID, provider);
-  const vaultProgram = new Program<VaultIdl>(VaultIDL, VAULT_PROGRAM_ID, provider);
-  const stakeForFeeProgram = new Program<StakeForFeeIdl>(StakeForFeeIDL, STAKE_FOR_FEE_PROGRAM_ID, provider);
+  const ammProgram = new Program<AmmIdl>({ ...AmmIDL, address: programId ?? PROGRAM_ID } as AmmIdl, provider);
 
-  return { provider, ammProgram, vaultProgram, stakeForFeeProgram };
+  return { provider, ammProgram };
 };
+
+export const getVaultLpSupply = (vault: VaultAccount, lpMintSupply: BN) =>
+  vault.version === VAULT_VERSION_TRACKED_LP_SUPPLY ? vault.totalLpSupply : lpMintSupply;
 
 /**
  * It takes an amount and a slippage rate, and returns the maximum amount that can be received with
@@ -235,9 +230,9 @@ export const computeActualDepositAmount = (
  * @param {number} currentTime - the on solana chain time in seconds (SYSVAR_CLOCK_PUBKEY)
  * @param {BN} poolVaultALp - The amount of LP tokens in the pool for token A
  * @param {BN} poolVaultBLp - The amount of Lp tokens in the pool for token B,
- * @param {BN} vaultALpSupply - The total amount of Vault A LP tokens in the pool.
- * @param {BN} vaultBLpSupply - The total amount of Vault B LP token in the pool.
- * @param {BN} poolLpSupply - The total amount of LP tokens in the pool.
+ * @param {BN} vaultALpSupply - vault A lp supply (use `getVaultLpSupply`)
+ * @param {BN} vaultBLpSupply - vault B lp supply (use `getVaultLpSupply`)
+ * @param {BN} poolLpSupply - pool lp supply (`PoolState.lpMintSupply`)
  * @param {SwapCurve} swapCurve - SwapCurve - the swap curve used to calculate the virtual price
  * @param {VaultState} vaultA - VaultState of vault A
  * @param {VaultState} vaultB - VaultState of Vault B
@@ -275,14 +270,20 @@ export const calculatePoolInfo = (
   return poolInformation;
 };
 
+export const calculateFee = (amount: BN, feeNumerator: BN, feeDenominator: BN): BN => {
+  if (feeNumerator.isZero() || amount.isZero()) return new BN(0);
+  const fee = amount.mul(feeNumerator).div(feeDenominator);
+  return fee.isZero() ? new BN(1) : fee;
+};
+
 export const calculateProtocolTradingFee = (amount: BN, poolState: PoolState): BN => {
   const { protocolTradeFeeDenominator, protocolTradeFeeNumerator } = poolState.fees;
-  return amount.mul(protocolTradeFeeNumerator).div(protocolTradeFeeDenominator);
+  return calculateFee(amount, protocolTradeFeeNumerator, protocolTradeFeeDenominator);
 };
 
 export const calculateTradingFee = (amount: BN, poolState: PoolState): BN => {
   const { tradeFeeDenominator, tradeFeeNumerator } = poolState.fees;
-  return amount.mul(tradeFeeNumerator).div(tradeFeeDenominator);
+  return calculateFee(amount, tradeFeeNumerator, tradeFeeDenominator);
 };
 
 export const calculateUnclaimedLockEscrowFee = (
@@ -458,8 +459,8 @@ export const calculateSwapQuoteForGoingToCreateMemecoinPool = (
     ? [inAmountLamport, tokenAAmount, tokenBAmount, vaultA, vaultB]
     : [inAmountLamport, tokenBAmount, tokenAAmount, vaultB, vaultA];
 
-  const tradeFee = sourceAmount.mul(fees.tradeFeeNumerator).div(fees.tradeFeeDenominator);
-  const protocolFee = tradeFee.mul(fees.protocolTradeFeeNumerator).div(fees.protocolTradeFeeDenominator);
+  const tradeFee = calculateFee(sourceAmount, fees.tradeFeeNumerator, fees.tradeFeeDenominator);
+  const protocolFee = calculateFee(tradeFee, fees.protocolTradeFeeNumerator, fees.protocolTradeFeeDenominator);
   const sourceAmountLessProtocolFee = sourceAmount.sub(protocolFee);
 
   const beforeSwapSourceAmount = swapSourceAmount;
@@ -498,8 +499,8 @@ export const calculateSwapQuoteForGoingToCreateMemecoinPool = (
  * @param {VaultState} params.vaultB - vault B state that fetch from vault program
  * @param {BN} params.poolVaultALp - The amount of LP tokens in the pool for token A (`PoolState.aVaultLp` accountInfo)
  * @param {BN} params.poolVaultBLp - The amount of LP tokens in the pool for token B (`PoolState.bVaultLp` accountInfo)
- * @param {BN} params.vaultALpSupply - vault A lp supply (`VaultState.lpMint` accountInfo)
- * @param {BN} params.vaultBLpSupply - vault B lp supply (`VaultState.lpMint` accountInfo)
+ * @param {BN} params.vaultALpSupply - vault A lp supply (use `getVaultLpSupply`)
+ * @param {BN} params.vaultBLpSupply - vault B lp supply (use `getVaultLpSupply`)
  * @param {BN} params.vaultAReserve - vault A reserve (`VaultState.tokenVault` accountInfo)
  * @param {BN} params.vaultBReserve - vault B reserve (`VaultState.tokenVault` accountInfo)
  * @param {BN} params.currentTime - on chain time (use `SYSVAR_CLOCK_PUBKEY`)

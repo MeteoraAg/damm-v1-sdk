@@ -2,12 +2,11 @@ import { AccountInfo, PublicKey, Transaction } from '@solana/web3.js';
 import { IdlAccounts, IdlTypes, Program } from '@coral-xyz/anchor';
 import BN from 'bn.js';
 import { Amm as AmmIdl } from '../idl';
-import { VaultState, VaultIdl } from '@meteora-ag/vault-sdk';
+import { VaultState } from '@meteora-ag/vault-sdk';
 import Decimal from 'decimal.js';
 import { publicKey, struct, u64, u8, option, i64 } from '@coral-xyz/borsh';
 
 export type AmmProgram = Program<AmmIdl>;
-export type VaultProgram = Program<VaultIdl>;
 
 export interface AmmImplementation {
   decimals: number;
@@ -163,11 +162,12 @@ export type PoolState = Omit<IdlAccounts<AmmIdl>['pool'], 'curveType' | 'fees' |
   poolType: PoolType;
 };
 
-export type Depeg = Omit<IdlTypes<AmmIdl>['Depeg'], 'depegType'> & { depegType: DepegType };
-export type PoolFees = IdlTypes<AmmIdl>['PoolFees'];
-export type Bootstrapping = IdlTypes<AmmIdl>['Bootstrapping'];
+export type Depeg = Omit<IdlTypes<AmmIdl>['depeg'], 'depegType'> & { depegType: DepegType };
+export type PoolFees = IdlTypes<AmmIdl>['poolFees'];
+export type Bootstrapping = IdlTypes<AmmIdl>['bootstrapping'];
 export type LockEscrowAccount = IdlAccounts<AmmIdl>['lockEscrow'];
-export type CustomizableParams = IdlTypes<AmmIdl>['CustomizableParams'];
+export type CustomizableParams = IdlTypes<AmmIdl>['customizableParams'];
+export type VaultAccount = IdlAccounts<AmmIdl>['vault'];
 
 export type PoolInformation = {
   tokenAAmount: BN;

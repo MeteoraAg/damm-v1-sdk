@@ -2,8 +2,6 @@ import { Connection, PublicKey, Keypair } from '@solana/web3.js';
 import BN from 'bn.js';
 import { Wallet, AnchorProvider, Program } from '@coral-xyz/anchor';
 import AmmImpl from '../amm';
-import { Amm as AmmIdl, IDL as AmmIDL } from '../amm/idl';
-import { PROGRAM_ID } from '../amm/constants';
 import fs from 'fs';
 import os from 'os';
 
