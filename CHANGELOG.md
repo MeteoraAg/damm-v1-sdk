@@ -45,7 +45,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Breaking Changes
 
 - `AmmIdl` is the Anchor 0.30+ IDL JSON and `Amm` is its type. Load it with `@coral-xyz/anchor` 0.30 or later: `new Program({ ...AmmIdl, address }, provider)`
-- `calculateSwapQuote` callers must pass `vaultALpSupply` and `vaultBLpSupply` from `getVaultLpSupply`
+- `calculateSwapQuote` and `calculatePoolInfo` callers must pass `vaultALpSupply` and `vaultBLpSupply` from `getVaultLpSupply`
+- `calculatePoolInfo`, `StableSwap.computeImbalanceDeposit`, and `StableSwap.computeWithdrawOne` take pool `lpSupply` from `pool.lpMintSupply` (`getLpSupply` / `poolState.lpSupply`)
 
 ## dynamic-amm-quote [0.0.6] - PR[#229](https://github.com/MeteoraAg/damm-v1-sdk/pull/229)
 

@@ -22,6 +22,9 @@ export interface SwapCurve {
 
   computeInAmount(destAmount: BN, swapSourceAmount: BN, swapDestinationAmount: BN, tradeDirection: TradeDirection): BN;
 
+  /**
+   * @param lpSupply Pool LP supply from `pool.lpMintSupply` (`getLpSupply` / `poolState.lpSupply`).
+   */
   computeImbalanceDeposit(
     depositAAmount: BN,
     depositBAmount: BN,
@@ -31,6 +34,9 @@ export interface SwapCurve {
     fees: PoolFees,
   ): BN;
 
+  /**
+   * @param lpSupply Pool LP supply from `pool.lpMintSupply` (`getLpSupply` / `poolState.lpSupply`).
+   */
   computeWithdrawOne(
     lpAmount: BN,
     lpSupply: BN,
