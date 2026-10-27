@@ -5,6 +5,8 @@ export const ERROR = {
   POOL_NOT_LOAD: 'Pool not loaded',
   INVALID_MINT: 'Invalid mint',
   INVALID_ACCOUNT: 'Account not found',
+  STAKE_FOR_FEE_VAULT_DEPRECATED:
+    'Stake-for-fee (M3M3) vault initialization is deprecated, remove `stakeLiquidity` and `feeVault` options',
 };
 
 export const PROGRAM_ID = 'Eo7WjKq67rjJQSZxS6z3YkapzY3eMj6Xy8X5EQVn5UaB';
