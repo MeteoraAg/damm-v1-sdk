@@ -33,7 +33,7 @@ The Dynamic AMM SDK supports three types of pools:
 
 - Constant Product Pool (Volatile Pool)
 
-- Memecoin Pool (M3M3 Pool)
+- Memecoin Pool
 
 - Stable Pool
 
@@ -177,7 +177,6 @@ for (const transaction of transactions) {
 import AmmImpl, { PROGRAM_ID } from '@meteora-ag/dynamic-amm-sdk';
 import { derivePoolAddressWithConfig } from '@meteora-ag/dynamic-amm-sdk/dist/cjs/src/amm/utils';
 import { BN } from 'bn.js';
-import { roundToNearestMinutes } from 'date-fns';
 
 // Token A/B address of the pool.
 const memecoinMint = new PublicKey('...');
@@ -210,34 +209,6 @@ const transactions = await AmmImpl.createPermissionlessConstantProductMemecoinPo
   { isMinted: true },
 );
 
-// with M3M3 vault
-const feeDurationInDays = 7;
-const numOfStakers = 1000;
-const feeClaimStartTime = roundToNearestMinutes(new Date(), {
-  nearestTo: 30,
-});
-const cooldownDurationInHours = 6;
-
-const transactions = await AmmImpl.createPermissionlessConstantProductMemecoinPoolWithConfig(
-  provider.connection,
-  mockWallet.publicKey, // payer
-  memecoinMint,
-  tokenBMint,
-  memecoinAmount,
-  tokenBAmount,
-  feeConfig.publicKey,
-  { isMinted: true },
-  {
-    feeVault: {
-      secondsToFullUnlock: feeDurationInDays ? new BN(feeDurationInDays * 86400) : new BN(0),
-      topListLength: numOfStakers || 0,
-      startFeeDistributeTimestamp: feeClaimStartTime ? new BN(feeClaimStartTime.getTime() / 1000) : null,
-      unstakeLockDuration: cooldownDurationInHours ? new BN(cooldownDurationInHours * 3600) : new BN(0),
-    },
-    // other options
-  },
-);
-
 for (const transaction of transactions) {
   transaction.sign(mockWallet.payer);
   const txHash = await provider.connection.sendRawTransaction(transaction.serialize());
@@ -245,6 +216,8 @@ for (const transaction of transactions) {
   console.log('transaction %s', txHash);
 }
 ```
+
+> Note: Stake-for-fee (M3M3) vault initialization is deprecated. Do not create new stake-for-fee vaults or DAMM lock escrows owned by a stake-for-fee vault. Passing `stakeLiquidity` or `feeVault` to the pool creation functions throws.
 
 > Note: For Alpha Vault integration, please refer to [Create Dynamic Pool With Permissionless Alpha Vault.](https://docs.meteora.ag/alpha-vault-docs/alpha-vault-without-whitelist#id-1.-create-dynamic-pool-with-permissionless-alpha-vault)
 

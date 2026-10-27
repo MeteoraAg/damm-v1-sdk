@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Deprecated
 
+- Stake-for-fee (M3M3) vault initialization, since `initialize_vault` now returns `VaultError::Deprecated` on-chain. `createPermissionlessConstantProductPoolWithConfig2` (`opt.stakeLiquidity`) and `createPermissionlessConstantProductMemecoinPoolWithConfig` (`opt.stakeLiquidity`, `opt.feeVault`) throw if these options are passed, before building any transaction. They no longer create a fee vault or a DAMM lock escrow owned by the fee vault PDA
+
 ### Removed
 
 ### Fixed

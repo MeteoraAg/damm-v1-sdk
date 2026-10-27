@@ -440,6 +440,9 @@ export default class AmmImpl implements AmmImplementation {
         inAmount: BN;
         minAmountOut: BN;
       };
+      /**
+       * @deprecated Stake-for-fee (M3M3) vault initialization is deprecated on-chain. Passing this option throws.
+       */
       stakeLiquidity?: {
         ratio?: Decimal;
         param: Omit<InitializeVaultParams, 'padding'>;
@@ -447,6 +450,8 @@ export default class AmmImpl implements AmmImplementation {
       activationPoint?: BN;
     },
   ) {
+    invariant(!opt?.stakeLiquidity, ERROR.STAKE_FOR_FEE_VAULT_DEPRECATED);
+
     const { ammProgram } = createProgram(connection, opt?.programId);
 
     const [
@@ -521,10 +526,9 @@ export default class AmmImpl implements AmmImplementation {
     const activationPoint = opt?.activationPoint || null;
 
     const lpAmount = sqrt(tokenAAmount.mul(tokenBAmount));
-    const { userLockAmount, feeWrapperLockAmount } = calculateLockAmounts(lpAmount, opt?.stakeLiquidity?.ratio);
 
     const createPoolPostInstructions: TransactionInstruction[] = [];
-    if (opt?.lockLiquidity && userLockAmount.gt(new BN(0))) {
+    if (opt?.lockLiquidity && lpAmount.gt(new BN(0))) {
       const [lockEscrowPK] = deriveLockEscrowPda(poolPubkey, payer, ammProgram.programId);
       const createLockEscrowIx = await ammProgram.methods
         .createLockEscrow()
@@ -542,7 +546,7 @@ export default class AmmImpl implements AmmImplementation {
 
       createEscrowAtaIx && createPoolPostInstructions.push(createEscrowAtaIx);
       const lockIx = await ammProgram.methods
-        .lock(userLockAmount)
+        .lock(lpAmount)
         .accountsPartial({
           pool: poolPubkey,
           lockEscrow: lockEscrowPK,
@@ -613,61 +617,6 @@ export default class AmmImpl implements AmmImplementation {
       units: 450_000,
     });
     ixs.push([setComputeUnitLimitIx, createPermissionlessPoolTx]);
-
-    if (feeWrapperLockAmount.gt(new BN(0))) {
-      const preInstructions: TransactionInstruction[] = [];
-      const createFeeVaultIxs = await StakeForFee.createFeeVaultInstructions(
-        connection,
-        poolPubkey,
-        payer,
-        tokenAMint,
-        tokenBMint,
-        {
-          unstakeLockDuration: opt?.stakeLiquidity?.param.unstakeLockDuration || new BN(0),
-          secondsToFullUnlock: opt?.stakeLiquidity?.param.secondsToFullUnlock || new BN(0),
-          topListLength: opt?.stakeLiquidity?.param.topListLength || 0,
-          startFeeDistributeTimestamp: opt?.stakeLiquidity?.param.startFeeDistributeTimestamp || new BN(0),
-          padding: new Array<number>(64).fill(0),
-        },
-      );
-
-      preInstructions.push(...createFeeVaultIxs);
-
-      const vaultKey = deriveFeeVault(poolPubkey, STAKE_FOR_FEE_PROGRAM_ID);
-
-      const [lockEscrowFeeVaultPK] = deriveLockEscrowPda(poolPubkey, vaultKey, ammProgram.programId);
-
-      const [escrowFeeVaultAta, createEscrowFeeVaultAtaIx] = await getOrCreateATAInstruction(
-        lpMint,
-        lockEscrowFeeVaultPK,
-        connection,
-        payer,
-      );
-
-      createEscrowFeeVaultAtaIx && preInstructions.push(createEscrowFeeVaultAtaIx);
-
-      const lockTx = await ammProgram.methods
-        .lock(feeWrapperLockAmount)
-        .accountsPartial({
-          pool: poolPubkey,
-          lockEscrow: lockEscrowFeeVaultPK,
-          owner: payer,
-          lpMint,
-          sourceTokens: payerPoolLp,
-          escrowVault: escrowFeeVaultAta,
-          tokenProgram: TOKEN_PROGRAM_ID,
-          aVault,
-          bVault,
-          aVaultLp,
-          bVaultLp,
-          aVaultLpMint,
-          bVaultLpMint,
-        })
-        .preInstructions(preInstructions)
-        .transaction();
-
-      ixs.push(lockTx);
-    }
 
     if (opt?.swapLiquidity) {
       const protocolTokenFee = deriveProtocolTokenFee(poolPubkey, tokenBMint, ammProgram.programId);
@@ -941,11 +890,17 @@ export default class AmmImpl implements AmmImplementation {
         inAmount: BN;
         minAmountOut: BN;
       };
+      /**
+       * @deprecated Stake-for-fee (M3M3) vault initialization is deprecated on-chain. Passing this option throws.
+       */
       stakeLiquidity?: {
         ratio?: Decimal;
       };
       skipAAta?: boolean;
       skipBAta?: boolean;
+      /**
+       * @deprecated Stake-for-fee (M3M3) vault initialization is deprecated on-chain. Passing this option throws.
+       */
       feeVault?: {
         secondsToFullUnlock: BN;
         topListLength: number;
@@ -954,6 +909,8 @@ export default class AmmImpl implements AmmImplementation {
       };
     },
   ) {
+    invariant(!opt?.stakeLiquidity && !opt?.feeVault, ERROR.STAKE_FOR_FEE_VAULT_DEPRECATED);
+
     const { ammProgram } = createProgram(connection, opt?.programId);
 
     const createTokenIxs: TransactionInstruction[] = [];
@@ -1087,10 +1044,9 @@ export default class AmmImpl implements AmmImplementation {
 
     const [mintMetadata, _mintMetadataBump] = deriveMintMetadata(lpMint);
     const lpAmount = sqrt(tokenAAmount.mul(tokenBAmount));
-    const { userLockAmount, feeWrapperLockAmount } = calculateLockAmounts(lpAmount, opt?.stakeLiquidity?.ratio);
 
     const createPoolPostInstructions: TransactionInstruction[] = [];
-    if (opt?.lockLiquidity && userLockAmount.gt(new BN(0))) {
+    if (opt?.lockLiquidity && lpAmount.gt(new BN(0))) {
       const [lockEscrowPK] = deriveLockEscrowPda(poolPubkey, payer, ammProgram.programId);
       const createLockEscrowIx = await ammProgram.methods
         .createLockEscrow()
@@ -1108,7 +1064,7 @@ export default class AmmImpl implements AmmImplementation {
 
       createEscrowAtaIx && createPoolPostInstructions.push(createEscrowAtaIx);
       const lockIx = await ammProgram.methods
-        .lock(userLockAmount)
+        .lock(lpAmount)
         .accountsPartial({
           pool: poolPubkey,
           lockEscrow: lockEscrowPK,
@@ -1178,57 +1134,6 @@ export default class AmmImpl implements AmmImplementation {
     });
 
     ixs.push([setComputeUnitLimitIx, createPermissionlessPoolTx]);
-
-    if (feeWrapperLockAmount.gt(new BN(0))) {
-      const preInstructions: TransactionInstruction[] = [];
-
-      const initFeeVaultParams = opt?.feeVault ? { ...opt.feeVault, padding: new Array(64).fill(0) } : undefined;
-
-      const createFeeVaultIxs = await StakeForFee.createFeeVaultInstructions(
-        connection,
-        poolPubkey,
-        payer,
-        tokenAMint,
-        tokenBMint,
-        initFeeVaultParams,
-      );
-      preInstructions.push(...createFeeVaultIxs);
-
-      const vaultKey = deriveFeeVault(poolPubkey, STAKE_FOR_FEE_PROGRAM_ID);
-
-      const [lockEscrowFeeVaultPK] = deriveLockEscrowPda(poolPubkey, vaultKey, ammProgram.programId);
-
-      const [escrowFeeVaultAta, createEscrowFeeVaultAtaIx] = await getOrCreateATAInstruction(
-        lpMint,
-        lockEscrowFeeVaultPK,
-        connection,
-        payer,
-      );
-
-      createEscrowFeeVaultAtaIx && preInstructions.push(createEscrowFeeVaultAtaIx);
-
-      const lockTx = await ammProgram.methods
-        .lock(feeWrapperLockAmount)
-        .accountsPartial({
-          pool: poolPubkey,
-          lockEscrow: lockEscrowFeeVaultPK,
-          owner: payer,
-          lpMint,
-          sourceTokens: payerPoolLp,
-          escrowVault: escrowFeeVaultAta,
-          tokenProgram: TOKEN_PROGRAM_ID,
-          aVault,
-          bVault,
-          aVaultLp,
-          bVaultLp,
-          aVaultLpMint,
-          bVaultLpMint,
-        })
-        .preInstructions(preInstructions)
-        .transaction();
-
-      ixs.push(lockTx);
-    }
 
     if (opt?.swapLiquidity) {
       const protocolTokenFee = deriveProtocolTokenFee(poolPubkey, tokenBMint, ammProgram.programId);
