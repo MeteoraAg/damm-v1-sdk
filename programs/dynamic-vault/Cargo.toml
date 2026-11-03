@@ -3,6 +3,7 @@ name = "dynamic-vault"
 version = "0.1.0"
 description = "Created with Anchor"
 edition = "2021"
+publish = false
 
 [features]
 default = ["cpi"]

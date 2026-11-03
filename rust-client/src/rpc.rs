@@ -187,7 +187,7 @@ impl RpcArgs {
                 }
             }
         }
-        return Err(anyhow::Error::msg("Cannot send transaction"));
+        Err(anyhow::Error::msg("Cannot send transaction"))
     }
 
     pub fn simulation_transaction(

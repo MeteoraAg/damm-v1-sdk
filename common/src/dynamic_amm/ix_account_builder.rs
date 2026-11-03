@@ -125,7 +125,7 @@ impl IxAccountBuilder {
             payer_token_b,
         } = get_or_derive_initialize_pool_related_keys(pool_key, token_a_mint, token_b_mint, payer);
 
-        let accounts = dynamic_amm::accounts::InitializePermissionlessPoolWithFeeTier {
+        dynamic_amm::accounts::InitializePermissionlessPoolWithFeeTier {
             pool: pool_key,
             token_a_mint,
             token_b_mint,
@@ -153,9 +153,7 @@ impl IxAccountBuilder {
             associated_token_program: anchor_spl::associated_token::ID,
             system_program: solana_sdk::system_program::ID,
             token_program: anchor_spl::token::ID,
-        };
-
-        accounts
+        }
     }
 
     pub fn initialize_permissionless_pool_accounts(
@@ -185,7 +183,7 @@ impl IxAccountBuilder {
             payer_token_b,
         } = get_or_derive_initialize_pool_related_keys(pool_key, token_a_mint, token_b_mint, payer);
 
-        let accounts = dynamic_amm::accounts::InitializePermissionlessPool {
+        dynamic_amm::accounts::InitializePermissionlessPool {
             pool: pool_key,
             token_a_mint,
             token_b_mint,
@@ -213,9 +211,7 @@ impl IxAccountBuilder {
             associated_token_program: anchor_spl::associated_token::ID,
             system_program: solana_sdk::system_program::ID,
             token_program: anchor_spl::token::ID,
-        };
-
-        accounts
+        }
     }
 
     pub fn initialize_permissionless_constant_product_pool_with_config_accounts(
@@ -248,37 +244,34 @@ impl IxAccountBuilder {
             payer_token_b,
         } = get_or_derive_initialize_pool_related_keys(pool_key, token_a_mint, token_b_mint, payer);
 
-        let accounts =
-            dynamic_amm::accounts::InitializePermissionlessConstantProductPoolWithConfig {
-                pool: pool_key,
-                token_a_mint,
-                token_b_mint,
-                lp_mint,
-                a_vault: vault_a,
-                a_token_vault: vault_a_token_vault,
-                a_vault_lp: vault_a_lp,
-                a_vault_lp_mint: vault_a_lp_mint,
-                b_vault: vault_b,
-                b_token_vault: vault_b_token_vault,
-                b_vault_lp: vault_b_lp,
-                b_vault_lp_mint: vault_b_lp_mint,
-                protocol_token_a_fee,
-                protocol_token_b_fee,
-                mint_metadata,
-                payer_token_a,
-                payer_pool_lp,
-                payer_token_b,
-                payer,
-                config,
-                vault_program: dynamic_vault::ID,
-                metadata_program: mpl_token_metadata::ID,
-                rent: solana_sdk::sysvar::rent::ID,
-                associated_token_program: anchor_spl::associated_token::ID,
-                system_program: solana_sdk::system_program::ID,
-                token_program: anchor_spl::token::ID,
-            };
-
-        accounts
+        dynamic_amm::accounts::InitializePermissionlessConstantProductPoolWithConfig {
+            pool: pool_key,
+            token_a_mint,
+            token_b_mint,
+            lp_mint,
+            a_vault: vault_a,
+            a_token_vault: vault_a_token_vault,
+            a_vault_lp: vault_a_lp,
+            a_vault_lp_mint: vault_a_lp_mint,
+            b_vault: vault_b,
+            b_token_vault: vault_b_token_vault,
+            b_vault_lp: vault_b_lp,
+            b_vault_lp_mint: vault_b_lp_mint,
+            protocol_token_a_fee,
+            protocol_token_b_fee,
+            mint_metadata,
+            payer_token_a,
+            payer_pool_lp,
+            payer_token_b,
+            payer,
+            config,
+            vault_program: dynamic_vault::ID,
+            metadata_program: mpl_token_metadata::ID,
+            rent: solana_sdk::sysvar::rent::ID,
+            associated_token_program: anchor_spl::associated_token::ID,
+            system_program: solana_sdk::system_program::ID,
+            token_program: anchor_spl::token::ID,
+        }
     }
 
     pub fn initialize_customizable_permissionless_constant_product_pool(
@@ -309,36 +302,33 @@ impl IxAccountBuilder {
             payer_token_b,
         } = get_or_derive_initialize_pool_related_keys(pool_key, token_a_mint, token_b_mint, payer);
 
-        let accounts =
-            dynamic_amm::accounts::InitializeCustomizablePermissionlessConstantProductPool {
-                pool: pool_key,
-                token_a_mint,
-                token_b_mint,
-                lp_mint,
-                a_vault: vault_a,
-                a_token_vault: vault_a_token_vault,
-                a_vault_lp: vault_a_lp,
-                a_vault_lp_mint: vault_a_lp_mint,
-                b_vault: vault_b,
-                b_token_vault: vault_b_token_vault,
-                b_vault_lp: vault_b_lp,
-                b_vault_lp_mint: vault_b_lp_mint,
-                protocol_token_a_fee,
-                protocol_token_b_fee,
-                mint_metadata,
-                payer_token_a,
-                payer_pool_lp,
-                payer_token_b,
-                payer,
-                vault_program: dynamic_vault::ID,
-                metadata_program: mpl_token_metadata::ID,
-                rent: solana_sdk::sysvar::rent::ID,
-                // Deprecated field
-                associated_token_program: anchor_spl::associated_token::ID,
-                system_program: solana_sdk::system_program::ID,
-                token_program: anchor_spl::token::ID,
-            };
-
-        accounts
+        dynamic_amm::accounts::InitializeCustomizablePermissionlessConstantProductPool {
+            pool: pool_key,
+            token_a_mint,
+            token_b_mint,
+            lp_mint,
+            a_vault: vault_a,
+            a_token_vault: vault_a_token_vault,
+            a_vault_lp: vault_a_lp,
+            a_vault_lp_mint: vault_a_lp_mint,
+            b_vault: vault_b,
+            b_token_vault: vault_b_token_vault,
+            b_vault_lp: vault_b_lp,
+            b_vault_lp_mint: vault_b_lp_mint,
+            protocol_token_a_fee,
+            protocol_token_b_fee,
+            mint_metadata,
+            payer_token_a,
+            payer_pool_lp,
+            payer_token_b,
+            payer,
+            vault_program: dynamic_vault::ID,
+            metadata_program: mpl_token_metadata::ID,
+            rent: solana_sdk::sysvar::rent::ID,
+            // Deprecated field
+            associated_token_program: anchor_spl::associated_token::ID,
+            system_program: solana_sdk::system_program::ID,
+            token_program: anchor_spl::token::ID,
+        }
     }
 }

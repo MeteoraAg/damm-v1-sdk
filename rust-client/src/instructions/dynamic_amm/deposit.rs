@@ -126,6 +126,7 @@ fn failed_cb(_wallet_memo: String) {
     println!("cannot deposit");
 }
 
+#[allow(clippy::too_many_arguments)]
 fn get_pool_token_amount(
     args: &Args,
     pool: &Pubkey,
@@ -141,7 +142,7 @@ fn get_pool_token_amount(
     let client = RpcClient::new_with_commitment(&args.rpc_url, CommitmentConfig::finalized());
     let blockhash = client.get_latest_blockhash()?;
     let tx = Transaction::new_signed_with_payer(
-        &vec![Instruction {
+        &[Instruction {
             program_id: prog_dynamic_amm::ID,
             accounts: prog_dynamic_amm::accounts::GetPoolInfo {
                 a_vault: pool_state.a_vault,

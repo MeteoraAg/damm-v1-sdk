@@ -2,6 +2,7 @@
 name = "cli"
 version = { workspace = true }
 edition = { workspace = true }
+publish = false
 
 [dependencies]
 anchor-lang = "0.28.0"

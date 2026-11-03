@@ -56,7 +56,7 @@ pub fn process_get_dynamic_pool_info(args: &Args, sub_args: &PoolInfoDynamicAmmA
     let vault_b_lp_mint = Mint::try_deserialize_unchecked(&mut data).unwrap();
 
     let data = accounts[4].as_slice();
-    let clock = deserialize::<Clock>(&data).unwrap();
+    let clock = deserialize::<Clock>(data).unwrap();
 
     let current_time: u64 = clock.unix_timestamp.try_into().unwrap();
 

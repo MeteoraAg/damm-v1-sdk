@@ -10,7 +10,7 @@ pub fn read_keypair(path: PathBuf) -> Result<Keypair, &'static str> {
     let file = File::open(path).unwrap();
     let mut reader = BufReader::new(file);
     let mut buf = String::new();
-    if let Ok(_) = reader.read_to_string(&mut buf) {
+    if reader.read_to_string(&mut buf).is_ok() {
         let keypair = Keypair::from_base58_string(&buf);
         return Ok(keypair);
     }

@@ -24,7 +24,7 @@
     "@solana/spl-token": "^0.4.6",
     "@solana/web3.js": "1.98.0",
     "bn-sqrt": "^1.0.0",
-    "bn.js": "5.2.1",
+    "bn.js": "5.2.5",
     "decimal.js": "^10.4.1",
     "dotenv": "^16.0.1",
     "invariant": "^2.2.4"
@@ -70,5 +70,6 @@
   "bugs": {
     "url": "https://github.com/MeteoraAg/dynamic-amm-sdk/issues"
   },
-  "homepage": "https://github.com/meteora-ag/mercurial-dynamic-amm-sdk#readme"
+  "homepage": "https://github.com/meteora-ag/mercurial-dynamic-amm-sdk#readme",
+  "packageManager": "pnpm@12.16.1"
 }

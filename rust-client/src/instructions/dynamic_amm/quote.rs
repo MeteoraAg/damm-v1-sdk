@@ -73,7 +73,7 @@ pub fn process_quote_dynamic_pool(args: &Args, sub_args: &QuoteDynamicAmmArgs) {
     let vault_b_token = TokenAccount::try_deserialize_unchecked(&mut data).unwrap();
 
     let data = accounts[6].as_slice();
-    let clock = deserialize::<Clock>(&data).unwrap();
+    let clock = deserialize::<Clock>(data).unwrap();
 
     let stake_data = if pool_state.stake != Pubkey::default() {
         let account = program_dynamic_amm
