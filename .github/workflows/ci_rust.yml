@@ -20,20 +20,27 @@ env:
 jobs:
   changed_files_rust:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
     outputs:
-      program: ${{steps.changed-files-specific.outputs.any_changed}}
+      program: ${{steps.changed-files-specific.outputs.program}}
     steps:
       - uses: actions/checkout@0717577d45739eb3c851188b29f50ed6c0b2194e # v2.8.0
         with:
           fetch-depth: 0
       - name: Get specific changed files
         id: changed-files-specific
-        uses: tj-actions/changed-files@a2f1692a6f703b7a14e155ae404e6bb15538b763 # v18.6
+        uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
         with:
-          files: |
-            rust-client
-            programs
-            dynamic-amm-quote
+          filters: |
+            program:
+              - "rust-client/**"
+              - "programs/**"
+              - "dynamic-amm-quote/**"
+              - "common/**"
+              - "Cargo.toml"
+              - "Cargo.lock"
 
   rust-test:
     needs: changed_files_rust
@@ -65,4 +72,17 @@ jobs:
         shell: bash
       - name: Cargo test
         run: cargo test -- --nocapture
+        shell: bash
+
+  clippy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: ./.github/actions/setup-dep
+      - uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # master (2026-10-16)
+        with:
+          toolchain: ${{ env.RUST_TOOLCHAIN_VERSION }}
+          components: clippy
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+      - run: cargo clippy --locked --all-targets -- -D warnings
         shell: bash

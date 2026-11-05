@@ -2,7 +2,7 @@
 #![deny(rustdoc::all)]
 #![allow(rustdoc::missing_doc_code_examples)]
 #![warn(clippy::unwrap_used)]
-#![warn(clippy::integer_arithmetic)]
+#![warn(clippy::arithmetic_side_effects)]
 #![allow(warnings)]
 
 pub mod seed;

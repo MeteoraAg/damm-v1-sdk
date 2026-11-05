@@ -1,3 +1,4 @@
+#![allow(clippy::result_large_err)]
 pub mod curve;
 pub mod depeg;
 pub mod math;

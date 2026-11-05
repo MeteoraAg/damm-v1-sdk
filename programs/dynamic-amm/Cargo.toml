@@ -3,6 +3,7 @@ name = "dynamic-amm"
 version = "0.6.1"
 description = "Created with Anchor"
 edition = "2021"
+publish = false
 
 [features]
 default = ["cpi"]

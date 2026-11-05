@@ -11,10 +11,7 @@ pub fn estimate_sol_transfer_fee(priority_fee: u64) -> u64 {
 }
 
 pub fn get_max_transfer_sol(current_balance: u64, transfer_fee: u64) -> u64 {
-    let max_transfer_amount = current_balance
-        .checked_sub(transfer_fee)
-        .unwrap_or(0)
-        .checked_sub(RENT_EXEMPTION_SYSTEM_ACCOUNT)
-        .unwrap_or(0);
-    max_transfer_amount
+    current_balance
+        .saturating_sub(transfer_fee)
+        .saturating_sub(RENT_EXEMPTION_SYSTEM_ACCOUNT)
 }

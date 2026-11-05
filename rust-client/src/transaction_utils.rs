@@ -4,13 +4,13 @@ use solana_sdk::pubkey::Pubkey;
 pub fn parse_event_log<
     T: anchor_lang::AnchorDeserialize + anchor_lang::AnchorSerialize + anchor_lang::Discriminator,
 >(
-    logs: &Vec<String>,
+    logs: &[String],
     program_id: Pubkey,
 ) -> Option<T> {
     let program_start_pattern = Regex::new(r"Program .* invoke \[\d{1}\]").ok()?;
     let program_end_pattern = Regex::new(r"Program .* success").ok()?;
     let mut execution_stack: Vec<String> = vec![];
-    for log in logs.into_iter() {
+    for log in logs.iter() {
         if program_start_pattern.is_match(log) {
             let parsed_program_id: String = log.chars().skip(8).take(44).collect();
             let parsed_program_id = parsed_program_id.trim();

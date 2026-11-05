@@ -2,6 +2,7 @@
 name = "dynamic-amm-quote"
 version = { workspace = true }
 edition = { workspace = true }
+publish = false
 
 [lib]
 crate-type = ["cdylib", "lib"]

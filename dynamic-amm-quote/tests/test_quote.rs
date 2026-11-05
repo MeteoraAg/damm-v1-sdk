@@ -249,6 +249,7 @@ async fn get_quote_data(banks_client: &mut BanksClient, pool: Pubkey) -> QuoteDa
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 async fn swap(
     banks_client: &mut BanksClient,
     pool: Pubkey,

@@ -20,9 +20,9 @@ fn get_stake_pool_virtual_price(
     stake_data: HashMap<Pubkey, Vec<u8>>,
 ) -> Option<u64> {
     match depeg_type {
-        DepegType::Lido => solido::get_virtual_price(&stake_data.get(&solido::stake::ID)?),
-        DepegType::Marinade => marinade::get_virtual_price(&stake_data.get(&marinade::stake::ID)?),
-        DepegType::SplStake => spl_stake::get_virtual_price(&stake_data.get(&spl_stake_pool)?),
+        DepegType::Lido => solido::get_virtual_price(stake_data.get(&solido::stake::ID)?),
+        DepegType::Marinade => marinade::get_virtual_price(stake_data.get(&marinade::stake::ID)?),
+        DepegType::SplStake => spl_stake::get_virtual_price(stake_data.get(&spl_stake_pool)?),
         DepegType::None => None,
     }
 }

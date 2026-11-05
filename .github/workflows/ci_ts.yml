@@ -21,18 +21,22 @@ env:
 jobs:
   sdk_changed_files:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
     outputs:
-      sdk: ${{steps.changed-files-specific.outputs.any_changed}}
+      sdk: ${{steps.changed-files-specific.outputs.sdk}}
     steps:
       - uses: actions/checkout@0717577d45739eb3c851188b29f50ed6c0b2194e # v2.8.0
         with:
           fetch-depth: 0
       - name: Get specific changed files
         id: changed-files-specific
-        uses: tj-actions/changed-files@a2f1692a6f703b7a14e155ae404e6bb15538b763 # v18.6
+        uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
         with:
-          files: |
-            ts-client
+          filters: |
+            sdk:
+              - "ts-client/**"
 
   sdk_test:
     runs-on: ubuntu-latest
@@ -48,6 +52,6 @@ jobs:
         shell: bash
       - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4.3.0
         with:
-          version: 12
+          package_json_file: ts-client/package.json
       - run: cd ts-client && pnpm install --frozen-lockfile && pnpm run test
         shell: bash
